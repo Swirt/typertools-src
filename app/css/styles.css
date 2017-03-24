@@ -55,11 +55,16 @@
 }
 #tool-current-line {
 	border: 1px solid rgba(0, 0, 0, .4);
-	background: rgba(0, 0, 0, .03);
 	border-radius: 3px;
 	min-height: 44px;
 	padding: 4px 6px;
-	font-size: 14px;
+	font-size: 18px;
+}
+.dark-theme #tool-current-line {
+	background: rgba(0, 0, 0, .03);
+}
+.light-theme #tool-current-line {
+	background: rgba(255, 255, 255, .2);
 }
 #tool-error {
 	text-align: center;
@@ -80,25 +85,34 @@
 	z-index: 1;
 }
 .dark-theme .tool-body {
-	border-top: 1px double rgba(255, 255, 255, .3);
+	border-top: 1px solid rgba(255, 255, 255, .3);
 }
 .light-theme .tool-body {
-	border-top: 1px double rgba(0, 0, 0, .4);
+	border-top: 1px solid rgba(0, 0, 0, .4);
+}
+.tool-hidden-origins {
+	display: none;
 }
 #tool-text {
 	border: 1px solid rgba(0, 0, 0, .4);
-	background: rgba(0, 0, 0, .14);
 	border-radius: 3px;
 	position: relative;
 	overflow-y: auto;
+	padding: 4px 0;
+}
+.dark-theme #tool-text {
+	background: rgba(0, 0, 0, .14);
+}
+.light-theme #tool-text {
+	background: #fff;
 }
 .tool-textarea-cont {
 	position: absolute;
 	z-index: 1;
+	bottom: 4px;
 	right: 6px;
 	left: 46px;
-	bottom: 0;
-	top: 0;
+	top: 4px;
 }
 #tool-textarea {
 	box-sizing: border-box;
@@ -119,14 +133,44 @@
 	z-index: 2;
 }
 .tool-text-list:before {
-	background: rgba(255, 255, 255, .1);
 	position: absolute;
 	content: '';
 	width: 40px;
 	z-index: 1;
-	bottom: 0;
+	bottom: -4px;
+	top: -4px;
+	left: 0;
+}
+.dark-theme .tool-text-list:before {
+	background: rgba(255, 255, 255, .1);
+}
+.light-theme .tool-text-list:before {
+	background: rgba(0, 0, 0, .1);
+}
+.tool-line {
+	position: relative;
+	padding-left: 46px;
+	padding-right: 6px;
+}
+.tool-line + .tool-line {
+	margin-top: -1px;
+}
+.dark-theme .tool-line + .tool-line {
+	border-top: 1px dashed rgba(255, 255, 255, .3);
+}
+.light-theme .tool-line + .tool-line {
+	border-top: 1px dashed rgba(0, 0, 0, .4);
+}
+.tool-line-aside {
+	position: absolute;
+	width: 40px;
 	left: 0;
 	top: 0;
+}
+.tool-line-text {
+	color: red;
+	word-wrap: break-word;
+	font-size: 14px;
 }
 .tool-line-action {
 	pointer-events: auto;
@@ -138,7 +182,8 @@
 	
 }
 #tool-clear-text {
-	
+	margin-top: 2px;
+	float: right;
 }
 
 
