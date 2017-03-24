@@ -1,6 +1,6 @@
-#include "../lib/json2.js"
-
-
-function sayHello(){
-    alert("hello from ExtendScript");
+function getActiveLayerData() {
+    return JSON.stringify({
+        text: (activeDocument.activeLayer.kind == LayerKind.TEXT),
+        id: activeDocument.activeLayer.id
+    });
 }

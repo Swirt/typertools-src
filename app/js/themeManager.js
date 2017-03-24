@@ -94,7 +94,7 @@ var themeManager = (function () {
         addRule(styleId, ".hostButton:active", "background-color:" + "#" + darkBgdColor);
         addRule(styleId, ".hostButton", "border-color: " + "#" + lightBgdColor);
 		
-		var topcoat = $("#topcoat");
+		var topcoat = jQuery("#topcoat");
 		topcoat.attr("href", topcoat.data(isLight ? "light" : "dark"));
     }
     
@@ -103,7 +103,6 @@ var themeManager = (function () {
         var skinInfo = JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo;
         updateThemeWithAppSkinInfo(skinInfo);
     }
-
 
     function init() {
         var csInterface = new CSInterface();

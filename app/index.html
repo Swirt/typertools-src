@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <title></title>
 
-    <link rel="stylesheet" href="./lib/font-awesome/css/font-awesome.min.css"/>
-    <link id="topcoat" rel="stylesheet" href="./lib/topcoat/css/topcoat-desktop-dark.min.css"
-		data-light="./lib/topcoat/css/topcoat-desktop-light.min.css"
-		data-dark="./lib/topcoat/css/topcoat-desktop-dark.min.css" />
-    <link id="hostStyle" rel="stylesheet" href="./css/styles.css"/>
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css"/>
+    <link id="topcoat" rel="stylesheet" href="lib/topcoat/css/topcoat-desktop-dark.min.css"
+		data-light="lib/topcoat/css/topcoat-desktop-light.min.css"
+		data-dark="lib/topcoat/css/topcoat-desktop-dark.min.css" />
+    <link id="hostStyle" rel="stylesheet" href="css/styles.css"/>
 	
 </head>
 
@@ -20,14 +20,19 @@
 		</div>
         <div id="tool-body">
 			<div id="tool-text" contenteditable>qwe rty</div>
+           <textarea rows="4"></textarea>
             <button id="btn_test" class="topcoat-button--large hostFontSize">Real human bean</button>                
         </div>
     </div>
-	
-    <!--<script src="./js/CSInterface.js"></script>
-    <script src="./js/themeManager.js"></script> -->
-    <script src="./lib/jquery.min.js"></script>
-    <script src="./js/main.js"></script>
+		
+    <script src="lib/json2.js"></script>
+    <script src="lib/jquery.min.js"></script>
+    <script type="text/javascript">
+        var jQuery = module.exports;
+    </script>
+    <script src="js/CSInterface.js"></script>
+    <script src="js/themeManager.js"></script>
+    <script src="js/main.js"></script>
 	
 </body>
 </html>
