@@ -47,14 +47,14 @@
 					<Menu>Screentoner</Menu>
 					<Geometry>
 						<Size>
-							<Height>300</Height>
-							<Width>300</Width>
+							<Height>600</Height>
+							<Width>500</Width>
 						</Size>
-                    <!--<MinSize>
-                            <Height>550</Height>
-                            <Width>400</Width>
+						<MinSize>
+                            <Height>400</Height>
+                            <Width>350</Width>
                         </MinSize>
-                        <MaxSize>
+                     <!--<MaxSize>
                             <Height>550</Height>
                             <Width>400</Width>
                         </MaxSize>-->

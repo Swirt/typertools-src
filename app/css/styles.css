@@ -2,19 +2,149 @@
     margin: 10px;
 }
 
+.tool-header {
+	position: relative;
+	z-index: 2;
+}
+.tool-header-actions {
+	margin-bottom: 10px;
+	padding-right: 40px;
+	padding-left: 40px;
+	position: relative;
+}
+#tool-status {
+	border: 1px solid rgba(0, 0, 0, .8);
+	background: rgba(0, 0, 0, .5);
+	position: absolute;
+	border-radius: 50%;
+	height: 14px;
+	width: 14px;
+	left: 8px;
+	top: 8px;
+}
+#tool-status:before {
+	background: rgba(255, 255, 255, .08);
+	position: absolute;
+	border-radius: 50%;
+	content: '';
+	height: 6px;
+	width: 6px;
+	left: 4px;
+	top: 4px;
+}
+.tool-active #tool-status {
+	
+}
+#tool-toggle {
+	padding: 0 2.4rem;
+}
+#tool-insert-current {
+	position: absolute;
+	right: 5px;
+	top: 1px;
+}
+.tool-current {
+	position: relative;
+	padding-left: 40px;
+}
+.tool-current-actions {
+	position: absolute;
+	width: 27px;
+	left: 0;
+	top: 0;
+}
+#tool-current-line {
+	border: 1px solid rgba(0, 0, 0, .4);
+	background: rgba(0, 0, 0, .03);
+	border-radius: 3px;
+	min-height: 44px;
+	padding: 4px 6px;
+	font-size: 14px;
+}
+#tool-error {
+	text-align: center;
+	position: absolute;
+	display: none;
+	width: 100%;
+}
+#tool-error SPAN {
+	font-weight: bold;
+	padding: 0 6px;
+	color: #f00;
+}
 
-#content {
-    margin-right:auto;
-    margin-left:auto;
-    vertical-align:middle;
-    width:100%;
+.tool-body {
+	position: relative;
+	padding-top: 10px;
+	margin-top: 10px;
+	z-index: 1;
+}
+.dark-theme .tool-body {
+	border-top: 1px double rgba(255, 255, 255, .3);
+}
+.light-theme .tool-body {
+	border-top: 1px double rgba(0, 0, 0, .4);
+}
+#tool-text {
+	border: 1px solid rgba(0, 0, 0, .4);
+	background: rgba(0, 0, 0, .14);
+	border-radius: 3px;
+	position: relative;
+	overflow-y: auto;
+}
+.tool-textarea-cont {
+	position: absolute;
+	z-index: 1;
+	right: 6px;
+	left: 46px;
+	bottom: 0;
+	top: 0;
+}
+#tool-textarea {
+	box-sizing: border-box;
+	background: none;
+	overflow: hidden;
+	font-size: 14px;
+	display: block;
+	border: none;
+	resize: none;
+	height: 100%;
+	width: 100%;
+	padding: 0;
+}
+.tool-text-list {
+	pointer-events: none;
+	position: relative;
+	min-height: 50px;
+	z-index: 2;
+}
+.tool-text-list:before {
+	background: rgba(255, 255, 255, .1);
+	position: absolute;
+	content: '';
+	width: 40px;
+	z-index: 1;
+	bottom: 0;
+	left: 0;
+	top: 0;
+}
+.tool-line-action {
+	pointer-events: auto;
+}
+#tool-current-marker {
+	
+}
+#tool-current-marker I {
+	
+}
+#tool-clear-text {
+	
 }
 
 
-#btn_test{
-    width: 100%;
+#tool-text:focus, .tool-line:focus {
+	outline: 1px solid red;
 }
-
 .tool-text-line:before {
 	content: attr(data-number);
 }

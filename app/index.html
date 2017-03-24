@@ -4,35 +4,66 @@
     <meta charset="utf-8">
     <title></title>
 
-    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css"/>
-    <link id="topcoat" rel="stylesheet" href="lib/topcoat/css/topcoat-desktop-dark.min.css"
+    <link rel="stylesheet" href="./lib/font-awesome/css/font-awesome.min.css"/>
+    <link id="topcoat" rel="stylesheet" href="./lib/topcoat/css/topcoat-desktop-dark.min.css"
 		data-light="lib/topcoat/css/topcoat-desktop-light.min.css"
 		data-dark="lib/topcoat/css/topcoat-desktop-dark.min.css" />
-    <link id="hostStyle" rel="stylesheet" href="css/styles.css"/>
+    <link id="hostStyle" rel="stylesheet" href="./css/styles.css"/>
 	
 </head>
 
-<body class="hostElt">
-	
+<body class="hostElt dark-theme">
+
     <div id="content">
-		<div id="tool-header">
-			<div id="tool-current-line"></div>
+		<div class="tool-header">
+			<div class="tool-header-actions">
+				<div id="tool-status"></div>
+				<button id="tool-toggle" class="topcoat-button--large--cta" data-off="Запустить" data-on="Остановить">
+					Запустить
+				</button>
+				<button id="tool-insert-current" class="topcoat-icon-button--large--quiet" title="Вставить строку в текущий слой">
+					<i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+				</button>
+			</div>
+			<div class="tool-current">
+				<div class="tool-current-actions">
+					<div>
+						<button id="tool-prev-line" class="topcoat-icon-button--large" title="Предыдущая строка">
+							<i class="fa fa-chevron-up" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div>
+						<button id="tool-next-line" class="topcoat-icon-button--large" title="Следующая строка">
+							<i class="fa fa-chevron-down" aria-hidden="true"></i>
+						</button>
+					</div>
+				</div>
+				<div id="tool-current-line">123</div>
+			</div>
+			<div id="tool-error"><span class="hostBgd"></span></div>
 		</div>
-        <div id="tool-body">
-			<div id="tool-text" contenteditable>qwe rty</div>
-           <textarea rows="4"></textarea>
-            <button id="btn_test" class="topcoat-button--large hostFontSize">Real human bean</button>                
+        <div class="tool-body">
+			<div id="tool-text">
+				<div class="tool-textarea-cont">
+					<textarea id="tool-textarea"></textarea>
+				</div>
+				<div class="tool-text-list">
+					
+				</div>
+			</div>
+			<div id="tool-current-marker"><i></i></div>
+			<button id="tool-clear-text" class="topcoat-button--quiet">Очистить</button>
         </div>
     </div>
 		
-    <script src="lib/json2.js"></script>
-    <script src="lib/jquery.min.js"></script>
-    <script type="text/javascript">
+    <script src="./lib/json2.js"></script>
+    <script src="./lib/jquery.min.js"></script>
+    <!--<script type="text/javascript">
         var jQuery = module.exports;
     </script>
     <script src="js/CSInterface.js"></script>
-    <script src="js/themeManager.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/themeManager.js"></script>-->
+    <script src="./js/main.js"></script>
 	
 </body>
 </html>

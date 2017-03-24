@@ -94,8 +94,14 @@ var themeManager = (function () {
         addRule(styleId, ".hostButton:active", "background-color:" + "#" + darkBgdColor);
         addRule(styleId, ".hostButton", "border-color: " + "#" + lightBgdColor);
 		
-		var topcoat = jQuery("#topcoat");
-		topcoat.attr("href", topcoat.data(isLight ? "light" : "dark"));
+		var topcoatCSS = jQuery("#topcoat");
+		topcoatCSS.attr("href", topcoatCSS.data(isLight ? "light" : "dark"));
+		
+		if (isLight) {
+			jQuery("BODY").removeClass('dark-theme').addClass('light-theme');
+		} else {
+			jQuery("BODY").removeClass('light-theme').addClass('dark-theme');
+		}
     }
     
     
