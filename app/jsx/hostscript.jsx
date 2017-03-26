@@ -1,3 +1,15 @@
+function printObj(obj) {
+    var data = {};
+    for (var i in obj) {
+        try {
+            data[i] = obj[i] + '';
+        } catch(e) {
+            data[i] = '***';
+        }
+    }
+    return JSON.stringify(data);
+}
+
 function getActiveLayerData() {
     return JSON.stringify({
         isText: (activeDocument.activeLayer.kind == LayerKind.TEXT),
@@ -6,10 +18,12 @@ function getActiveLayerData() {
 }
 
 function setActiveLayerText(text) {
-	if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
-		return true;
+    if (!text) {
+        return 'empty';
+    } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
+        return 'layer';
 	} else {
-		activeDocument.activeLayer.textItem.content = text;
-		return false;
+        activeDocument.activeLayer.textItem.contents = text;
+		return '';
 	}
 }

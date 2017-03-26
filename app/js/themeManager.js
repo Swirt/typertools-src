@@ -65,8 +65,8 @@ var themeManager = (function () {
     function updateThemeWithAppSkinInfo(appSkinInfo) {
 		
         var panelBgColor = appSkinInfo.panelBackgroundColor.color;
-        var lightBgdColor = toHex(panelBgColor, -100);
-        var darkBgdColor = toHex(panelBgColor, 20);
+        var lightBgdColor = toHex(panelBgColor, 20);
+        var darkBgdColor = toHex(panelBgColor, -20);
         var bgdColor = toHex(panelBgColor);
 		var isLight = panelBgColor.red >= 125;
         var fontColor = isLight ? "000000" : "F0F0F0";

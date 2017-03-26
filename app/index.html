@@ -6,13 +6,13 @@
 
     <link rel="stylesheet" href="./lib/font-awesome/css/font-awesome.min.css"/>
     <link id="topcoat" rel="stylesheet" href="./lib/topcoat/css/topcoat-desktop-dark.min.css"
-		data-light="lib/topcoat/css/topcoat-desktop-light.min.css"
-		data-dark="lib/topcoat/css/topcoat-desktop-dark.min.css" />
+		data-light="./lib/topcoat/css/topcoat-desktop-light.min.css"
+		data-dark="./lib/topcoat/css/topcoat-desktop-dark.min.css" />
     <link id="hostStyle" rel="stylesheet" href="./css/styles.css"/>
 	
 </head>
 
-<body class="hostElt dark-theme">
+<body class="hostElt dark-theme" oncontextmenu="return false;">
 
     <div id="content">
 		<div class="tool-header">
@@ -38,37 +38,39 @@
 						</button>
 					</div>
 				</div>
-				<div id="tool-current-line">123</div>
+				<div id="tool-current-line"></div>
 			</div>
 			<div id="tool-error"><span class="hostBgd"></span></div>
 		</div>
         <div class="tool-body">
 			<div class="tool-hidden-origins">
-				<div class="tool-line">
-					<div class"tool-line-aside"></div>
-					<div class"tool-line-text"></div>
+				<div class="tool-line m-notempty">
+					<div class="tool-line-aside">
+					    <div class="tool-line-num"></div>
+					    <div class="tool-line-select tool-line-action" title="Выбрать строку">
+					        <i class="fa fa-bullseye" aria-hidden="true"></i>
+					    </div>
+					</div>
+					<div class="tool-line-text"></div>
 				</div>
 			</div>
 			<div id="tool-text">
 				<div class="tool-textarea-cont">
-					<textarea id="tool-textarea"></textarea>
+					<textarea id="tool-textarea" class="hostFontColor"></textarea>
+					<div class="tool-text-palseholder">Вставьте сюда скрипт</div>
 				</div>
-				<div class="tool-text-list">
-					
-				</div>
+				<div class="tool-text-list"></div>
 			</div>
-			<div id="tool-current-marker"><i></i></div>
-			<button id="tool-clear-text" class="topcoat-button--quiet">Очистить</button>
         </div>
     </div>
 		
     <script src="./lib/json2.js"></script>
     <script src="./lib/jquery.min.js"></script>
-    <!--<script type="text/javascript">
+    <script type="text/javascript">
         var jQuery = module.exports;
     </script>
-    <script src="js/CSInterface.js"></script>
-    <script src="js/themeManager.js"></script>-->
+    <script src="./js/CSInterface.js"></script>
+    <script src="./js/themeManager.js"></script>
     <script src="./js/main.js"></script>
 	
 </body>

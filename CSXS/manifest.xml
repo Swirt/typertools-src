@@ -8,8 +8,8 @@
             <!-- Uncomment Host tags according to the apps you want your panel to support -->
             <!-- Photoshop -->
 
-            <Host Name="PHXS" Version="(14.0,19.9]" />
-            <Host Name="PHSP" Version="(14.0,19.9]" />
+            <Host Name="PHXS" Version="(12.0,29.9]" />
+            <Host Name="PHSP" Version="(12.0,29.9]" />
 
             <!-- Illustrator -->
             <!-- <Host Name="ILST" Version="[18.0,18.9]" />-->
@@ -51,8 +51,8 @@
 							<Width>500</Width>
 						</Size>
 						<MinSize>
-                            <Height>400</Height>
-                            <Width>350</Width>
+                            <Height>250</Height>
+                            <Width>300</Width>
                         </MinSize>
                      <!--<MaxSize>
                             <Height>550</Height>
