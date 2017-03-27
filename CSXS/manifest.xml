@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="4.0" ExtensionBundleId="com.swirt.screentoner" ExtensionBundleName="Screentoner" ExtensionBundleVersion="0.0.1">
+<ExtensionManifest Version="4.0" ExtensionBundleId="com.swirt.typertools" ExtensionBundleName="Typer Tools" ExtensionBundleVersion="0.1.0">
 	<ExtensionList>
-		<Extension Id="com.swirt.screentoner" Version="0.0.1" />
+		<Extension Id="com.swirt.typertools" Version="0.0.1" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -33,7 +33,7 @@
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
-		<Extension Id="com.swirt.screentoner">
+		<Extension Id="com.swirt.typertools">
 			<DispatchInfo >
 				<Resources>
 				<MainPath>./app/index.html</MainPath>
@@ -44,7 +44,7 @@
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
-					<Menu>Screentoner</Menu>
+					<Menu>Typer Tools</Menu>
 					<Geometry>
 						<Size>
 							<Height>600</Height>

@@ -169,6 +169,7 @@
 .tool-text-list {
 	pointer-events: none;
 	position: relative;
+	min-height: 20px;
 	z-index: 2;
 }
 .tool-text-list:before {
@@ -221,7 +222,7 @@
 }
 .tool-line-aside {
 	position: absolute;
-	width: 50px;
+	width: 52px;
 	left: 0;
 	top: 0;
 }
