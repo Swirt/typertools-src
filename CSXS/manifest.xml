@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExtensionManifest Version="4.0" ExtensionBundleId="com.swirt.typertools" ExtensionBundleName="Typer Tools" ExtensionBundleVersion="0.1.0">
 	<ExtensionList>
-		<Extension Id="com.swirt.typertools" Version="0.0.1" />
+		<Extension Id="com.swirt.typertools" Version="0.1.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -54,11 +54,10 @@
                             <Height>250</Height>
                             <Width>300</Width>
                         </MinSize>
-                     <!--<MaxSize>
+						<!--<MaxSize>
                             <Height>550</Height>
                             <Width>400</Width>
                         </MaxSize>-->
-                        
 					</Geometry>
 					<Icons>
 						<Icon Type="Normal">./app/icons/iconNormal.png</Icon>

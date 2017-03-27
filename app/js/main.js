@@ -8,8 +8,8 @@
         csInterface.evalScript('$.evalFile("' + extensionRoot + fileName + '")');
     }
 	var getActiveLayerData = function(callback) {
-		csInterface.evalScript('getActiveLayerData()', function(res) {
-			callback(JSON.parse(res));
+		csInterface.evalScript('getActiveLayerData()', function(data) {
+			callback(JSON.parse(data));
 		});
 	};
 	var setActiveLayerText = function(text, callback) {
@@ -18,7 +18,7 @@
 		});
 	};
     
-    function init() {
+    var init = function() {
 		
         themeManager.init();
         loadJSX('json2.js');
@@ -57,11 +57,11 @@
 		
 		var currentLine = 0;
 		var scrollToCurrent = function() {
-			var top = $('.tool-line.m-current').position().top - 40;
+			var newTop = $('.tool-line.m-current').position().top - 40;
 			var currentTop = textCont.scrollTop();
 			var height = textCont.outerHeight();
-			if (top < currentTop || top > (currentTop + height - 70)) {
-				textCont.scrollTop(top);
+			if (newTop < currentTop || newTop > (currentTop + height - 70)) {
+				textCont.scrollTop(newTop);
 			}
 		};
         var checkCurrent = function() {
@@ -73,25 +73,27 @@
                 } else if (currentLine >= scriptArr.length) {
                     currentLine = scriptArr.length - 1;
                 }
+				if (currentLine === 0) {
+					prevLineBtn.prop('disabled', true);
+				} else {
+					prevLineBtn.prop('disabled', false);
+				}
+				if (currentLine === scriptArr.length - 1) {
+					nextLineBtn.prop('disabled', true);
+					if (active) toggleBtn.click();
+				} else {
+					nextLineBtn.prop('disabled', false);
+				}
                 currentText.text(scriptArr[currentLine]);
-                $('.tool-text-list .tool-line.m-notempty').eq(currentLine).addClass('m-current').siblings().removeClass('m-current');
+                $('.line-' + currentLine, textListCont).addClass('m-current').siblings().removeClass('m-current');
             } else {
                 body.addClass('empty-text');
                 toggleBtn.prop('disabled', true);
-				$('.tool-text-list').empty();
+				prevLineBtn.prop('disabled', true);
+				nextLineBtn.prop('disabled', true);
+				textListCont.empty();
                 currentText.text('');
                 currentLine = 0;
-            }
-            if (currentLine === 0 || !scriptArr.length) {
-                prevLineBtn.prop('disabled', true);
-            } else {
-                prevLineBtn.prop('disabled', false);
-            }
-            if (currentLine >= scriptArr.length - 1 || !scriptArr.length) {
-                nextLineBtn.prop('disabled', true);
-				if (active) toggleBtn.click();
-            } else {
-                nextLineBtn.prop('disabled', false);
             }
         };
         prevLineBtn.on('click', function() {
@@ -122,12 +124,16 @@
 					if (layer.isText && layer.id !== activeLayerId) {
 						activeLayerId = layer.id;
 						setActiveLayerText(scriptArr[currentLine], function(error) {
-							currentLine += 1;
-							checkCurrent();
-							scrollToCurrent();
+							if (!error) {
+								currentLine += 1;
+								checkCurrent();
+								scrollToCurrent();
+							}
+							checkLayerChange();
 						});
+					} else {
+						checkLayerChange();
 					}
-					checkLayerChange();
 				});
 			}, checkInterval);
 		};
@@ -144,16 +150,15 @@
 					checkLayerChange();
 				});
 			} else {
-				body.removeClass('tool-active');
-				toggleBtn.text(toggleBtn.data('off'));
 				clearTimeout(checkTimer);
+				toggleBtn.text(toggleBtn.data('off'));
+				body.removeClass('tool-active');
 				activeLayerId = null;
 			}
 		});
 		inputCurrentBtn.on('click', function() {
 			if (this.disabled) return false;
-			var line = scriptArr[currentLine];
-			setActiveLayerText(line, function(error) {
+			setActiveLayerText(scriptArr[currentLine], function(error) {
 				if (error) {
                     if (error === 'layer') showError('Выбранный слой не является текстовым');
 					else if (error === 'empty') showError('Нет текста для вставки');
@@ -172,11 +177,11 @@
             textListCont.empty();
             list.forEach(function(line) {
                 var row = originRow.clone();
-                if (line.replace(/[\s\n\r]+/g, '')) {
+                if (line.replace(/[\s]+/g, '')) {
                     if (i === currentLine) {
                         row.addClass('m-current');
                     }
-                    row.data('index', i);
+                    row.data('index', i).addClass('line-' + i);
                     $('.tool-line-num', row).text(++i);
                     $('.tool-line-text', row).text(line);
 					scriptArr.push(line);
