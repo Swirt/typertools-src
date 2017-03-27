@@ -72,6 +72,7 @@
                     currentLine = 0;
                 } else if (currentLine >= scriptArr.length) {
                     currentLine = scriptArr.length - 1;
+					if (active) toggleBtn.click();
                 }
 				if (currentLine === 0) {
 					prevLineBtn.prop('disabled', true);
@@ -80,7 +81,6 @@
 				}
 				if (currentLine === scriptArr.length - 1) {
 					nextLineBtn.prop('disabled', true);
-					if (active) toggleBtn.click();
 				} else {
 					nextLineBtn.prop('disabled', false);
 				}
