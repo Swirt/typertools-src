@@ -10,6 +10,19 @@ function printObj(obj) {
     return JSON.stringify(data);
 }
 
+function isOldSession() {
+	try {
+		var descr = app.getCustomOptions('typertools.sessionMark');
+		var session = descr.getString(0);
+		return 1;
+	} catch (e) {
+		var descr = new ActionDescriptor();
+		descr.putString(0, 'launched');
+		app.putCustomOptions('typertools.sessionMark', descr, false);
+		return '';
+	}
+}
+
 function getActiveLayerData() {
     return JSON.stringify({
         isText: (activeDocument.activeLayer.kind == LayerKind.TEXT),
@@ -18,13 +31,13 @@ function getActiveLayerData() {
     });
 }
 
-function setActiveLayerText(text) {
-    if (!text) {
+function setActiveLayerText(data) {
+    if (!data.text) {
         return 'empty';
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
         return 'layer';
 	} else {
-        activeDocument.activeLayer.textItem.contents = text;
+        activeDocument.activeLayer.textItem.contents = data.text;
 		switchType();
 		return '';
 	}

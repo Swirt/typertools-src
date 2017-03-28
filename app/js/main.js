@@ -1,7 +1,6 @@
 (function ($) {
     'use strict';
 	
-	var initialized = false;
     var csInterface = new CSInterface();
 	var root = csInterface.getSystemPath(SystemPath.EXTENSION);
     
@@ -9,16 +8,16 @@
         var extensionRoot = root + '/app/jsx/';
         csInterface.evalScript('$.evalFile("' + extensionRoot + fileName + '")');
     }
-	var getActiveLayerData = function(callback) {
-		csInterface.evalScript('getActiveLayerData()', function(data) {
-			callback(JSON.parse(data));
+	loadJSX('json2.js');
+	loadJSX('switchType.jsx');
+	
+		
+	var isOldSession = function(callback) {
+		csInterface.evalScript('isOldSession()', function(isOld) {
+			callback(isOld);
 		});
-	};
-	var setActiveLayerText = function(text, callback) {
-		csInterface.evalScript('setActiveLayerText("' + text + '")', function(error) {
-			callback(error);
-		});
-	};
+	};	
+	
 	var readStorage = function() {
 		var result = window.cep.fs.readFile(root + '/app/storage');
 		if (result.err) {
@@ -37,14 +36,26 @@
 		} else {
 			return {error: null};
 		}
+	};	
+	
+	var getActiveLayerData = function(callback) {
+		csInterface.evalScript('getActiveLayerData()', function(data) {
+			callback(JSON.parse(data));
+		});
 	};
-    
+	var setActiveLayerText = function(text, callback) {
+		var data = JSON.stringify({text: text || ''});
+		csInterface.evalScript('setActiveLayerText(' + data + ')', function(error) {
+			callback(error);
+		});
+	};
+	
+	
     var init = function() {
+		var initialized = false;
 		
-        themeManager.init();
-        loadJSX('json2.js');
-        loadJSX('switchType.jsx');
-				
+		themeManager.init();
+		
 		var active = false;
 		var scriptArr = [];
 		var scriptTxt = '';
@@ -82,9 +93,9 @@
 		var scrollToCurrent = function() {
 			var current = $('.tool-line.m-current')
 			if (current.length) {
-				var newTop = current.position().top - 40;
-				var currentTop = textCont.scrollTop();
 				var height = textCont.outerHeight();
+				var currentTop = textCont.scrollTop();
+				var newTop = current.position().top - 40;
 				if (newTop < currentTop || newTop > (currentTop + height - 70)) {
 					textCont.scrollTop(newTop);
 				}
@@ -92,6 +103,7 @@
 		};
 		var saveState = function() {
 			writeToStorage({
+				//active: active,
 				line: currentLine,
 				content: scriptTxt
 			});
@@ -101,7 +113,12 @@
 			if (!storage.error) {
 				currentLine = storage.data.line;
 				textArea.val(storage.data.content).trigger('input');
-				scrollToCurrent();
+				/*if (active !== storage.data.active) {
+					toggleBtn.click();
+				}*/
+				setTimeout(function() {
+					scrollToCurrent();
+				}, 100);
 			}
 		};
         var checkCurrent = function() {
@@ -208,6 +225,7 @@
 				body.removeClass('tool-active');
 				activeLayerId = null;
 			}
+			saveState();
 		});
 		inputCurrentBtn.on('click', function() {
 			if (this.disabled) return false;
@@ -273,8 +291,12 @@
 			textArea.height(textListCont.height()).scrollTop(0);
         });
 		
-		getState();
-		initialized = true;
+		isOldSession(function(isOld) {
+			if (isOld) {
+				getState();
+			}
+			initialized = true;
+		});
     }
 	
     init();

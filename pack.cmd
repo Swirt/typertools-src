@@ -1,13 +1,13 @@
 TITLE Typer Tools Pack
 
+SET /p ver=Version: 
+
 SET name=com.swirt.typertools
 SET sert=selfDB.p12
 SET pass=98916062
 
-SET /p ver=Version: 
-
 del %sert%
-del %name%.zxp
+del %name%-%ver%.zxp
 rmdir %name% /S/Q
 
 xcopy app %name%\app\ /S/E/Y
