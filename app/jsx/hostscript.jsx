@@ -13,7 +13,8 @@ function printObj(obj) {
 function getActiveLayerData() {
     return JSON.stringify({
         isText: (activeDocument.activeLayer.kind == LayerKind.TEXT),
-        id: activeDocument.activeLayer.id
+        id: activeDocument.activeLayer.id,
+		docId: activeDocument.id
     });
 }
 
@@ -24,6 +25,7 @@ function setActiveLayerText(text) {
         return 'layer';
 	} else {
         activeDocument.activeLayer.textItem.contents = text;
+		switchType();
 		return '';
 	}
 }

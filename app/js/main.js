@@ -22,7 +22,8 @@
 		
         themeManager.init();
         loadJSX('json2.js');
-		
+        loadJSX('switchType.jsx');
+				
 		var active = false;
 		var scriptArr = [];
 		
@@ -117,22 +118,31 @@
 		var checkTimer = 0;
         var checkInterval = 400;
 		var activeLayerId = null;
+		var activeDocumentId = null;
 		var checkLayerChange = function() {
 			if (!active) return false;
 			checkTimer = setTimeout(function() {
 				getActiveLayerData(function(layer) {
-					if (layer.isText && layer.id !== activeLayerId) {
-						activeLayerId = layer.id;
-						setActiveLayerText(scriptArr[currentLine], function(error) {
-							if (!error) {
-								currentLine += 1;
-								checkCurrent();
-								scrollToCurrent();
-							}
-							checkLayerChange();
-						});
-					} else {
+					if (layer.docId !== activeDocumentId) {
+						activeDocumentId = layer.docId;
+						if (layer.isText) {
+							activeLayerId = layer.id;
+						}
 						checkLayerChange();
+					} else {
+						if (layer.isText && layer.id !== activeLayerId) {
+							activeLayerId = layer.id;
+							setActiveLayerText(scriptArr[currentLine], function(error) {
+								if (!error) {
+									currentLine += 1;
+									checkCurrent();
+									scrollToCurrent();
+								}
+								checkLayerChange();
+							});
+						} else {
+							checkLayerChange();
+						}
 					}
 				});
 			}, checkInterval);
@@ -144,6 +154,7 @@
 				body.addClass('tool-active');
 				toggleBtn.text(toggleBtn.data('on'));
 				getActiveLayerData(function(layer) {
+					activeDocumentId = layer.docId;
 					if (layer.isText) {
 						activeLayerId = layer.id;
 					}
@@ -213,7 +224,7 @@
 		
 		
         $(window).resize(function() {
-			var height = window.outerHeight - header.outerHeight() - 96;
+			var height = window.outerHeight - header.outerHeight() - 97;
             textCont.height(height);
 			textListCont.css('min-height', height);
 			textArea.height(textListCont.height()).scrollTop(0);
