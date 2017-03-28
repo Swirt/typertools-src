@@ -38,7 +38,13 @@ function setActiveLayerText(data) {
         return 'layer';
 	} else {
         activeDocument.activeLayer.textItem.contents = data.text;
-		switchType();
+		if (activeDocument.activeLayer.textItem.kind === TextType.PARAGRAPHTEXT) {
+			switchToLine();
+			switchToBlock();
+		} else {
+			switchToBlock();
+			switchToLine();
+		}
 		return '';
 	}
 }

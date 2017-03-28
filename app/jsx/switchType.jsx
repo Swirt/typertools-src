@@ -1,4 +1,4 @@
-function switchType() {
+function switchToLine() {
 	var idsetd = charIDToTypeID( "setd" );
 		var desc25 = new ActionDescriptor();
 		var idnull = charIDToTypeID( "null" );
@@ -16,7 +16,8 @@ function switchType() {
 		var idPnt = charIDToTypeID( "Pnt " );
 		desc25.putEnumerated( idT, idTEXT, idPnt );
 	executeAction( idsetd, desc25, DialogModes.NO );
-
+}
+function switchToBlock() {
 	var idsetd = charIDToTypeID( "setd" );
 		var desc26 = new ActionDescriptor();
 		var idnull = charIDToTypeID( "null" );
