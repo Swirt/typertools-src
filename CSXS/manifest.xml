@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="4.0" ExtensionBundleId="com.swirt.typertools" ExtensionBundleName="Typer Tools" ExtensionBundleVersion="0.2.0">
+<ExtensionManifest Version="4.0" ExtensionBundleId="com.swirt.typertools" ExtensionBundleName="Typer Tools" ExtensionBundleVersion="0.3.0">
 	<ExtensionList>
-		<Extension Id="com.swirt.typertools" Version="0.2.0" />
+		<Extension Id="com.swirt.typertools" Version="0.3.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
             <!-- Uncomment Host tags according to the apps you want your panel to support -->
             <!-- Photoshop -->
 
-            <Host Name="PHXS" Version="(12.0,29.9]" />
-            <Host Name="PHSP" Version="(12.0,29.9]" />
+            <Host Name="PHXS" Version="(14.0,29.9]" />
+            <Host Name="PHSP" Version="(14.0,29.9]" />
 
             <!-- Illustrator -->
             <!-- <Host Name="ILST" Version="[18.0,18.9]" />-->
@@ -29,7 +29,7 @@
 			<Locale Code="All" />
 		</LocaleList>
 		<RequiredRuntimeList>
-			<RequiredRuntime Name="CSXS" Version="4.0" />
+			<RequiredRuntime Name="CSXS" Version="5.0" />
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>

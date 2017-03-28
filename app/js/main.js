@@ -2,9 +2,10 @@
     'use strict';
 	
     var csInterface = new CSInterface();
+	var root = csInterface.getSystemPath(SystemPath.EXTENSION);
     
     var loadJSX = function(fileName) {
-        var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + '/app/jsx/';
+        var extensionRoot = root + '/app/jsx/';
         csInterface.evalScript('$.evalFile("' + extensionRoot + fileName + '")');
     }
 	var getActiveLayerData = function(callback) {
@@ -17,6 +18,19 @@
 			callback(error);
 		});
 	};
+	var readStorage = function() {
+		var result = window.cep.fs.readFile(root + '/app/storage');
+		console.log(result);
+		if (result.err) {
+			return {error: result.err};
+		} else {
+			return {data: JSON.parse(result.data)};
+		}
+	};
+	var writeToStorage = function(data) {
+		var result = window.cep.fs.writeFile(root + '/app/storage', JSON.stringify(data));
+		console.log(result);
+	};
     
     var init = function() {
 		
@@ -26,6 +40,8 @@
 				
 		var active = false;
 		var scriptArr = [];
+		var scriptTxt = '';
+		var currentLine = 0;
 		
         var body = $('BODY');
         var header = $('.tool-header');
@@ -56,13 +72,26 @@
 		};
         
 		
-		var currentLine = 0;
 		var scrollToCurrent = function() {
 			var newTop = $('.tool-line.m-current').position().top - 40;
 			var currentTop = textCont.scrollTop();
 			var height = textCont.outerHeight();
 			if (newTop < currentTop || newTop > (currentTop + height - 70)) {
 				textCont.scrollTop(newTop);
+			}
+		};
+		var saveState = function() {
+			writeToStorage({
+				line: currentLine,
+				content: scriptTxt
+			});
+		};
+		var getState = function() {
+			var storage = readStorage();
+			if (!storage.error) {
+				currentLine = storage.data.line;
+				textArea.val(storage.data.content).trigger('input');
+				scrollToCurrent();
 			}
 		};
         var checkCurrent = function() {
@@ -96,6 +125,7 @@
                 currentText.text('');
                 currentLine = 0;
             }
+			saveState();
         };
         prevLineBtn.on('click', function() {
             if (this.disabled) return false;
@@ -209,6 +239,7 @@
         };        
         textArea.on('input', function(e) {
             var list = e.target.value.split('\n');
+			scriptTxt = e.target.value
             makeList(list);
         }).on('focus', function() {
 			textCont.addClass('m-focus');
@@ -229,6 +260,8 @@
 			textListCont.css('min-height', height);
 			textArea.height(textListCont.height()).scrollTop(0);
         });
+		
+		getState();
     }
 	
     init();
