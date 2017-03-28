@@ -1,6 +1,7 @@
 (function ($) {
     'use strict';
 	
+	var initialized = false;
     var csInterface = new CSInterface();
 	var root = csInterface.getSystemPath(SystemPath.EXTENSION);
     
@@ -20,16 +21,22 @@
 	};
 	var readStorage = function() {
 		var result = window.cep.fs.readFile(root + '/app/storage');
-		console.log(result);
 		if (result.err) {
 			return {error: result.err};
 		} else {
-			return {data: JSON.parse(result.data)};
+			return {
+				error: null,
+				data: JSON.parse(result.data)
+			};
 		}
 	};
 	var writeToStorage = function(data) {
 		var result = window.cep.fs.writeFile(root + '/app/storage', JSON.stringify(data));
-		console.log(result);
+		if (result.err) {
+			return {error: result.err};
+		} else {
+			return {error: null};
+		}
 	};
     
     var init = function() {
@@ -73,11 +80,14 @@
         
 		
 		var scrollToCurrent = function() {
-			var newTop = $('.tool-line.m-current').position().top - 40;
-			var currentTop = textCont.scrollTop();
-			var height = textCont.outerHeight();
-			if (newTop < currentTop || newTop > (currentTop + height - 70)) {
-				textCont.scrollTop(newTop);
+			var current = $('.tool-line.m-current')
+			if (current.length) {
+				var newTop = current.position().top - 40;
+				var currentTop = textCont.scrollTop();
+				var height = textCont.outerHeight();
+				if (newTop < currentTop || newTop > (currentTop + height - 70)) {
+					textCont.scrollTop(newTop);
+				}
 			}
 		};
 		var saveState = function() {
@@ -125,7 +135,9 @@
                 currentText.text('');
                 currentLine = 0;
             }
-			saveState();
+			if (initialized) {
+				saveState();
+			}
         };
         prevLineBtn.on('click', function() {
             if (this.disabled) return false;
@@ -262,6 +274,7 @@
         });
 		
 		getState();
+		initialized = true;
     }
 	
     init();
