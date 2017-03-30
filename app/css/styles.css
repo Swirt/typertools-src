@@ -34,21 +34,19 @@
 	top: 5px;
 }
 .tool-active #tool-status {
-	box-shadow: 0 0 16px rgba(210, 20, 20, .8);
-	background: rgba(210, 20, 20, 1);
-	animation: blink 1.4s ease infinite;
+	-webkit-animation: blink 1.2s ease infinite;
 }
-@keyframes blink {
+@-webkit-keyframes blink {
 	0% {
-		box-shadow: 0 0 16px rgba(210, 20, 20, .8);
+		box-shadow: 0 0 18px rgba(210, 20, 20, .8);
 		background: rgba(210, 20, 20, 1);
 	}
 	50% {
-		box-shadow: 0 0 8px rgba(210, 20, 20, .6);
-		background: rgba(210, 20, 20, .6);
+		box-shadow: 0 0 8px rgba(210, 20, 20, .5);
+		background: rgba(210, 20, 20, .5);
 	}
 	100% {
-		box-shadow: 0 0 16px rgba(210, 20, 20, .8);
+		box-shadow: 0 0 18px rgba(210, 20, 20, .8);
 		background: rgba(210, 20, 20, 1);
 	}
 }
