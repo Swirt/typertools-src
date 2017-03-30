@@ -9,9 +9,13 @@
         csInterface.evalScript('$.evalFile("' + extensionRoot + fileName + '")');
     }
 	loadJSX('json2.js');
-	loadJSX('switchType.jsx');
+	loadJSX('jam/jamEngine-min.jsxinc');
+	loadJSX('jam/jamHelpers-min.jsxinc');
+	loadJSX('jam/jamJSON-min.jsxinc');
+	loadJSX('jam/jamText-min.jsxinc');
+	loadJSX('jam/jamUtils-min.jsxinc');
 	
-		
+	
 	var isOldSession = function(callback) {
 		csInterface.evalScript('isOldSession()', function(isOld) {
 			callback(isOld);
@@ -38,6 +42,11 @@
 		}
 	};	
 	
+	var getAllLayers = function(callback) {
+		csInterface.evalScript('getAllLayers()', function(data) {
+			callback(JSON.parse(data));
+		});
+	};
 	var getActiveLayerData = function(callback) {
 		csInterface.evalScript('getActiveLayerData()', function(data) {
 			callback(JSON.parse(data));
@@ -103,7 +112,6 @@
 		};
 		var saveState = function() {
 			writeToStorage({
-				//active: active,
 				line: currentLine,
 				content: scriptTxt
 			});
@@ -113,9 +121,6 @@
 			if (!storage.error) {
 				currentLine = storage.data.line;
 				textArea.val(storage.data.content).trigger('input');
-				/*if (active !== storage.data.active) {
-					toggleBtn.click();
-				}*/
 				setTimeout(function() {
 					scrollToCurrent();
 				}, 100);
@@ -174,37 +179,28 @@
         checkCurrent();
 		
 		
-		var checkTimer = 0;
-        var checkInterval = 400;
-		var activeLayerId = null;
-		var activeDocumentId = null;
-		var checkLayerChange = function() {
-			if (!active) return false;
-			checkTimer = setTimeout(function() {
-				getActiveLayerData(function(layer) {
-					if (layer.docId !== activeDocumentId) {
-						activeDocumentId = layer.docId;
-						if (layer.isText) {
-							activeLayerId = layer.id;
-						}
-						checkLayerChange();
-					} else {
-						if (layer.isText && layer.id !== activeLayerId) {
-							activeLayerId = layer.id;
-							setActiveLayerText(scriptArr[currentLine], function(error) {
-								if (!error) {
-									currentLine += 1;
-									checkCurrent();
-									scrollToCurrent();
-								}
-								checkLayerChange();
-							});
-						} else {
-							checkLayerChange();
-						}
-					}
-				});
-			}, checkInterval);
+		var allLayers = {};
+		var inProcess = false;
+		var insertText = function() {
+			inProcess = true;
+			setActiveLayerText(scriptArr[currentLine], function(error) {
+				if (error) {
+                    if (error === 'layer') showError('Выбранный слой не является текстовым');
+					else if (error === 'empty') showError('Нет текста для вставки');
+					else if (error === 'emptyLayer') showError('Пустой слой');
+					else showError('Неизвестная ошибка');
+				} else {
+					currentLine += 1;
+					checkCurrent();
+					scrollToCurrent();
+				}
+				inProcess = false;
+			});
+		};
+		var updateAllLayers = function() {
+			getAllLayers(function(layers) {
+				allLayers = layers;
+			});
 		};
 		toggleBtn.on('click', function() {
 			if (this.disabled) return false;
@@ -212,34 +208,33 @@
 			if (active) {
 				body.addClass('tool-active');
 				toggleBtn.text(toggleBtn.data('on'));
-				getActiveLayerData(function(layer) {
-					activeDocumentId = layer.docId;
-					if (layer.isText) {
-						activeLayerId = layer.id;
-					}
-					checkLayerChange();
-				});
 			} else {
-				clearTimeout(checkTimer);
-				toggleBtn.text(toggleBtn.data('off'));
 				body.removeClass('tool-active');
-				activeLayerId = null;
+				toggleBtn.text(toggleBtn.data('off'));
 			}
-			saveState();
 		});
 		inputCurrentBtn.on('click', function() {
 			if (this.disabled) return false;
-			setActiveLayerText(scriptArr[currentLine], function(error) {
-				if (error) {
-                    if (error === 'layer') showError('Выбранный слой не является текстовым');
-					else if (error === 'empty') showError('Нет текста для вставки');
+			insertText();
+		});
+		csInterface.addEventListener('documentEdited', function() {
+			if (inProcess) return;
+			getActiveLayerData(function(layer) {
+				if (allLayers[layer.docId]) {
+					var docLayers = allLayers[layer.docId];
+					if (!docLayers[layer.id]) {
+						if (active && layer.isText) {
+							insertText();
+						}
+						docLayers[layer.id] = 1;
+					}
 				} else {
-					currentLine += 1;
-					checkCurrent();
-					scrollToCurrent();
+					allLayers[layer.docId] = {};
+					updateAllLayers();
 				}
 			});
 		});
+		updateAllLayers();
 		
 		
         var makeList = function(list) {
@@ -290,6 +285,7 @@
 			textListCont.css('min-height', height);
 			textArea.height(textListCont.height()).scrollTop(0);
         });
+		
 		
 		isOldSession(function(isOld) {
 			if (isOld) {

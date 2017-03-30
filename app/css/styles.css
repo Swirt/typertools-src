@@ -35,7 +35,22 @@
 }
 .tool-active #tool-status {
 	box-shadow: 0 0 16px rgba(210, 20, 20, .8);
-	background: rgba(210, 20, 20, .8);
+	background: rgba(210, 20, 20, 1);
+	animation: blink 1.4s ease infinite;
+}
+@keyframes blink {
+	0% {
+		box-shadow: 0 0 16px rgba(210, 20, 20, .8);
+		background: rgba(210, 20, 20, 1);
+	}
+	50% {
+		box-shadow: 0 0 8px rgba(210, 20, 20, .6);
+		background: rgba(210, 20, 20, .6);
+	}
+	100% {
+		box-shadow: 0 0 16px rgba(210, 20, 20, .8);
+		background: rgba(210, 20, 20, 1);
+	}
 }
 #tool-toggle {
 	width: 160px;

@@ -23,6 +23,19 @@ function isOldSession() {
 	}
 }
 
+function getAllLayers() {
+	var allLayers = {};
+	for (var i = 0; i < documents.length; i++) {
+        var doc = documents[i];
+        allLayers[doc.id] = {};
+		for (var j = 0; j < doc.layers.length; j++) {
+			var layer = doc.layers[j];
+			allLayers[doc.id][layer.id] = 1;
+		}
+    }
+	return JSON.stringify(allLayers);
+}
+
 function getActiveLayerData() {
     return JSON.stringify({
         isText: (activeDocument.activeLayer.kind == LayerKind.TEXT),
@@ -36,15 +49,15 @@ function setActiveLayerText(data) {
         return 'empty';
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
         return 'layer';
+	} else if (!activeDocument.activeLayer.textItem.contents) {
+		return 'emptyLayer';
 	} else {
-        activeDocument.activeLayer.textItem.contents = data.text;
-		if (activeDocument.activeLayer.textItem.kind === TextType.PARAGRAPHTEXT) {
-			switchToLine();
-			switchToBlock();
-		} else {
-			switchToBlock();
-			switchToLine();
+		var newLayerText = {
+			"layerText": {
+				"textKey": data.text
+			}
 		}
+		jamText.setLayerText(newLayerText);
 		return '';
 	}
 }
