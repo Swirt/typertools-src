@@ -2,13 +2,13 @@
     'use strict';
 	
     var csInterface = new CSInterface();
-	var root = csInterface.getSystemPath(SystemPath.EXTENSION);
+	var path = csInterface.getSystemPath(SystemPath.EXTENSION);
+	var storagePath = path + '/app/storage';
+	var extensionPath = path + '/app/jsx/';
     
     var loadJSX = function(fileName) {
-        var extensionRoot = root + '/app/jsx/';
-        csInterface.evalScript('$.evalFile("' + extensionRoot + fileName + '")');
+        csInterface.evalScript('$.evalFile("' + extensionPath + fileName + '")');
     }
-	loadJSX('json2.js');
 	loadJSX('jam/jamEngine-min.jsxinc');
 	loadJSX('jam/jamHelpers-min.jsxinc');
 	loadJSX('jam/jamJSON-min.jsxinc');
@@ -23,7 +23,7 @@
 	};	
 	
 	var readStorage = function() {
-		var result = window.cep.fs.readFile(root + '/app/storage');
+		var result = window.cep.fs.readFile(storagePath);
 		if (result.err) {
 			return {error: result.err};
 		} else {
@@ -34,7 +34,7 @@
 		}
 	};
 	var writeToStorage = function(data) {
-		var result = window.cep.fs.writeFile(root + '/app/storage', JSON.stringify(data));
+		var result = window.cep.fs.writeFile(storagePath, JSON.stringify(data));
 		if (result.err) {
 			return {error: result.err};
 		} else {
@@ -88,9 +88,9 @@
 		var errorTimer = 0;
 		var errorShowTime = 3000;
 		var showError = function(text) {
+			clearTimeout(errorTimer);
 			errorCont.hide();
 			errorText.text(text);
-			clearTimeout(errorTimer);
 			errorCont.fadeIn(function() {
 				errorTimer = setTimeout(function() {
 					errorCont.fadeOut();
@@ -100,7 +100,7 @@
         
 		
 		var scrollToCurrent = function() {
-			var current = $('.tool-line.m-current')
+			var current = $('.tool-line.m-current', textListCont);
 			if (current.length) {
 				var height = textCont.outerHeight();
 				var currentTop = textCont.scrollTop();
@@ -187,7 +187,7 @@
 				if (error) {
                     if (error === 'layer') showError('Выбранный слой не является текстовым');
 					else if (error === 'empty') showError('Нет текста для вставки');
-					else if (error === 'emptyLayer') showError('Пустой слой');
+					else if (error === 'emptyLayer') showError('Слой не должен быть пустым');
 					else showError('Неизвестная ошибка');
 				} else {
 					currentLine += 1;
@@ -198,8 +198,10 @@
 			});
 		};
 		var updateAllLayers = function() {
+			inProcess = true;
 			getAllLayers(function(layers) {
 				allLayers = layers;
+				inProcess = false;
 			});
 		};
 		toggleBtn.on('click', function() {

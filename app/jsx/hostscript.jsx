@@ -7,7 +7,7 @@ function printObj(obj) {
             data[i] = '***';
         }
     }
-    return JSON.stringify(data);
+    return jamJSON.stringify(data);
 }
 
 function isOldSession() {
@@ -25,19 +25,20 @@ function isOldSession() {
 
 function getAllLayers() {
 	var allLayers = {};
-	for (var i = 0; i < documents.length; i++) {
+	var docsLength = documents.length;
+	for (var i = 0; i < docsLength; i++) {
         var doc = documents[i];
+		var layersLength = doc.layers.length;
         allLayers[doc.id] = {};
-		for (var j = 0; j < doc.layers.length; j++) {
-			var layer = doc.layers[j];
-			allLayers[doc.id][layer.id] = 1;
+		for (var j = 0; j < layersLength; j++) {
+			allLayers[doc.id][doc.layers[j].id] = 1;
 		}
     }
-	return JSON.stringify(allLayers);
+	return jamJSON.stringify(allLayers);
 }
 
 function getActiveLayerData() {
-    return JSON.stringify({
+    return jamJSON.stringify({
         isText: (activeDocument.activeLayer.kind == LayerKind.TEXT),
         id: activeDocument.activeLayer.id,
 		docId: activeDocument.id
