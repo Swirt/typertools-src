@@ -9,6 +9,7 @@
     var loadJSX = function(fileName) {
         csInterface.evalScript('$.evalFile("' + extensionPath + fileName + '")');
     }
+	
 	loadJSX('jam/jamEngine-min.jsxinc');
 	loadJSX('jam/jamHelpers-min.jsxinc');
 	loadJSX('jam/jamJSON-min.jsxinc');
@@ -116,6 +117,9 @@
 				content: scriptTxt
 			});
 		};
+		var clearState = function() {
+			writeToStorage({});
+		};
 		var getState = function() {
 			var storage = readStorage();
 			if (!storage.error) {
@@ -185,7 +189,8 @@
 			inProcess = true;
 			setActiveLayerText(scriptArr[currentLine], function(error) {
 				if (error) {
-                    if (error === 'layer') showError('Выбранный слой не является текстовым');
+					if (error === 'doc') showError('Не выбран документ');
+                    else if (error === 'layer') showError('Выбранный слой не является текстовым');
 					else if (error === 'empty') showError('Нет текста для вставки');
 					else if (error === 'emptyLayer') showError('Слой не должен быть пустым');
 					else showError('Неизвестная ошибка');
@@ -282,7 +287,7 @@
 		
 		
         $(window).resize(function() {
-			var height = window.outerHeight - header.outerHeight() - 97;
+			var height = window.outerHeight - header.outerHeight() - 56;
             textCont.height(height);
 			textListCont.css('min-height', height);
 			textArea.height(textListCont.height()).scrollTop(0);
@@ -290,13 +295,12 @@
 		
 		
 		isOldSession(function(isOld) {
-			if (isOld) {
-				getState();
-			}
+			isOld? getState() : clearState();
+			$(window).resize();
 			initialized = true;
 		});
     }
 	
-    init();
+	setTimeout(init, 0);
 	
 })(jQuery);

@@ -46,7 +46,9 @@ function getActiveLayerData() {
 }
 
 function setActiveLayerText(data) {
-    if (!data.text) {
+	if (!documents.length) {
+		return 'doc';
+	} else if (!data.text) {
         return 'empty';
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
         return 'layer';
