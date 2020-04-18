@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="4.0" ExtensionBundleId="com.swirt.tools" ExtensionBundleVersion="0.1" ExtensionBundleName="Swirt Tools">
+    <ExtensionList>
+        <Extension Id="typertools" Version="0.5.0" />
+    </ExtensionList>
+    <ExecutionEnvironment>
+        <HostList>
+            <Host Name="PHXS" Version="[14.0,99.9]" />
+            <Host Name="PHSP" Version="[14.0,99.9]" />
+        </HostList>
+        <LocaleList>
+            <Locale Code="All" />
+        </LocaleList>
+        <RequiredRuntimeList>
+            <RequiredRuntime Name="CSXS" Version="4.0" />
+        </RequiredRuntimeList>
+    </ExecutionEnvironment>
+    <DispatchInfoList>
+        <Extension Id="typertools">
+            <DispatchInfo >
+                <Resources>
+                <MainPath>./app/index.html</MainPath>
+                <ScriptPath>./app/jsx/hostscript.jsx</ScriptPath>
+                </Resources>
+                <Lifecycle>
+                    <AutoVisible>true</AutoVisible>
+                </Lifecycle>
+                <UI>
+                    <Type>Panel</Type>
+                    <Menu>Typer Tools</Menu>
+                    <Geometry>
+                        <Size>
+                            <Height>600</Height>
+                            <Width>500</Width>
+                        </Size>
+                        <MinSize>
+                            <Height>250</Height>
+                            <Width>300</Width>
+                        </MinSize>
+                        <!--<MaxSize>
+                            <Height>550</Height>
+                            <Width>400</Width>
+                        </MaxSize>-->
+                    </Geometry>
+                    <Icons>
+                        <Icon Type="Normal">./app/icons/iconNormal.png</Icon>
+                        <Icon Type="RollOver">./app/icons/iconRollover.png</Icon>
+                        <Icon Type="Disabled">./app/icons/iconDisabled.png</Icon>
+                        <Icon Type="DarkNormal">./app/icons/iconDarkNormal.png</Icon>
+                        <Icon Type="DarkRollOver">./app/icons/iconDarkRollover.png</Icon>
+                    </Icons>
+                </UI>
+            </DispatchInfo>
+        </Extension>
+    </DispatchInfoList>
+</ExtensionManifest>

@@ -8,12 +8,14 @@ del %sert%
 del %name%.zxp
 rmdir %name% /S/Q
 
-xcopy app %name%\app\ /S/E/Y
-xcopy CSXS %name%\CSXS\ /S/E/Y
+xcopy typertools\app %name%\app\ /S/E/Y
+xcopy typertools\CSXS %name%\CSXS\ /S/E/Y
 
 ZXPSignCmd -selfSignedCert RU SPB 34squad "34th squad" %pass% %sert%
-ZXPSignCmd -sign %name% %name%.zxp %sert% %pass% -tsa http://tsa.starfieldtech.com
+ZXPSignCmd -sign %name% %name%.zxp %sert% %pass% -tsa http://timestamp.digicert.com/
 
 rmdir %name% /S/Q
 del %sert%
 del .rnd
+
+PAUSE

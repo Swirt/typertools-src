@@ -1,0 +1,337 @@
+body {
+    overflow: hidden;
+    margin: 10px 3px;
+}
+
+.tool-header {
+    position: relative;
+    z-index: 2;
+}
+.tool-header-actions {
+    margin-bottom: 10px;
+    padding-right: 40px;
+    padding-left: 50px;
+    position: relative;
+}
+#tool-status {
+    border: 1px solid rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .4);
+    position: absolute;
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    left: 10px;
+    top: 6px;
+}
+#tool-status:before {
+    background: rgba(255, 255, 255, .08);
+    position: absolute;
+    border-radius: 50%;
+    content: '';
+    height: 8px;
+    width: 8px;
+    left: 5px;
+    top: 5px;
+}
+.tool-active #tool-status {
+    -webkit-animation: blink 1.2s ease infinite;
+}
+@-webkit-keyframes blink {
+    0% {
+        box-shadow: 0 0 18px rgba(210, 20, 20, .8);
+        background: rgba(210, 20, 20, 1);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(210, 20, 20, .5);
+        background: rgba(210, 20, 20, .5);
+    }
+    100% {
+        box-shadow: 0 0 18px rgba(210, 20, 20, .8);
+        background: rgba(210, 20, 20, 1);
+    }
+}
+#tool-toggle {
+    width: 160px;
+}
+#tool-insert-current {
+    position: absolute;
+    right: 0;
+    top: 1px;
+}
+.empty-text #tool-insert-current {
+    display: none;
+}
+.tool-current {
+    position: relative;
+    padding-left: 50px;
+}
+.tool-current-actions {
+    position: absolute;
+    width: 50px;
+    left: 0;
+    top: 0;
+}
+#tool-prev-line, #tool-next-line {
+    width: 38px;
+}
+#tool-current-line {
+    border: 1px solid rgba(0, 0, 0, .4);
+    white-space: pre-wrap;
+    border-radius: 3px;
+    line-height: 15px;
+    overflow: hidden;
+    padding: 4px 6px;
+    font-size: 13px;
+    height: 44px;
+}
+.dark-theme #tool-current-line {
+    background: rgba(0, 0, 0, .2);
+}
+.light-theme #tool-current-line {
+    background: rgba(255, 255, 255, .2);
+}
+#tool-error {
+    text-align: center;
+    position: absolute;
+    display: none;
+    bottom: -18px;
+    width: 100%;
+}
+#tool-error SPAN {
+    font-weight: bold;
+    line-height: 18px;
+    font-size: 13px;
+    padding: 0 6px;
+    color: #f00;
+}
+
+
+.tool-body {
+    position: relative;
+    padding-top: 10px;
+    margin-top: 10px;
+    z-index: 1;
+}
+.dark-theme .tool-body {
+    border-top: 1px solid rgba(255, 255, 255, .3);
+}
+.light-theme .tool-body {
+    border-top: 1px solid rgba(0, 0, 0, .4);
+}
+.tool-hidden-origins {
+    display: none;
+}
+#tool-text {
+    border: 1px solid rgba(0, 0, 0, .4);
+    border-radius: 3px;
+    position: relative;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+.dark-theme #tool-text {
+    background: rgba(0, 0, 0, .2);
+}
+.light-theme #tool-text {
+    background: rgba(255, 255, 255, .2);
+}
+.tool-textarea-cont {
+    position: absolute;
+    z-index: 1;
+    bottom: 4px;
+    right: 6px;
+    left: 56px;
+    top: 4px;
+}
+#tool-textarea {
+    box-sizing: border-box;
+    line-height: 20px;
+    background: none;
+    overflow: hidden;
+    font-size: 14px;
+    display: block;
+    border: none;
+    resize: none;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+}
+#tool-text.m-focus #tool-textarea {
+    box-shadow: 0 0 0 6px #fff;
+    background: #fff;
+    color: #000;
+}
+.tool-text-palseholder {
+    pointer-events: none;
+    text-align: center;
+    position: absolute;
+    font-style: italic;
+    font-size: 18px;
+    display: none;
+    opacity: .6;
+    width: 100%;
+    z-index: 3;
+    top: 30px;
+    left: 0;
+}
+.empty-text .tool-text-palseholder {
+    display: block;
+}
+#tool-textarea:focus + .tool-text-palseholder {
+    display: none;
+}
+.tool-text-list {
+    pointer-events: none;
+    position: relative;
+    min-height: 20px;
+    z-index: 2;
+}
+.tool-text-list:before {
+    position: absolute;
+    content: '';
+    width: 50px;
+    z-index: 1;
+    bottom: -4px;
+    top: -4px;
+    left: 0;
+}
+.dark-theme .tool-text-list:before {
+    background: rgba(255, 255, 255, .1);
+}
+.light-theme .tool-text-list:before {
+    background: rgba(0, 0, 0, .1);
+}
+.tool-line {
+    position: relative;
+    padding-left: 56px;
+    padding-right: 6px;
+}
+.tool-line + .tool-line:before {
+    border-bottom: 1px dashed #868686;
+    position: absolute;
+    content: '';
+    height: 0;
+    right: 0;
+    left: 0;
+    top: 0;
+}
+.tool-line.m-current {
+    background: rgba(40, 142, 223, .3);
+    z-index: 2;
+}
+.tool-line.m-current:before, .tool-line.m-current:after {
+    position: absolute;
+    content: '';
+    height: 0;
+    right: 0;
+    left: 0;
+}
+.tool-line.m-current:before {
+    border-bottom: 1px solid #288edf;
+    top: 0;
+}
+.tool-line.m-current:after {
+    border-bottom: 1px solid #288edf;
+    bottom: -1px;
+}
+.tool-line-aside {
+    position: absolute;
+    width: 52px;
+    left: 0;
+    top: 0;
+}
+.tool-line-aside > * {
+    vertical-align: bottom;
+    display: inline-block;
+}
+.tool-line-num {
+    font-family: monospace;
+    position: relative;
+    text-align: center;
+    line-height: 20px;
+    margin-left: 1px;
+    font-size: 13px;
+    opacity: .8;
+    width: 26px;
+    top: -1px;
+}
+.tool-line-select {
+    line-height: 20px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.tool-line-select .fa {
+    position: relative;
+    line-height: 20px;
+    font-size: 14px;
+    opacity: .2;
+    top: 1px;
+}
+.tool-line-select:hover .fa {
+    opacity: .8;
+}
+.tool-line.m-current .fa {
+    cursor: default;
+    opacity: 1;
+}
+.tool-line-text {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    visibility: hidden;
+    line-height: 20px;
+    font-size: 14px;
+}
+.tool-line.m-current .tool-line-text {
+    visibility: visible;
+}
+#tool-text.m-focus .tool-line.m-current .tool-line-text {
+    color: #000;
+}
+.tool-line-action {
+    pointer-events: auto;
+}
+
+
+
+
+/*
+Those classes will be edited at runtime with values specified
+by the settings of the CC application
+*/
+.hostFontColor {}
+.hostFontFamily {}
+.hostFontSize {}
+
+/*font family, color and size*/
+.hostFont {}
+/*background color*/
+.hostBgd {}
+/*lighter background color*/
+.hostBgdLight {}
+/*darker background color*/
+.hostBgdDark {}
+/*background color and font*/
+.hostElt {}
+
+/* buttons */
+.hostButton {
+    vertical-align: bottom;
+    font-family: inherit;
+    border-radius: 2px;
+    font-size: inherit;
+    border: 1px solid;
+    cursor: pointer;
+    color: inherit;
+    height: 20px;
+}
+
+.topcoat-button, 
+.topcoat-button--quiet, 
+.topcoat-button--large, 
+.topcoat-button--large--quiet, 
+.topcoat-button--cta, 
+.topcoat-button--large--cta,
+.topcoat-icon-button,
+.topcoat-icon-button--large {
+    cursor: pointer;
+}
