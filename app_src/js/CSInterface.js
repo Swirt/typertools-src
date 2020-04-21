@@ -30,7 +30,7 @@ CSXSWindowType._MODELESS = "Modeless";
 CSXSWindowType._MODAL_DIALOG = "ModalDialog";
 
 /** EvalScript error message */
-EvalScript_ErrMessage = "EvalScript error.";
+window.EvalScript_ErrMessage = "EvalScript error.";
 
 /**
  * @class Version
@@ -115,7 +115,7 @@ function Runtime(name, versionRange)
 * @param name            The localizable display name of this extension.
 * @param mainPath        The path of the "index.html" file.
 * @param basePath        The base path of this extension.
-* @param windowType          The window type of the main window of this extension.
+* @param windowType      The window type of the main window of this extension.
                  Valid values are defined by \c #CSXSWindowType.
 * @param width           The default width in pixels of the main window of this extension.
 * @param height          The default height in pixels of the main window of this extension.
@@ -510,9 +510,9 @@ CSInterface.prototype.loadBinAsync = function(urlName,callback)
         xhr.open('GET', urlName, true);
         xhr.onerror = function ()
         {
-  		  console.log("Unable to load snapshot from given URL");
-  		  return false;
-		};
+            console.log("Unable to load snapshot from given URL");
+            return false;
+        };
         xhr.send();
         xhr.onload = () => {
             window.__adobe_cep__.loadSnapshot(xhr.response);
@@ -532,7 +532,7 @@ CSInterface.prototype.loadBinAsync = function(urlName,callback)
         return false;
     }
 
-	return true;
+    return true;
 };
 
 /** Loads binary file created synchronously
@@ -592,11 +592,11 @@ CSInterface.prototype.getSystemPath = function(pathType)
     var OSVersion = this.getOSInformation();
     if (OSVersion.indexOf("Windows") >= 0)
     {
-      path = path.replace("file:///", "");
+        path = path.replace("file:///", "");
     }
     else if (OSVersion.indexOf("Mac") >= 0)
     {
-      path = path.replace("file://", "");
+        path = path.replace("file://", "");
     }
     return path;
 };
@@ -613,7 +613,7 @@ CSInterface.prototype.evalScript = function(script, callback)
 {
     if(callback === null || callback === undefined)
     {
-        callback = function(result){};
+        callback = function(){};
     }
     window.__adobe_cep__.evalScript(script, callback);
 };
@@ -895,7 +895,7 @@ CSInterface.prototype.getOSInformation = function()
  */
 CSInterface.prototype.openURLInDefaultBrowser = function(url)
 {
-    return cep.util.openURLInDefaultBrowser(url);
+    return window.cep.util.openURLInDefaultBrowser(url);
 };
 
 /**
@@ -907,7 +907,7 @@ CSInterface.prototype.openURLInDefaultBrowser = function(url)
  */
 CSInterface.prototype.getExtensionID = function()
 {
-     return window.__adobe_cep__.getExtensionId();
+    return window.__adobe_cep__.getExtensionId();
 };
 
 /**
@@ -937,7 +937,7 @@ CSInterface.prototype.getScaleFactor = function()
  * @return value >= 1.0f
  * only available for windows machine
  */
- if(navigator.appVersion.toLowerCase().indexOf("windows") >= 0) {
+if(navigator.appVersion.toLowerCase().indexOf("windows") >= 0) {
     CSInterface.prototype.getMonitorScaleFactor = function()
     {
         return window.__adobe_cep__.getMonitorScaleFactor();
@@ -1166,7 +1166,7 @@ CSInterface.prototype.setContextMenuByJSON = function(menu, callback)
 CSInterface.prototype.updateContextMenuItem = function(menuItemID, enabled, checked)
 {
     var itemStatus = new ContextMenuItemStatus(menuItemID, enabled, checked);
-    ret = window.__adobe_cep__.invokeSync("updateContextMenuItem", JSON.stringify(itemStatus));
+    window.__adobe_cep__.invokeSync("updateContextMenuItem", JSON.stringify(itemStatus));
 };
 
 /**
@@ -1289,3 +1289,29 @@ CSInterface.prototype.getWindowTitle = function()
 {
     return window.__adobe_cep__.invokeSync("getWindowTitle", "");
 };
+
+
+
+
+
+window.CSXSWindowType = CSXSWindowType;
+window.Version = Version;
+window.VersionBound = VersionBound;
+window.VersionRange = VersionRange;
+window.Runtime = Runtime;
+window.Extension = Extension;
+window.CSEvent = CSEvent;
+window.SystemPath = SystemPath;
+window.ColorType = ColorType;
+window.RGBColor = RGBColor;
+window.Direction = Direction;
+window.GradientStop = GradientStop;
+window.GradientColor = GradientColor;
+window.UIColor = UIColor;
+window.AppSkinInfo = AppSkinInfo;
+window.HostEnvironment = HostEnvironment;
+window.HostCapabilities = HostCapabilities;
+window.ApiVersion = ApiVersion;
+window.MenuItemStatus = MenuItemStatus;
+window.ContextMenuItemStatus = ContextMenuItemStatus;
+window.CSInterface = CSInterface;

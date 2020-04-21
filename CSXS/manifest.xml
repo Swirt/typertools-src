@@ -19,8 +19,12 @@
         <Extension Id="typertools">
             <DispatchInfo >
                 <Resources>
-                <MainPath>./app/index.html</MainPath>
-                <ScriptPath>./app/jsx/hostscript.jsx</ScriptPath>
+                    <MainPath>./app/index.html</MainPath>
+                    <ScriptPath>./host/index.jsx</ScriptPath>
+                    <CEFCommandLine>
+                        <Parameter>--allow-file-access</Parameter>
+                        <Parameter>--allow-file-access-from-files</Parameter>
+                    </CEFCommandLine>
                 </Resources>
                 <Lifecycle>
                     <AutoVisible>true</AutoVisible>
@@ -30,24 +34,24 @@
                     <Menu>Typer Tools</Menu>
                     <Geometry>
                         <Size>
-                            <Height>600</Height>
-                            <Width>500</Width>
+                            <Height>900</Height>
+                            <Width>600</Width>
                         </Size>
                         <MinSize>
-                            <Height>250</Height>
+                            <Height>600</Height>
                             <Width>300</Width>
                         </MinSize>
-                        <!--<MaxSize>
-                            <Height>550</Height>
-                            <Width>400</Width>
-                        </MaxSize>-->
+                        <MaxSize>
+                            <Height>9999</Height>
+                            <Width>800</Width>
+                        </MaxSize>
                     </Geometry>
                     <Icons>
-                        <Icon Type="Normal">./app/icons/iconNormal.png</Icon>
-                        <Icon Type="RollOver">./app/icons/iconRollover.png</Icon>
-                        <Icon Type="Disabled">./app/icons/iconDisabled.png</Icon>
-                        <Icon Type="DarkNormal">./app/icons/iconDarkNormal.png</Icon>
-                        <Icon Type="DarkRollOver">./app/icons/iconDarkRollover.png</Icon>
+                        <Icon Type="Normal">./icons/iconNormal.png</Icon>
+                        <Icon Type="RollOver">./icons/iconRollover.png</Icon>
+                        <Icon Type="Disabled">./icons/iconDisabled.png</Icon>
+                        <Icon Type="DarkNormal">./icons/iconDarkNormal.png</Icon>
+                        <Icon Type="DarkRollOver">./icons/iconDarkRollover.png</Icon>
                     </Icons>
                 </UI>
             </DispatchInfo>
