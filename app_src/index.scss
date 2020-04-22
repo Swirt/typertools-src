@@ -87,6 +87,7 @@
     -webkit-font-smoothing: antialiased;
     border: 1px solid rgba(#000, .3);
     box-sizing: border-box;
+    letter-spacing: 1px;
     border-radius: 6px;
     padding: 5px 8px;
     font-size: 14px;
@@ -302,10 +303,10 @@
     -webkit-font-smoothing: antialiased;
     max-width: calc(100% - 52px);
     text-overflow: ellipsis;
+    letter-spacing: 1px;
     white-space: nowrap;
     overflow: hidden;
-    display: block;
-    font-size: 12px;
+    font-size: 14px;
     flex-grow: 2;
 }
 .style-edit {

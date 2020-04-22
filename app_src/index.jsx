@@ -28,6 +28,7 @@ csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamText-min.jsxinc")')
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamStyles-min.jsxinc")');
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamUtils-min.jsxinc")');
 
+
 const readStorage = key => {
     const result = window.cep.fs.readFile(storagePath);
     if (result.err) {
@@ -115,6 +116,7 @@ const rgbToHex = (rgb={}) => {
 const getStyleObject = textStyle => {
     const styleObj = {};
     if (textStyle.fontName) styleObj.fontFamily = textStyle.fontName;
+    if (textStyle.fontPostScriptName) styleObj.fontFileFamily = textStyle.fontPostScriptName;
     if (textStyle.syntheticBold) styleObj.fontWeight = 'bold';
     if (textStyle.syntheticItalic) styleObj.fontStyle = 'italic';
     if (textStyle.fontCaps === 'allCaps') styleObj.textTransform = 'uppercase';
@@ -302,11 +304,12 @@ const App = React.memo(function App() {
 
 const TopBlock = React.memo(function TopBlock(props) {
     const textStyle = props.currentStyle?.text.layerText.textStyleRange[0]?.textStyle || {};
+    const styleObject = getStyleObject(textStyle);
     return (
         <React.Fragment>
             <div className="header-top">
                 <div className="header-button">
-                    <button className={'topcoat-button--large--cta' + (props.launched ? ' m-launched' : '')} onClick={() => props.setLaunched(!props.launched)}>
+                    <button className={'topcoat-button--large--cta' + (props.launched ? ' m-launched' : '')} onClick={() => props.setLaunched(!props.launched)} title="Когда плагин запущен, он автоматически подставляет текущую строку в каждый созданный текстовый слой">
                         {props.launched ? 'Остановить' : 'Запустить'}
                     </button>
                 </div>
@@ -325,9 +328,11 @@ const TopBlock = React.memo(function TopBlock(props) {
                         <FiArrowDown size={18} />
                     </button>
                 </div>
-                <div className="header-current hostBgdDark" style={getStyleObject(textStyle)} onClick={() => scrollToLine(props.currentLineIndex)}>
-                    {props.currentText}
-                </div>
+                <div className="header-current hostBgdDark" title="Нажмите, чтобы прокрутить скрипт до этой строчки" style={styleObject} onClick={() => scrollToLine(props.currentLineIndex)}
+                    dangerouslySetInnerHTML = {
+                        { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.currentText}</span>`} 
+                    }
+                ></div>
             </div>
         </React.Fragment>
     );
@@ -422,11 +427,15 @@ const BottomBlock = React.memo(function BottomBlock(props) {
         getActiveLayerText(data => {
             if (!data.text.layerText?.textStyleRange.length) return false;
             const firstStyle = data.text.layerText.textStyleRange[0];
-            const firstPar = data.text.layerText.paragraphStyleRange[0];
+            const firstParag = data.text.layerText.paragraphStyleRange[0];
             firstStyle.to = 999999999;
-            firstPar.to = 999999999;
+            firstParag.to = 999999999;
+            firstParag.paragraphStyle.burasagari = firstParag.paragraphStyle.burasagari || 'burasagariNone';
+            firstParag.paragraphStyle.singleWordJustification = firstParag.paragraphStyle.singleWordJustification || 'justifyAll';
+            firstParag.paragraphStyle.justificationMethodType = firstParag.paragraphStyle.justificationMethodType || 'justifMethodAutomatic';
+            firstParag.paragraphStyle.textEveryLineComposer = !!firstParag.paragraphStyle.textEveryLineComposer;
+            data.text.layerText.paragraphStyleRange = [firstParag];
             data.text.layerText.textStyleRange = [firstStyle];
-            data.text.layerText.paragraphStyleRange = [firstPar];
             delete data.text.layerText.textKey;
             delete data.text.layerText.textShape;
             delete data.text.layerText.textClickPoint;
@@ -559,12 +568,15 @@ const StyleItem = React.memo(function StyleItem(props) {
         props.openStyle();
     };
     const textStyle = props.style.text.layerText.textStyleRange[0]?.textStyle || {};
+    const styleObject = getStyleObject(textStyle);
     return (
         <div className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
             <div className="style-color" style={{background: rgbToHex(textStyle.color)}}></div>
-            <div className="style-name" style={getStyleObject(textStyle)}>
-                {props.style.name}
-            </div>
+            <div className="style-name" style={styleObject}
+                dangerouslySetInnerHTML = {
+                    { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.style.name}</span>`} 
+                }
+            ></div>
             <button className="style-edit topcoat-icon-button--large--quiet" title="Редактировать стиль" onClick={openStyle}>
                 <MdEdit size={18} />
             </button>

@@ -8,8 +8,10 @@ del %sert%
 del %name%.zxp
 rmdir %name% /S/Q
 
-xcopy typertools\app %name%\app\ /E/Y
-xcopy typertools\CSXS %name%\CSXS\ /E/Y
+xcopy app %name%\app\ /E/Y
+xcopy host %name%\host\ /E/Y
+xcopy CSXS %name%\CSXS\ /E/Y
+xcopy icons %name%\icons\ /E/Y
 
 ZXPSignCmd -selfSignedCert RU SPB 34squad "34th squad" %pass% %sert%
 ZXPSignCmd -sign %name% %name%.zxp %sert% %pass% -tsa http://timestamp.digicert.com/
