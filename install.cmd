@@ -2,7 +2,7 @@
 chcp 1251 >nul
 setlocal EnableDelayedExpansion
 
-echo Установка расширения для Фотошопа Typer Tools
+echo Установка расширения для Фотошопа Typer Tools v0.6.0
 echo.
 echo Закройте Фотошоп, если он открыт.
 echo.

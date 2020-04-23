@@ -1,6 +1,6 @@
 TITLE Typer Tools Pack
 
-SET name=com.swirt.typertools
+SET name=typertools
 SET sert=selfDB.p12
 SET pass=12345
 

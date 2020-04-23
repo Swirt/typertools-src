@@ -317,7 +317,7 @@ const HelpBlock = React.memo(function HelpBlock(props) {
                     <div className="help-title">
                         Typer Tools
                     </div>
-                    <button className="topcoat-icon-button--large--quiet" title="Закрыть инструкцию" onClick={() => props.setHelpOpen(false)}>
+                    <button className="topcoat-icon-button--large--quiet" title="Закрыть справку" onClick={() => props.setHelpOpen(false)}>
                         <FiX size={18} />
                     </button>
                 </div>
@@ -355,7 +355,7 @@ const TopBlock = React.memo(function TopBlock(props) {
                     </button>
                 </div>
                 <div className="header-actions">
-                    <button className="topcoat-icon-button--large--quiet" title="Открыть инструкцию" onClick={() => props.setHelpOpen(true)}>
+                    <button className="topcoat-icon-button--large--quiet" title="Открыть справку" onClick={() => props.setHelpOpen(true)}>
                         <FiHelpCircle size={18} />
                     </button>
                     <button className="topcoat-icon-button--large--quiet" title="Применить текст и стиль к текущему слою" onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
@@ -372,7 +372,7 @@ const TopBlock = React.memo(function TopBlock(props) {
                         <FiArrowDown size={18} />
                     </button>
                 </div>
-                <div className="header-current hostBgdDark" title="Нажмите, чтобы прокрутить скрипт до этой строчки" style={styleObject} onClick={() => scrollToLine(props.currentLineIndex)}
+                <div className="header-current hostBgdDark" title="Нажмите, чтобы прокрутить скрипт до этой строки" style={styleObject} onClick={() => scrollToLine(props.currentLineIndex)}
                     dangerouslySetInnerHTML = {
                         { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.currentText}</span>`} 
                     }
@@ -624,7 +624,7 @@ const StyleItem = React.memo(function StyleItem(props) {
     const styleObject = getStyleObject(textStyle);
     return (
         <div className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
-            <div className="style-color" style={{background: rgbToHex(textStyle.color)}}></div>
+            <div className="style-color" style={{background: rgbToHex(textStyle.color)}} title={rgbToHex(textStyle.color)}></div>
             <div className="style-name" style={styleObject}
                 dangerouslySetInnerHTML = {
                     { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.style.name}</span>`} 
