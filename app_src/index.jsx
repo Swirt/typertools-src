@@ -10,16 +10,21 @@ import {FiArrowUp, FiArrowDown, FiHelpCircle, FiArrowRightCircle, FiTarget, FiPl
 import {MdEdit, MdDelete, MdSave} from "react-icons/md";
 
 
-const version = '0.6.0';
+const appTitle = 'Typer Tools';
+const appVersion = '0.6.0';
+const authorName = 'Swirt';
+const authorUrl = 'https://telegram.me/swirt';
 
 const topHeight = 125;
 const minMiddleHeight = 160;
 const minBottomHeight = 260;
+let allLayers = {};
 
 const csInterface = new window.CSInterface();
+const locale = csInterface.initResourceBundle();
+const openUrl = window.cep.util.openURLInDefaultBrowser;
 const path = csInterface.getSystemPath(window.SystemPath.EXTENSION);
 const storagePath = path + '/app/storage';
-let allLayers = {};
 
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamActions-min.jsxinc")');
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamEngine-min.jsxinc")');
@@ -64,14 +69,14 @@ const getAllLayers = () => {
 
 const getActiveLayerData = callback => {
     csInterface.evalScript('getActiveLayerData()', data => {
-        callback(JSON.parse(data));
+        callback(JSON.parse(data || '{}'));
     });
 };
 
 const getActiveLayerText = callback => {
     csInterface.evalScript('getActiveLayerText()', data => {
         const dataObj = JSON.parse(data || '{}');
-        if (!data || !dataObj.layer || !dataObj.text) nativeAlert('Не выбран текстовый слой.', 'Ошибка', true);
+        if (!data || !dataObj.layer || !dataObj.text) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
         else callback(dataObj);
     });
 };
@@ -79,7 +84,7 @@ const getActiveLayerText = callback => {
 const setActiveLayerText = (text, style) => {
     const data = JSON.stringify({text, style});
     csInterface.evalScript('setActiveLayerText(' + data + ')', error => {
-        if (error) nativeAlert('Не выбран текстовый слой.', 'Ошибка', true);
+        if (error) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
     });
 };
 
@@ -148,12 +153,9 @@ const App = React.memo(function App() {
     let dragging = false;
     let resizeStartY = 0;
     let resizeStartH = 0;
-    let appBlock = React.useRef();
-    let bottomBlock = React.useRef();
-    let appHeight = appBlock.current?.offsetHeight || 0;
-    let bottomHeight = bottomBlock.current?.offsetHeight || 0;
     const startBottomResize = e => {
-        resizeStartH = bottomHeight;
+        const bottomBlock = document.querySelector('.bottom-block');
+        resizeStartH = bottomBlock.offsetHeight;
         resizeStartY = e.pageY;
         dragging = true;
     };
@@ -169,12 +171,13 @@ const App = React.memo(function App() {
         }
     };
     const setBottomSize = height => {
+        const appHeight = document.documentElement.clientHeight;
+        const bottomBlock = document.querySelector('.bottom-block');
         const maxBottomHeight = appHeight - topHeight - minMiddleHeight;
-        height = height || readStorage('bottomHeight') || minBottomHeight;
-        if (height < minBottomHeight) height = minBottomHeight;
-        else if (height > maxBottomHeight) height = maxBottomHeight;
-        bottomHeight = height;
-        bottomBlock.current.style.height = bottomHeight + 'px';
+        let bottomHeight = height || readStorage('bottomHeight') || minBottomHeight;
+        if (height < minBottomHeight) bottomHeight = minBottomHeight;
+        else if (height > maxBottomHeight) bottomHeight = maxBottomHeight;
+        bottomBlock.style.height = bottomHeight + 'px';
         writeToStorage({bottomHeight});
         resizeTextArea();
     };
@@ -232,8 +235,9 @@ const App = React.memo(function App() {
     React.useEffect(() => {
         getAllLayers();
         window.addEventListener('resize', () => {
-            appHeight = document.documentElement.clientHeight;
-            appBlock.current.style.height = appHeight + 'px';
+            const appHeight = document.documentElement.clientHeight;
+            const appBlock = document.querySelector('.app-body');
+            appBlock.style.height = appHeight + 'px';
             setBottomSize();
         });
         if (currentText) {
@@ -241,7 +245,7 @@ const App = React.memo(function App() {
         } else if (lines.length) {
             let hasLine = false;
             for (let i = 0; i < lines.length; i++) {
-                if (lines[i]?.trim()) {
+                if (lines[i].trim()) {
                     setCurrentLineIndex(i);
                     scrollToLine(i);
                     hasLine = true;
@@ -265,7 +269,7 @@ const App = React.memo(function App() {
     React.useEffect(() => {writeToStorage({currentStyleId})}, [currentStyleId]);
 
     return (
-        <div className="app-body" ref={appBlock} onMouseMove={moveBottomResize} onMouseLeave={stopBottomResize} onMouseUp={stopBottomResize}>
+        <div className="app-body" onMouseMove={moveBottomResize} onMouseLeave={stopBottomResize} onMouseUp={stopBottomResize}>
             {helpOpen && (
                 <HelpBlock setHelpOpen={setHelpOpen} />
             )}
@@ -293,7 +297,7 @@ const App = React.memo(function App() {
             <div className="bottom-divider hostBgdDark" onMouseDown={startBottomResize}>
                 <div className="hostBgdLight"></div>
             </div>
-            <div className="bottom-block" ref={bottomBlock}>
+            <div className="bottom-block">
                 <BottomBlock 
                     styles={styles} 
                     setStyles={setStyles} 
@@ -315,22 +319,21 @@ const HelpBlock = React.memo(function HelpBlock(props) {
             <div className="help-block-inner hostBgdLight">
                 <div className="help-header">
                     <div className="help-title">
-                        Typer Tools
+                        {locale.helpTitle}
                     </div>
-                    <button className="topcoat-icon-button--large--quiet" title="Закрыть справку" onClick={() => props.setHelpOpen(false)}>
+                    <button className="topcoat-icon-button--large--quiet" title={locale.closeHelp} onClick={() => props.setHelpOpen(false)}>
                         <FiX size={18} />
                     </button>
                 </div>
                 <div className="help-body">
-                    <div className="help-body-inner">
-                        <p>
-                            HALP
-                        </p>
-                    </div>
+                    <div className="help-body-inner" 
+                        dangerouslySetInnerHTML = {
+                            { __html: locale.helpText} 
+                        }
+                    ></div>
                 </div>
                 <div className="help-footer">
-                    Версия: <strong>{version}</strong>
-                    , автор: <span className="g-link" onClick={() => window.cep.util.openURLInDefaultBrowser('https://telegram.me/swirt')}>Swirt</span>
+                    <b>{appTitle}</b> ({locale.version}: {appVersion}), {locale.author}: <span className="g-link" onClick={() => openUrl(authorUrl)}>{authorName}</span>
                 </div>
             </div>
         </div>
@@ -351,30 +354,30 @@ const TopBlock = React.memo(function TopBlock(props) {
             <div className="header-top">
                 <div className="header-button">
                     <button className={'topcoat-button--large--cta' + (props.launched ? ' m-launched' : '')} onClick={() => props.setLaunched(!props.launched)}>
-                        {props.launched ? 'Остановить' : 'Запустить'}
+                        {props.launched ? locale.stop : locale.launch}
                     </button>
                 </div>
                 <div className="header-actions">
-                    <button className="topcoat-icon-button--large--quiet" title="Открыть справку" onClick={() => props.setHelpOpen(true)}>
+                    <button className="topcoat-icon-button--large--quiet" title={locale.openHelp} onClick={() => props.setHelpOpen(true)}>
                         <FiHelpCircle size={18} />
                     </button>
-                    <button className="topcoat-icon-button--large--quiet" title="Применить текст и стиль к текущему слою" onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
+                    <button className="topcoat-icon-button--large--quiet" title={locale.insertStyledText} onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
                         <FiArrowRightCircle size={18} />
                     </button>
                 </div>
             </div>
             <div className="header-bottom">
                 <div className="header-nav">
-                    <button className="topcoat-icon-button--large" title="Предыдущая строка" onClick={props.prevLine}>
+                    <button className="topcoat-icon-button--large" title={locale.prevLine} onClick={props.prevLine}>
                         <FiArrowUp size={18} />
                     </button>
-                    <button className="topcoat-icon-button--large" title="Следующая строка" onClick={props.nextLine}>
+                    <button className="topcoat-icon-button--large" title={locale.nextLine} onClick={props.nextLine}>
                         <FiArrowDown size={18} />
                     </button>
                 </div>
-                <div className="header-current hostBgdDark" title="Нажмите, чтобы прокрутить скрипт до этой строки" style={styleObject} onClick={() => scrollToLine(props.currentLineIndex)}
+                <div className="header-current hostBgdDark" title={locale.scrollToLine} style={styleObject} onClick={() => scrollToLine(props.currentLineIndex)}
                     dangerouslySetInnerHTML = {
-                        { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.currentText}</span>`} 
+                        { __html: `<span style='font-family: "${styleObject.fontFamily || 'Tahoma'}"'>${props.currentText}</span>`} 
                     }
                 ></div>
             </div>
@@ -407,13 +410,13 @@ const MiddleBlock = React.memo(function MiddleBlock(props) {
                         <div className="text-line-num">
                             {line.trim() ? lineCounter++ : ' '}
                         </div>
-                        <div className="text-line-select" title={line.trim() ? 'Сделать эту строку активной' : ' '}>
+                        <div className="text-line-select" title={line.trim() ? locale.selectLine : ' '}>
                             {line.trim() ? <FiTarget size={14} onClick={() => props.setCurrentLineIndex(i)} /> : ' '}
                         </div>
                         <div className="text-line-text">
                             {line || ' '}
                         </div>
-                        <div className="text-line-insert" title={line.trim() ? 'Вставить текст в текущий слой' : ' '}>
+                        <div className="text-line-insert" title={line.trim() ? locale.insertText : ' '}>
                             {line.trim() ? <FiArrowRightCircle size={14} onClick={() => setActiveLayerText(line)} /> : ' '}
                         </div>
                     </div>
@@ -428,7 +431,7 @@ const MiddleBlock = React.memo(function MiddleBlock(props) {
             />
             {!lines.length && !focused && (
                 <div className="text-message">
-                    <div>Вставьте сюда скрипт</div>
+                    <div>{locale.pasteTextHint}</div>
                 </div>
             )}
         </React.Fragment>
@@ -501,7 +504,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
     const saveStyle = () => {
         if (!editorStyleId) return false;
         if (!editorStyleName || !editorStyleInfo) {
-            nativeAlert('Нужно ввести название и скопировать стиль.', 'Ошибка', true);
+            nativeAlert(locale.errorStyleCreation, locale.errorTitle, true);
             return false;
         }
         const styles = props.styles.concat([]);
@@ -527,7 +530,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
 
     const deleteStyle = () => {
         if (!editorStyleId) return false;
-        nativeConfirm('Вы уверены, что хотите удалить стиль?', 'Требуется подтвержение', ok => {
+        nativeConfirm(locale.confirmDeleteStyle, locale.confirmTitle, ok => {
             if (!ok) return;
             if (props.currentStyleId === editorStyleId) {
                 props.setCurrentStyleId(props.styles[0]?.id || null);
@@ -540,67 +543,42 @@ const BottomBlock = React.memo(function BottomBlock(props) {
 
     return !editorStyleId ? (
         <React.Fragment>
-            {props.styles.length ? (
-                <ReactSortable className="styles-list" list={props.styles} setList={props.setStyles}>
-                    {props.styles.map(style => (
-                        <StyleItem 
-                            key={style.id} 
-                            active={props.currentStyleId === style.id}
-                            selectStyle={() => props.setCurrentStyleId(style.id)}
-                            openStyle={() => openStyle(style.id)}
-                            style={style}
-                        />
-                    ))}
-                </ReactSortable >
-            ) : (
-                <div className="styles-list">
-                    <div className="styles-empty">Добавьте стили, которые будут применяться к вставляемому тексту</div>
-                </div>
-            )}
+            <div className="styles-list-cont">
+                {props.styles.length ? (
+                    <ReactSortable className="styles-list" list={props.styles} setList={props.setStyles}>
+                        {props.styles.map(style => (
+                            <StyleItem 
+                                key={style.id} 
+                                active={props.currentStyleId === style.id}
+                                selectStyle={() => props.setCurrentStyleId(style.id)}
+                                openStyle={() => openStyle(style.id)}
+                                style={style}
+                            />
+                        ))}
+                    </ReactSortable >
+                ) : (
+                    <div className="styles-empty">
+                        <span>{locale.addStylesHint}</span>
+                    </div>
+                )}
+            </div>
             <div className="style-add">
-                <button className="style-add topcoat-button--large" onClick={() => openStyle(null)}>
-                    <FiPlus size={18} /> Добавить
+                <button className="topcoat-button--large" onClick={() => openStyle(null)}>
+                    <FiPlus size={18} /> {locale.add}
                 </button>
             </div>
         </React.Fragment>
     ) : (
-        <div className="style-settings hostBgdLight">
-            <div className="style-settings-header">
-                <div className="style-settings-title">
-                    {editorNewStyle ? 'Создание стиля' : 'Редактирование стиля'}
-                </div>
-                <button className="topcoat-icon-button--large--quiet" title="Отменить редактирование" onClick={() => setEditorStyleId(null)}>
-                    <FiX size={18} />
-                </button>
-            </div>
-            <div className="style-settings-name">
-                <div className="style-settings-name-title">Введите название</div>
-                <input type="text" className="topcoat-text-input--large" value={editorStyleName} onChange={e => setEditorStyleName(e.target.value)} />
-            </div>
-            <div className="style-settings-copy">
-                <div className="style-settings-copy-title">Создайте в документе текстовый слой с нужным стилем и нажмите кнопку</div>
-                <button className="style-settings-copy-btn topcoat-button--large" onClick={copyLayerStyle}>
-                    <FiCopy size={18} /> Скопировать стиль
-                </button>
-                <div className="style-settings-info">
-                    {editorStyleInfo ? (
-                        <StyleInfo style={editorStyleInfo} />
-                    ) : (
-                        <div className="style-settings-empty-info">Стиль ещё не скопирован</div>
-                    )}
-                </div>
-            </div>
-            <div className="style-settings-actions">
-                <button className="topcoat-button--large--cta" onClick={saveStyle}>
-                    <MdSave size={18} /> Сохранить
-                </button>
-                {!editorNewStyle && (
-                    <button className="topcoat-button--large--quiet" onClick={deleteStyle}>
-                        <MdDelete size={18} /> Удалить
-                    </button>
-                )}
-            </div>
-        </div>
+        <StyleEdit 
+            setEditorStyleId={setEditorStyleId}
+            editorNewStyle={editorNewStyle}
+            editorStyleName={editorStyleName}
+            setEditorStyleName={setEditorStyleName}
+            copyLayerStyle={copyLayerStyle}
+            editorStyleInfo={editorStyleInfo}
+            saveStyle={saveStyle}
+            deleteStyle={deleteStyle}
+        />
     );
 });
 BottomBlock.propTypes = {
@@ -627,14 +605,14 @@ const StyleItem = React.memo(function StyleItem(props) {
             <div className="style-color" style={{background: rgbToHex(textStyle.color)}} title={rgbToHex(textStyle.color)}></div>
             <div className="style-name" style={styleObject}
                 dangerouslySetInnerHTML = {
-                    { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.style.name}</span>`} 
+                    { __html: `<span style='font-family: "${styleObject.fontFamily || 'Tahoma'}"'>${props.style.name}</span>`} 
                 }
             ></div>
             <div className="style-actions">
-                <button className="topcoat-icon-button--large--quiet" title="Редактировать стиль" onClick={openStyle}>
+                <button className="topcoat-icon-button--large--quiet" title={locale.editStyle} onClick={openStyle}>
                     <MdEdit size={16} />
                 </button>
-                <button className="topcoat-icon-button--large--quiet" title="Применить стиль к текущему слою" onClick={insertStyle}>
+                <button className="topcoat-icon-button--large--quiet" title={locale.insertStyle} onClick={insertStyle}>
                     <FiArrowRightCircle size={16} />
                 </button>
             </div>
@@ -646,6 +624,63 @@ StyleItem.propTypes = {
     openStyle: PropTypes.func.isRequired,
     style: PropTypes.object.isRequired,
     active: PropTypes.bool
+};
+
+
+const StyleEdit = React.memo(function StyleEdit(props) {
+    const nameInputRef = React.useRef();
+    React.useEffect(() => {
+        if (nameInputRef.current) nameInputRef.current.focus();
+    }, []);
+    return (
+        <form className="style-edit hostBgdLight" onSubmit={props.saveStyle}>
+            <div className="style-edit-header">
+                <div className="style-edit-title">
+                    {props.editorNewStyle ? locale.styleCreateTile : locale.styleEditTitle}
+                </div>
+                <button type="button" className="topcoat-icon-button--large--quiet" title={locale.cancelStyleEdit} onClick={() => props.setEditorStyleId(null)}>
+                    <FiX size={18} />
+                </button>
+            </div>
+            <div className="style-edit-name">
+                <div className="style-edit-name-title">{locale.styleNameLabel}</div>
+                <input type="text" className="topcoat-text-input--large" ref={nameInputRef} value={props.editorStyleName} onChange={e => props.setEditorStyleName(e.target.value)} />
+            </div>
+            <div className="style-edit-copy">
+                <div className="style-edit-copy-title">{locale.styleCopyLabel}</div>
+                <button type="button" className="style-edit-copy-btn topcoat-button--large" onClick={props.copyLayerStyle}>
+                    <FiCopy size={18} /> {locale.styleCopyButton}
+                </button>
+                <div className="style-edit-info">
+                    {props.editorStyleInfo ? (
+                        <StyleInfo style={props.editorStyleInfo} />
+                    ) : (
+                        <div className="style-edit-empty-info">{locale.styleNotCopied}</div>
+                    )}
+                </div>
+            </div>
+            <div className="style-edit-actions">
+                <button type="submit" className="topcoat-button--large--cta">
+                    <MdSave size={18} /> {locale.save}
+                </button>
+                {!props.editorNewStyle && (
+                    <button type="button" className="topcoat-button--large--quiet" onClick={props.deleteStyle}>
+                        <MdDelete size={18} /> {locale.delete}
+                    </button>
+                )}
+            </div>
+        </form>
+    );
+});
+StyleEdit.propTypes = {
+    setEditorStyleId: PropTypes.func.isRequired,
+    setEditorStyleName: PropTypes.func.isRequired,
+    copyLayerStyle: PropTypes.func.isRequired,
+    deleteStyle: PropTypes.func.isRequired,
+    saveStyle: PropTypes.func.isRequired,
+    editorStyleName: PropTypes.string,
+    editorStyleInfo: PropTypes.object,
+    editorNewStyle: PropTypes.bool
 };
 
 

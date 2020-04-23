@@ -23,6 +23,7 @@
 
 
 .app-body {
+    overflow: hidden;
     position: relative;
     flex-direction: column;
     display: flex;
@@ -68,10 +69,10 @@
     box-shadow: 0 0 6px 2px rgba(#000, .4);
     position: absolute;
     border-radius: 6px;
-    bottom: 16px;
-    right: 10px;
-    left: 10px;
-    top: 10px;
+    bottom: 20px;
+    right: 8px;
+    left: 8px;
+    top: 8px;
 }
 .help-header {
     flex-grow: 0;
@@ -173,6 +174,7 @@
     -webkit-font-smoothing: antialiased;
     border: 1px solid rgba(#000, .3);
     box-sizing: border-box;
+    word-break: break-word;
     letter-spacing: 1px;
     border-radius: 6px;
     padding: 5px 8px;
@@ -187,7 +189,7 @@
 .middle-block {
     background: #fff;
     position: relative;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: flex;
     flex-grow: 2;
     height: 100%;
@@ -353,12 +355,18 @@
 
 
 .bottom-block {
-    box-sizing: border-box;
-    padding: 10px 10px 0;
-    margin-bottom: 16px;
+    position: relative;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    flex-direction: column;
+    flex-shrink: 0;
+    display: flex;
+}
+.styles-list-cont {
     position: relative;
     overflow-y: auto;
-    flex-shrink: 0;
+    padding: 10px;
+    flex-grow: 2;
 }
 .styles-list {
     justify-content: space-between;
@@ -438,17 +446,34 @@
     }
 }
 .styles-empty {
-    text-align: center;
-    font-size: 16px;
-    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 100%;
     width: 100%;
-    opacity: .6;
+    left: 0;
+    top: 0;
+    & > SPAN {
+        text-align: center;
+        font-size: 16px;
+        margin: 20px;
+        opacity: .6;
+    }
 }
 .style-add  {
-    margin-top: 10px;
-    width: 100%;
+    border-top: 1px solid rgba(#fff, .2);
+    padding: 10px 10px 0;
+    flex-grow: 0;
+    .light-theme & {
+        border-top: 1px solid rgba(#000, .2);
+    }
+    & > BUTTON {
+        width: 100%;
+    }
 }
-.style-settings {
+
+.style-edit {
     box-shadow: 0 0 6px 2px rgba(#000, .4);
     position: absolute;
     padding: 5px 10px 0;
@@ -458,51 +483,53 @@
     left: 10px;
     top: 10px;
 }
-.style-settings-header {
+.style-edit-header {
     margin-bottom: 5px;
     justify-content: space-between;
     align-items: center;
     display: flex;
 }
-.style-settings-title {
+.style-edit-title {
     font-weight: bold;
     font-size: 16px;
 }
-.style-settings-name {
+.style-edit-name {
     margin-bottom: 10px;
     & > INPUT {
         box-sizing: border-box;
         width: 100%;
     }
 }
-.style-settings-name-title {
+.style-edit-name-title {
     margin-bottom: 4px;
     font-size: 12px;
 }
-.style-settings-copy {
+.style-edit-copy {
     margin-bottom: 10px;
 }
-.style-settings-copy-title {
+.style-edit-copy-title {
     margin-bottom: 4px;
     font-size: 12px;
 }
-.style-settings-copy-btn {
+.style-edit-copy-btn {
     margin-bottom: 5px;
     width: 100%;
 }
-.style-settings-info {
+.style-edit-info {
     border: 1px dashed rgba(#000, .12);
     background: rgba(#000, .06);
     padding: 2px 6px;
     font-size: 10px;
 }
-.style-settings-empty-info {
+.style-edit-empty-info {
     text-align: center;
     font-weight: bold;
+    max-height: 38px;
     font-size: 12px;
+    overflow: auto;
     padding: 5px 0;
 }
-.style-settings-actions {
+.style-edit-actions {
     justify-content: space-between;
     display: flex;
 }
