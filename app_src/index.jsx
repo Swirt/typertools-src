@@ -6,12 +6,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import {ReactSortable} from "react-sortablejs";
-import {FiArrowUp, FiArrowDown, FiArrowRightCircle, FiTarget, FiPlus, FiCopy, FiX} from "react-icons/fi";
+import {FiArrowUp, FiArrowDown, FiHelpCircle, FiArrowRightCircle, FiTarget, FiPlus, FiCopy, FiX} from "react-icons/fi";
 import {MdEdit, MdDelete, MdSave} from "react-icons/md";
 
 
+const version = '0.6.0';
 
-let allLayers = {};
 const topHeight = 125;
 const minMiddleHeight = 160;
 const minBottomHeight = 260;
@@ -19,6 +19,7 @@ const minBottomHeight = 260;
 const csInterface = new window.CSInterface();
 const path = csInterface.getSystemPath(window.SystemPath.EXTENSION);
 const storagePath = path + '/app/storage';
+let allLayers = {};
 
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamActions-min.jsxinc")');
 csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamEngine-min.jsxinc")');
@@ -69,7 +70,7 @@ const getActiveLayerData = callback => {
 
 const getActiveLayerText = callback => {
     csInterface.evalScript('getActiveLayerText()', data => {
-        const dataObj = JSON.parse(data);
+        const dataObj = JSON.parse(data || '{}');
         if (!data || !dataObj.layer || !dataObj.text) nativeAlert('Не выбран текстовый слой.', 'Ошибка', true);
         else callback(dataObj);
     });
@@ -138,6 +139,7 @@ const App = React.memo(function App() {
     const [currentLineIndex, setCurrentLineIndex] = React.useState(readStorage('currentLineIndex') || 0);
     const [currentStyleId, setCurrentStyleId] = React.useState(readStorage('currentStyleId') || null);
     const [launched, setLaunched] = React.useState(false);
+    const [helpOpen, setHelpOpen] = React.useState(false);
 
     const lines = text ? text.split('\n') : [];
     const currentText = lines[currentLineIndex]?.trim() || '';
@@ -264,11 +266,15 @@ const App = React.memo(function App() {
 
     return (
         <div className="app-body" ref={appBlock} onMouseMove={moveBottomResize} onMouseLeave={stopBottomResize} onMouseUp={stopBottomResize}>
+            {helpOpen && (
+                <HelpBlock setHelpOpen={setHelpOpen} />
+            )}
             <div className="top-block" style={{height: topHeight}}>
                 <TopBlock 
                     prevLine={prevLine}
                     nextLine={nextLine}
                     launched={launched} 
+                    setHelpOpen={setHelpOpen}
                     setLaunched={setLaunched} 
                     currentText={currentText} 
                     currentStyle={currentStyle} 
@@ -302,6 +308,41 @@ const App = React.memo(function App() {
 
 
 
+const HelpBlock = React.memo(function HelpBlock(props) {
+    return (
+        <div className="help-block">
+            <div className="help-hatch hostBgd"></div>
+            <div className="help-block-inner hostBgdLight">
+                <div className="help-header">
+                    <div className="help-title">
+                        Typer Tools
+                    </div>
+                    <button className="topcoat-icon-button--large--quiet" title="Закрыть инструкцию" onClick={() => props.setHelpOpen(false)}>
+                        <FiX size={18} />
+                    </button>
+                </div>
+                <div className="help-body">
+                    <div className="help-body-inner">
+                        <p>
+                            HALP
+                        </p>
+                    </div>
+                </div>
+                <div className="help-footer">
+                    Версия: <strong>{version}</strong>
+                    , автор: <span className="g-link" onClick={() => window.cep.util.openURLInDefaultBrowser('https://telegram.me/swirt')}>Swirt</span>
+                </div>
+            </div>
+        </div>
+    );
+});
+HelpBlock.propTypes = {
+    setHelpOpen: PropTypes.func.isRequired
+};
+
+
+
+
 const TopBlock = React.memo(function TopBlock(props) {
     const textStyle = props.currentStyle?.text.layerText.textStyleRange[0]?.textStyle || {};
     const styleObject = getStyleObject(textStyle);
@@ -309,12 +350,15 @@ const TopBlock = React.memo(function TopBlock(props) {
         <React.Fragment>
             <div className="header-top">
                 <div className="header-button">
-                    <button className={'topcoat-button--large--cta' + (props.launched ? ' m-launched' : '')} onClick={() => props.setLaunched(!props.launched)} title="Когда плагин запущен, он автоматически подставляет текущую строку в каждый созданный текстовый слой">
+                    <button className={'topcoat-button--large--cta' + (props.launched ? ' m-launched' : '')} onClick={() => props.setLaunched(!props.launched)}>
                         {props.launched ? 'Остановить' : 'Запустить'}
                     </button>
                 </div>
-                <div className="header-insert">
-                    <button className="topcoat-icon-button--large--quiet" title="Применить к текущему слою" onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
+                <div className="header-actions">
+                    <button className="topcoat-icon-button--large--quiet" title="Открыть инструкцию" onClick={() => props.setHelpOpen(true)}>
+                        <FiHelpCircle size={18} />
+                    </button>
+                    <button className="topcoat-icon-button--large--quiet" title="Применить текст и стиль к текущему слою" onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
                         <FiArrowRightCircle size={18} />
                     </button>
                 </div>
@@ -338,13 +382,14 @@ const TopBlock = React.memo(function TopBlock(props) {
     );
 });
 TopBlock.propTypes = {
+    setHelpOpen: PropTypes.func.isRequired,
+    setLaunched: PropTypes.func.isRequired,
     prevLine: PropTypes.func.isRequired,
     nextLine: PropTypes.func.isRequired,
-    setLaunched: PropTypes.func.isRequired,
+    currentLineIndex: PropTypes.number,
     launched: PropTypes.bool,
     currentText: PropTypes.string,
     currentStyle: PropTypes.object,
-    currentLineIndex: PropTypes.number
 };
 
 
@@ -367,6 +412,9 @@ const MiddleBlock = React.memo(function MiddleBlock(props) {
                         </div>
                         <div className="text-line-text">
                             {line || ' '}
+                        </div>
+                        <div className="text-line-insert" title={line.trim() ? 'Вставить текст в текущий слой' : ' '}>
+                            {line.trim() ? <FiArrowRightCircle size={14} onClick={() => setActiveLayerText(line)} /> : ' '}
                         </div>
                     </div>
                 ))}
@@ -439,6 +487,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
             delete data.text.layerText.textKey;
             delete data.text.layerText.textShape;
             delete data.text.layerText.textClickPoint;
+            delete data.text.layerText.transform;
             delete data.text.layerText.boundingBox;
             delete data.text.layerText.bounds;
             delete data.layer.layerEffects?.scale;
@@ -567,6 +616,10 @@ const StyleItem = React.memo(function StyleItem(props) {
         e.stopPropagation();
         props.openStyle();
     };
+    const insertStyle = e => {
+        e.stopPropagation();
+        setActiveLayerText('', props.style)
+    };
     const textStyle = props.style.text.layerText.textStyleRange[0]?.textStyle || {};
     const styleObject = getStyleObject(textStyle);
     return (
@@ -577,9 +630,14 @@ const StyleItem = React.memo(function StyleItem(props) {
                     { __html: `<span style='font-family: "${styleObject.fontFamily}"'>${props.style.name}</span>`} 
                 }
             ></div>
-            <button className="style-edit topcoat-icon-button--large--quiet" title="Редактировать стиль" onClick={openStyle}>
-                <MdEdit size={18} />
-            </button>
+            <div className="style-actions">
+                <button className="topcoat-icon-button--large--quiet" title="Редактировать стиль" onClick={openStyle}>
+                    <MdEdit size={16} />
+                </button>
+                <button className="topcoat-icon-button--large--quiet" title="Применить стиль к текущему слою" onClick={insertStyle}>
+                    <FiArrowRightCircle size={16} />
+                </button>
+            </div>
         </div>
     );
 });
@@ -615,7 +673,7 @@ const StyleInfo = React.memo(function StyleInfo(props) {
             {(textStyle.underline && (textStyle.underline !== 'underlineOff')) && (', _u_')}
             {(textStyle.strikethrough && (textStyle.strikethrough !== 'strikethroughOff')) && (', -s-')}
             , {text.layerText.antiAlias.replace('antiAlias', '')}
-            {!!layer.layerEffects && (', layerEffects')}
+            {!!layer.layerEffects && (', Layer Effects')}
             ...
         </React.Fragment>
     );

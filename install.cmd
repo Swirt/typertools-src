@@ -1,6 +1,12 @@
 @echo off
-chcp 65001
+chcp 1251 >nul
 setlocal EnableDelayedExpansion
+
+echo Установка расширения для Фотошопа Typer Tools
+echo.
+echo Закройте Фотошоп, если он открыт.
+echo.
+PAUSE
 
 for /l %%x in (4, 1, 12) do (
     reg query HKEY_CURRENT_USER\SOFTWARE\Adobe\CSXS.%%x 2>nul 
@@ -9,11 +15,10 @@ for /l %%x in (4, 1, 12) do (
     )
 )
 
-set Directory="%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\Adobe\CEP\extensions\typertools"
+set Directory=%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\Adobe\CEP\extensions\typertools
 if exist "%Directory%\app\storage" copy "%Directory%\app\storage" __storage /Y
 if exist "%Directory%" rmdir "%Directory%" /S/Q
 if not exist "%Directory%\*" md "%Directory%"
-echo. & echo %Directory%
 
 xcopy app "%Directory%\app\" /E/Y
 xcopy host "%Directory%\host\" /E/Y
@@ -25,9 +30,9 @@ if exist __storage (
     del __storage /F
 )
 
-echo.
-echo РЈСЃС‚Р°РЅРѕРІРєР° Р·Р°РІРµСЂС€РµРЅР°
-echo Р—Р°РїСѓСЃС‚РёС‚Рµ Р¤РѕС‚РѕС€РѕРї Рё РІС‹Р±РµСЂРёС‚Рµ РІ РјРµРЅСЋ [РћРєРЅРѕ] ^> [Р Р°СЃС€РёСЂРµРЅРёСЏ] ^> [Typer Tools]
+echo. & echo.
+echo Установка завершена
+echo Запустите Фотошоп и выберите в меню [Окно] ^> [Расширения] ^> [Typer Tools]
 echo.
 
 PAUSE

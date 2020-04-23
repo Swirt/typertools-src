@@ -16,8 +16,14 @@
     }
 }
 
+.g-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 
 .app-body {
+    position: relative;
     flex-direction: column;
     display: flex;
 }
@@ -33,6 +39,82 @@
     flex-shrink: 0;
     & > DIV {
         height: 2px;
+    }
+}
+
+
+.help-block {
+    z-index: 5;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+.help-hatch {
+    z-index: 1;
+    opacity: .6;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+.help-block-inner {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 0 6px 2px rgba(#000, .4);
+    position: absolute;
+    border-radius: 6px;
+    bottom: 16px;
+    right: 10px;
+    left: 10px;
+    top: 10px;
+}
+.help-header {
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(#fff, .2);
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    padding: 10px;
+}
+.help-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+.help-title-descr {
+    font-size: 12px;
+    opacity: .5;
+}
+.help-body {
+    white-space: pre-wrap;
+    overflow: auto;
+    flex-grow: 2;
+}
+.help-body-inner {
+    font-size: 14px;
+    padding: 10px;
+    & > *:first-child {
+        margin-top: 0;
+    }
+}
+.help-footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(#fff, .2);
+    padding: 6px 10px;
+    font-size: 12px;
+}
+.light-theme {
+    .help-header {
+        border-bottom: 1px solid rgba(#000, .2);
+    }
+    .help-footer {
+        border-top: 1px solid rgba(#000, .2);
     }
 }
 
@@ -65,8 +147,12 @@
         }
     }
 }
-.header-insert {
+.header-actions {
     flex-shrink: 0;
+    display: flex;
+    BUTTON + BUTTON {
+        margin-left: 3px;
+    }
 }
 .header-bottom {
     justify-content: space-between;
@@ -125,6 +211,16 @@
         left: 0;
         top: 0;
     }
+    &:after {
+        background: #ccc;
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 20px;
+        content: '';
+        right: 0;
+        top: 0;
+    }
 }
 .text-line {
     justify-content: space-between;
@@ -134,6 +230,7 @@
     line-height: 17px;
     font-size: 14px;
     color: #777;
+    z-index: 1;
     & + &:before {
         border-top: 1px dashed #bbb;
         position: absolute;
@@ -146,7 +243,7 @@
     }
     &.m-current {
         background: rgba(#608fbf, .6);
-        color: #000000;
+        color: #000;
         z-index: 2;
         &:before {
             border-top: 2px solid #608fbf;
@@ -181,15 +278,13 @@
     & > SVG {
         margin-bottom: -5px;
         position: relative;
+        cursor: pointer;
         top: -2px;
     }
     &:hover {
         color: #000;
     }
-    .text-line.m-with-text & {
-        cursor: pointer;
-    }
-    .text-line.m-current & {
+    .text-line.m-current & > SVG {
         cursor: auto;
     }
 }
@@ -201,6 +296,23 @@
     width: 100%;
     opacity: 0;
 }
+.text-line-insert {
+    text-align: center;
+    flex-shrink: 0;
+    width: 20px;
+    & > SVG {
+        margin-bottom: -5px;
+        position: relative;
+        cursor: pointer;
+        top: -2px;
+    }
+    &:hover {
+        color: #000;
+    }
+    .text-line.m-current &:hover {
+        color: #134f7f;
+    }
+}
 .text-area {
     box-sizing: border-box;
     font-family: monospace;
@@ -210,6 +322,7 @@
     overflow: hidden;
     background: none;
     padding: 4px 6px;
+    margin-right: 20px;
     margin-left: 50px;
     line-height: 17px;
     font-size: 14px;
@@ -229,8 +342,8 @@
     z-index: 4;
     cursor: text;
     height: 100%;
+    right: 20px;
     left: 50px;
-    right: 0;
     top: 0;
     & > DIV {
         font-size: 18px;
@@ -257,8 +370,8 @@
     align-items: center;
     display: flex;
     box-sizing: border-box;
+    padding: 4px 4px 4px 6px;
     margin-bottom: 3px;
-    padding: 2px 6px;
     opacity: .8;
     width: 100%;
     cursor: pointer;
@@ -266,20 +379,23 @@
         outline: 1px solid rgba(#fff, .5);
         opacity: 1;
     }
+    .light-theme &:hover {
+        outline: 1px solid rgba(#000, .5);
+    }
     &.m-current {
-        outline: 1px solid #134f7f;
+        outline: 1px solid #134f7f !important;
         background: #288edf;
         color: #fff;
         opacity: 1;
-        .style-edit {
+        BUTTON {
             color: #fff;
         }
-        .style-edit:hover {
+        BUTTON:hover {
             box-shadow: inset 0 1px rgba(#fff, .36);
             border-color: #134f7f;
             background: #4ca1e4;
         }
-        .style-edit:active {
+        BUTTON:active {
             box-shadow: inset 0 1px rgba(#000, .12);
             border-color: #134f7f;
             background: #1e7dc8;
@@ -301,7 +417,7 @@
 }
 .style-name {
     -webkit-font-smoothing: antialiased;
-    max-width: calc(100% - 52px);
+    max-width: calc(100% - 70px);
     text-overflow: ellipsis;
     letter-spacing: 1px;
     white-space: nowrap;
@@ -309,8 +425,17 @@
     font-size: 14px;
     flex-grow: 2;
 }
-.style-edit {
+.style-actions {
+    display: flex;
     flex-grow: 0;
+    BUTTON {
+        height: 20px;
+        width: 20px;
+        padding: 0;
+    }
+    BUTTON + BUTTON {
+        margin-left: 3px;
+    }
 }
 .styles-empty {
     text-align: center;
@@ -324,7 +449,7 @@
     width: 100%;
 }
 .style-settings {
-    box-shadow: rgba(#000, .4) 0 0 6px 2px;
+    box-shadow: 0 0 6px 2px rgba(#000, .4);
     position: absolute;
     padding: 5px 10px 0;
     border-radius: 6px;
@@ -375,7 +500,7 @@
     text-align: center;
     font-weight: bold;
     font-size: 12px;
-    padding: 4px 0;
+    padding: 5px 0;
 }
 .style-settings-actions {
     justify-content: space-between;
