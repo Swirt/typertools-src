@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
+const autoprefixer = require('autoprefixer');
 const postcssCssnano = require('cssnano');
 
 
@@ -53,7 +54,8 @@ const devConfig = {
                             sourceMap: true,
                             ident: 'postcss',
                             plugins: [
-                                postcssPresetEnv()
+                                postcssPresetEnv(), 
+                                autoprefixer()
                             ]
                         }
                     }, {
@@ -113,7 +115,8 @@ const prodConfig = {
                             ident: 'postcss',
                             plugins: [
                                 postcssPresetEnv(),
-                                postcssCssnano()
+                                postcssCssnano(),
+                                autoprefixer()
                             ]
                         }
                     }, {

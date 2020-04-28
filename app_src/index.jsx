@@ -1,3 +1,5 @@
+import 'babel-polyfill';
+
 import './index.scss';
 import './js/CSInterface';
 import './js/themeManager';
@@ -6,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import {ReactSortable} from "react-sortablejs";
+import {FaFileExport, FaFileImport} from "react-icons/fa";
 import {FiArrowUp, FiArrowDown, FiHelpCircle, FiArrowRightCircle, FiTarget, FiPlus, FiCopy, FiX} from "react-icons/fi";
 import {MdEdit, MdDelete, MdSave} from "react-icons/md";
 
@@ -14,6 +17,7 @@ const appTitle = 'Typer Tools';
 const appVersion = '0.6.0';
 const authorName = 'Swirt';
 const authorUrl = 'https://telegram.me/swirt';
+const exportFileName = 'typerToolsExport';
 
 const topHeight = 125;
 const minMiddleHeight = 160;
@@ -101,9 +105,7 @@ const nativeConfirm = (text, title, callback) => {
 const resizeTextArea = () => {
     const textArea = document.querySelector('.text-area');
     const textLines = document.querySelector('.text-lines');
-    if (textArea && textLines) {
-        textArea.style.height = textLines.offsetHeight + 'px';
-    }
+    textArea.style.height = textLines.offsetHeight + 'px';
 };
 
 const scrollToLine = lineNum => {
@@ -143,8 +145,10 @@ const App = React.memo(function App() {
     const [styles, setStyles] = React.useState(readStorage('styles') || []);
     const [currentLineIndex, setCurrentLineIndex] = React.useState(readStorage('currentLineIndex') || 0);
     const [currentStyleId, setCurrentStyleId] = React.useState(readStorage('currentStyleId') || null);
+    const [helpOpen, setHelpOpen] = React.useState(!readStorage('notFirstTime'));
     const [launched, setLaunched] = React.useState(false);
-    const [helpOpen, setHelpOpen] = React.useState(false);
+    const appBlock = React.useRef();
+    const bottomBlock = React.useRef();
 
     const lines = text ? text.split('\n') : [];
     const currentText = lines[currentLineIndex]?.trim() || '';
@@ -154,8 +158,7 @@ const App = React.memo(function App() {
     let resizeStartY = 0;
     let resizeStartH = 0;
     const startBottomResize = e => {
-        const bottomBlock = document.querySelector('.bottom-block');
-        resizeStartH = bottomBlock.offsetHeight;
+        resizeStartH = bottomBlock.current.offsetHeight;
         resizeStartY = e.pageY;
         dragging = true;
     };
@@ -172,14 +175,23 @@ const App = React.memo(function App() {
     };
     const setBottomSize = height => {
         const appHeight = document.documentElement.clientHeight;
-        const bottomBlock = document.querySelector('.bottom-block');
         const maxBottomHeight = appHeight - topHeight - minMiddleHeight;
         let bottomHeight = height || readStorage('bottomHeight') || minBottomHeight;
         if (height < minBottomHeight) bottomHeight = minBottomHeight;
         else if (height > maxBottomHeight) bottomHeight = maxBottomHeight;
-        bottomBlock.style.height = bottomHeight + 'px';
+        bottomBlock.current.style.height = bottomHeight + 'px';
         writeToStorage({bottomHeight});
         resizeTextArea();
+    };
+
+    const getSetAppSizeFunc = () => {
+        const func = () => {
+            const appHeight = document.documentElement.clientHeight;
+            appBlock.current.style.height = appHeight + 'px';
+            setBottomSize();
+        };
+        window.lastSetAppSizeFunc = func;
+        return func;
     };
 
     const prevLine = () => {
@@ -232,14 +244,12 @@ const App = React.memo(function App() {
     csInterface.removeEventListener('documentEdited', window.lastCheckAndInsertFunc);
     csInterface.addEventListener('documentEdited', getCheckAndInsertFunc());
 
+    window.removeEventListener('resize', window.lastSetAppSizeFunc);
+    window.addEventListener('resize', getSetAppSizeFunc());
+
     React.useEffect(() => {
         getAllLayers();
-        window.addEventListener('resize', () => {
-            const appHeight = document.documentElement.clientHeight;
-            const appBlock = document.querySelector('.app-body');
-            appBlock.style.height = appHeight + 'px';
-            setBottomSize();
-        });
+        window.lastSetAppSizeFunc();
         if (currentText) {
             scrollToLine(currentLineIndex);
         } else if (lines.length) {
@@ -260,6 +270,9 @@ const App = React.memo(function App() {
         if (!currentStyle) {
             setCurrentStyleId(styles[0]?.id || null);
         }
+        if (helpOpen) {
+            writeToStorage({notFirstTime: true});
+        }
     }, []);
     
     React.useEffect(() => {resizeTextArea()}, [text]);
@@ -269,7 +282,7 @@ const App = React.memo(function App() {
     React.useEffect(() => {writeToStorage({currentStyleId})}, [currentStyleId]);
 
     return (
-        <div className="app-body" onMouseMove={moveBottomResize} onMouseLeave={stopBottomResize} onMouseUp={stopBottomResize}>
+        <div className="app-body" ref={appBlock} onMouseMove={moveBottomResize} onMouseLeave={stopBottomResize} onMouseUp={stopBottomResize}>
             {helpOpen && (
                 <HelpBlock setHelpOpen={setHelpOpen} />
             )}
@@ -297,7 +310,7 @@ const App = React.memo(function App() {
             <div className="bottom-divider hostBgdDark" onMouseDown={startBottomResize}>
                 <div className="hostBgdLight"></div>
             </div>
-            <div className="bottom-block">
+            <div className="bottom-block" ref={bottomBlock}>
                 <BottomBlock 
                     styles={styles} 
                     setStyles={setStyles} 
@@ -494,10 +507,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
             delete data.text.layerText.boundingBox;
             delete data.text.layerText.bounds;
             delete data.layer.layerEffects?.scale;
-            setEditorStyleInfo({
-                text: data.text,
-                layer: data.layer
-            });
+            setEditorStyleInfo(data);
         });
     };
 
@@ -541,6 +551,35 @@ const BottomBlock = React.memo(function BottomBlock(props) {
         });
     };
 
+    const importStyles = () => {
+        const pathSelect = window.cep.fs.showOpenDialogEx(false, false, null, null, ['json']);
+        if (!pathSelect?.data?.[0]) return false;
+        const result = window.cep.fs.readFile(pathSelect.data[0]);
+        if (result.err) {
+            nativeAlert(locale.errorImportStyles, locale.errorTitle, true);
+        } else {
+            try {
+                const data = JSON.parse(result.data);
+                if (!data?.styles || !Array.isArray(data.styles)) {
+                    throw 'error';
+                }
+                if (data.styles.length) {
+                    props.setCurrentStyleId(data.styles[0].id);
+                }
+                props.setStyles(data.styles);
+            } catch (error) {
+                nativeAlert(locale.errorImportStyles, locale.errorTitle, true);
+            }
+        }
+    };
+
+    const exportStyles = () => {
+        if (!props.styles.length) return;
+        const pathSelect = window.cep.fs.showSaveDialogEx(false, false, ['json'], exportFileName + '.json');
+        if (!pathSelect?.data) return false;
+        window.cep.fs.writeFile(pathSelect.data, JSON.stringify({styles: props.styles}));
+    };
+
     return !editorStyleId ? (
         <React.Fragment>
             <div className="styles-list-cont">
@@ -563,8 +602,14 @@ const BottomBlock = React.memo(function BottomBlock(props) {
                 )}
             </div>
             <div className="style-add">
-                <button className="topcoat-button--large" onClick={() => openStyle(null)}>
+                <button className="style-add-btn topcoat-button--large" onClick={() => openStyle(null)}>
                     <FiPlus size={18} /> {locale.add}
+                </button>
+                <button className="topcoat-icon-button--large--quiet" title={locale.import} onClick={importStyles}>
+                    <FaFileImport size={18} />
+                </button>
+                <button className="topcoat-icon-button--large--quiet" title={locale.export} disabled={!props.styles.length} onClick={exportStyles}>
+                    <FaFileExport size={18} />
                 </button>
             </div>
         </React.Fragment>

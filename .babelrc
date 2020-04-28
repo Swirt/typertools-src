@@ -2,7 +2,7 @@
     "presets": [
         "@babel/preset-react",
         ["@babel/preset-env", {
-            "targets": {"chrome": "26"}
+            "targets": {"chrome": "18"}
         }]
     ],
     "plugins": [

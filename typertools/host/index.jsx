@@ -71,11 +71,9 @@ function setActiveLayerText(data) {
     }
     if (data.style) {
         if (data.style.layer) {
-            if (data.style.layer.layerEffects) {
-                var currentLayerStyle = jamStyles.getLayerStyle();
-                if (currentLayerStyle.layerEffects) {
-                    jamStyles.setLayerStyle(null);
-                }
+            var currentLayerStyle = jamStyles.getLayerStyle();
+            if (currentLayerStyle.layerEffects) {
+                jamStyles.setLayerStyle(null);
             }
             jamStyles.setLayerStyle(data.style.layer);
         }

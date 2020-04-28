@@ -30,14 +30,14 @@
 }
 
 .top-divider {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     height: 4px;
 }
 
 .bottom-divider {
     cursor: ns-resize;
     padding: 3px 0;
-    flex-shrink: 0;
+    flex: 0 0 auto;
     & > DIV {
         height: 2px;
     }
@@ -75,13 +75,12 @@
     top: 8px;
 }
 .help-header {
-    flex-grow: 0;
-    flex-shrink: 0;
     border-bottom: 1px solid rgba(#fff, .2);
     justify-content: space-between;
     align-items: center;
     display: flex;
     padding: 10px;
+    flex: 0 0 auto;
 }
 .help-title {
     font-weight: bold;
@@ -102,13 +101,31 @@
     & > *:first-child {
         margin-top: 0;
     }
+    H1, H2, H3, H4, H5 {
+        margin-bottom: .6em;
+        margin-top: 1.2em;
+    }
+    P {
+        margin-bottom: 0;
+        margin-top: 1em;
+    }
+    UL {
+        padding-left: 30px;
+        margin-bottom: 0;
+        margin-top: .6em;
+    }
+    UL + * {
+        margin-top: .6em;
+    }
+    LI + LI {
+        margin-top: .3em;
+    }
 }
 .help-footer {
-    flex-grow: 0;
-    flex-shrink: 0;
     border-top: 1px solid rgba(#fff, .2);
     padding: 6px 10px;
     font-size: 12px;
+    flex: 0 0 auto;
 }
 .light-theme {
     .help-header {
@@ -122,8 +139,8 @@
 
 .top-block {
     box-sizing: border-box;
-    flex-shrink: 0;
     padding: 10px;
+    flex: 0 0 auto;
 }
 .header-top {
     margin-bottom: 10px;
@@ -133,7 +150,6 @@
 }
 .header-button {
     flex-grow: 2;
-    width: 100%;
     & > BUTTON {
         width: 200px;
         &.m-launched {
@@ -149,7 +165,7 @@
     }
 }
 .header-actions {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     display: flex;
     BUTTON + BUTTON {
         margin-left: 3px;
@@ -160,7 +176,7 @@
     display: flex;
 }
 .header-nav {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     width: 40px;
     & > BUTTON {
         height: 30px;
@@ -182,7 +198,6 @@
     overflow: auto;
     height: 64px;
     flex-grow: 2;
-    width: 100%;
 }
 
 
@@ -192,7 +207,6 @@
     overflow-y: auto;
     display: flex;
     flex-grow: 2;
-    height: 100%;
 }
 .text-lines {
     box-sizing: border-box;
@@ -271,11 +285,11 @@
 }
 .text-line-num {
     text-align: center;
-    flex-shrink: 0;
+    flex: 0 0 auto;
     width: 32px;
 }
 .text-line-select {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     width: 18px;
     & > SVG {
         margin-bottom: -5px;
@@ -293,14 +307,13 @@
 .text-line-text {
     word-break: break-word;
     white-space: pre-wrap;
-    padding: 0 6px;
+    padding: 0 7px;
     flex-grow: 2;
-    width: 100%;
     opacity: 0;
 }
 .text-line-insert {
     text-align: center;
-    flex-shrink: 0;
+    flex: 0 0 auto;
     width: 20px;
     & > SVG {
         margin-bottom: -5px;
@@ -355,11 +368,11 @@
 
 
 .bottom-block {
+    flex: 0 0 auto;
     position: relative;
     margin-bottom: 20px;
     justify-content: space-between;
     flex-direction: column;
-    flex-shrink: 0;
     display: flex;
 }
 .styles-list-cont {
@@ -419,9 +432,9 @@
     box-shadow: 0 0 4px 1px rgba(#000, .4);
     border: 1px solid rgba(#fff, .8);
     border-radius: 50%;
+    flex: 0 0 auto;
     height: 10px;
     width: 10px;
-    flex-grow: 0;
 }
 .style-name {
     -webkit-font-smoothing: antialiased;
@@ -434,8 +447,8 @@
     flex-grow: 2;
 }
 .style-actions {
+    flex: 0 0 auto;
     display: flex;
-    flex-grow: 0;
     BUTTON {
         height: 20px;
         width: 20px;
@@ -457,20 +470,27 @@
     & > SPAN {
         text-align: center;
         font-size: 16px;
-        margin: 20px;
+        margin: 40px;
         opacity: .6;
     }
 }
 .style-add  {
     border-top: 1px solid rgba(#fff, .2);
     padding: 10px 10px 0;
-    flex-grow: 0;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     .light-theme & {
         border-top: 1px solid rgba(#000, .2);
     }
-    & > BUTTON {
-        width: 100%;
+    & > BUTTON + BUTTON {
+        margin-left: 3px;
+        flex: 0 0 auto;
     }
+}
+.style-add-btn {
+    flex-grow: 2;
 }
 
 .style-edit {
