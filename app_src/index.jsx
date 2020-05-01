@@ -374,7 +374,7 @@ const TopBlock = React.memo(function TopBlock(props) {
                     <button className="topcoat-icon-button--large--quiet" title={locale.openHelp} onClick={() => props.setHelpOpen(true)}>
                         <FiHelpCircle size={18} />
                     </button>
-                    <button className="topcoat-icon-button--large--quiet" title={locale.insertStyledText} onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
+                    <button className="topcoat-icon-button--large" title={locale.insertStyledText} onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
                         <FiArrowRightCircle size={18} />
                     </button>
                 </div>
