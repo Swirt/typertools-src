@@ -19,7 +19,6 @@ if exist "%Directory%" rmdir "%Directory%" /S/Q
 if not exist "%Directory%\*" md "%Directory%"
 
 xcopy app "%Directory%\app\" /E/Y
-xcopy host "%Directory%\host\" /E/Y
 xcopy CSXS "%Directory%\CSXS\" /E/Y
 xcopy icons "%Directory%\icons\" /E/Y
 xcopy locale "%Directory%\locale\" /E/Y

@@ -1,3 +1,4 @@
+const MergeIntoSingleFilePlugin = require('webpack-merge-and-include-globally');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -12,10 +13,8 @@ const defaultConfig = {
     },
     output: {
         path: __dirname + '/app/',
+        filename: 'index.js',
         publicPath: './'
-    },
-    resolve: {
-        extensions: ['.js', '.jsx']
     }
 };
 
@@ -83,7 +82,6 @@ const devConfig = {
     ]
 };
 
-
 const prodConfig = {
     mode: 'production',
     module: {
@@ -150,9 +148,42 @@ const prodConfig = {
     ]
 };
 
-function webpackOpt(env, argv) {
+function clientConfig(env, argv) {
     const envConfig = (argv.mode === 'development') ? devConfig : prodConfig;
     return Object.assign({}, defaultConfig, envConfig);
 }
 
-module.exports = webpackOpt;
+
+
+
+const hostConfig = () => {
+    return {
+        entry: {
+            index: ['./app_src/host.js']
+        },
+        output: {
+            path: __dirname + '/app/',
+            filename: 'host.jsx',
+            publicPath: './'
+        },
+        plugins: [
+            new MergeIntoSingleFilePlugin({
+                files: {
+                    'host.jsx': [
+                        __dirname + '/app_src/jam/jamActions.jsxinc',
+                        __dirname + '/app_src/jam/jamEngine.jsxinc',
+                        __dirname + '/app_src/jam/jamHelpers.jsxinc',
+                        __dirname + '/app_src/jam/jamJSON.jsxinc',
+                        __dirname + '/app_src/jam/jamText.jsxinc',
+                        __dirname + '/app_src/jam/jamStyles.jsxinc',
+                        __dirname + '/app_src/jam/jamUtils.jsxinc',
+                        __dirname + '/app_src/host.js'
+                    ]
+                }
+            })
+        ]
+    }
+};
+
+
+module.exports = [clientConfig, hostConfig];

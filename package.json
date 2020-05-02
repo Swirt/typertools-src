@@ -2,14 +2,12 @@
   "name": "typertools",
   "author": "Swirt",
   "main": "app/index.js",
+  "browserslist": ["since 2012"],
   "scripts": {
     "build": "rimraf app && webpack --mode=production",
     "build_dev": "rimraf app && webpack --mode=development",
     "build_watch": "rimraf app && webpack --mode=development --watch"
   },
-  "browserslist": [
-    "since 2012"
-  ],
   "dependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",

@@ -20,7 +20,7 @@
             <DispatchInfo >
                 <Resources>
                     <MainPath>./app/index.html</MainPath>
-                    <ScriptPath>./host/index.jsx</ScriptPath>
+                    <ScriptPath>./app/host.jsx</ScriptPath>
                     <CEFCommandLine>
                         <Parameter>--allow-file-access</Parameter>
                         <Parameter>--allow-file-access-from-files</Parameter>

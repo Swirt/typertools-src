@@ -1,11 +1,11 @@
 /*
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamActions-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamEngine-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamHelpers-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamJSON-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamText-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamStyles-min.jsxinc');
-$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/host/jam/jamUtils-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamActions-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamEngine-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamHelpers-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamJSON-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamText-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamStyles-min.jsxinc');
+$.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/jam/jamUtils-min.jsxinc');
 */
 
 

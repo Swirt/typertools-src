@@ -30,14 +30,6 @@ const openUrl = window.cep.util.openURLInDefaultBrowser;
 const path = csInterface.getSystemPath(window.SystemPath.EXTENSION);
 const storagePath = path + '/app/storage';
 
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamActions-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamEngine-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamHelpers-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamJSON-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamText-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamStyles-min.jsxinc")');
-csInterface.evalScript('$.evalFile("' + path + '/host/jam/jamUtils-min.jsxinc")');
-
 
 const readStorage = key => {
     const result = window.cep.fs.readFile(storagePath);

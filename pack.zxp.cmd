@@ -9,7 +9,6 @@ del %name%.zxp
 rmdir %name% /S/Q
 
 xcopy app %name%\app\ /E/Y/C
-xcopy host %name%\host\ /E/Y/C
 xcopy CSXS %name%\CSXS\ /E/Y/C
 xcopy icons %name%\icons\ /E/Y/C
 xcopy locale %name%\locale\ /E/Y/C
