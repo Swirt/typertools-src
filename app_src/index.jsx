@@ -72,7 +72,7 @@ const getActiveLayerData = callback => {
 const getActiveLayerText = callback => {
     csInterface.evalScript('getActiveLayerText()', data => {
         const dataObj = JSON.parse(data || '{}');
-        if (!data || !dataObj.layer || !dataObj.text) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
+        if (!data || !dataObj.style) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
         else callback(dataObj);
     });
 };
@@ -218,7 +218,7 @@ const App = React.memo(function App() {
                     const docLayers = allLayers[layer.docId];
                     if (!docLayers[layer.id]) {
                         if (launched && layer.isText) {
-                            setActiveLayerText(currentText, currentStyle)
+                            setActiveLayerText(currentText, currentStyle.style)
                             nextLine(true);
                         }
                         docLayers[layer.id] = 1;
@@ -352,7 +352,7 @@ HelpBlock.propTypes = {
 
 
 const TopBlock = React.memo(function TopBlock(props) {
-    const textStyle = props.currentStyle?.text.layerText.textStyleRange[0]?.textStyle || {};
+    const textStyle = props.currentStyle?.style.layerText.textStyleRange[0]?.textStyle || {};
     const styleObject = getStyleObject(textStyle);
     return (
         <React.Fragment>
@@ -366,7 +366,7 @@ const TopBlock = React.memo(function TopBlock(props) {
                     <button className="topcoat-icon-button--large--quiet" title={locale.openHelp} onClick={() => props.setHelpOpen(true)}>
                         <FiHelpCircle size={18} />
                     </button>
-                    <button className="topcoat-icon-button--large" title={locale.insertStyledText} onClick={() => setActiveLayerText(props.currentText, props.currentStyle)}>
+                    <button className="topcoat-icon-button--large" title={locale.insertStyledText} onClick={() => setActiveLayerText(props.currentText, props.currentStyle.style)}>
                         <FiArrowRightCircle size={18} />
                     </button>
                 </div>
@@ -463,10 +463,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
         const style = props.styles.find(s => (s.id === id));
         if (style) {
             setEditorStyleName(style.name);
-            setEditorStyleInfo({
-                text: style.text,
-                layer: style.layer
-            });
+            setEditorStyleInfo(style.style);
             setEditorNewStyle(false);
             setEditorStyleId(id);
         } else {
@@ -481,25 +478,24 @@ const BottomBlock = React.memo(function BottomBlock(props) {
     const copyLayerStyle = () => {
         if (!editorStyleId) return false;
         getActiveLayerText(data => {
-            if (!data.text.layerText?.textStyleRange.length) return false;
-            const firstStyle = data.text.layerText.textStyleRange[0];
-            const firstParag = data.text.layerText.paragraphStyleRange[0];
+            if (!data.style.layerText?.textStyleRange.length) return false;
+            const firstStyle = data.style.layerText.textStyleRange[0];
+            const firstParag = data.style.layerText.paragraphStyleRange[0];
             firstStyle.to = 999999999;
             firstParag.to = 999999999;
             firstParag.paragraphStyle.burasagari = firstParag.paragraphStyle.burasagari || 'burasagariNone';
             firstParag.paragraphStyle.singleWordJustification = firstParag.paragraphStyle.singleWordJustification || 'justifyAll';
             firstParag.paragraphStyle.justificationMethodType = firstParag.paragraphStyle.justificationMethodType || 'justifMethodAutomatic';
             firstParag.paragraphStyle.textEveryLineComposer = !!firstParag.paragraphStyle.textEveryLineComposer;
-            data.text.layerText.paragraphStyleRange = [firstParag];
-            data.text.layerText.textStyleRange = [firstStyle];
-            delete data.text.layerText.textKey;
-            delete data.text.layerText.textShape;
-            delete data.text.layerText.textClickPoint;
-            delete data.text.layerText.transform;
-            delete data.text.layerText.boundingBox;
-            delete data.text.layerText.bounds;
-            delete data.layer.layerEffects?.scale;
-            setEditorStyleInfo(data);
+            data.style.layerText.paragraphStyleRange = [firstParag];
+            data.style.layerText.textStyleRange = [firstStyle];
+            delete data.style.layerText.textKey;
+            delete data.style.layerText.textShape;
+            delete data.style.layerText.textClickPoint;
+            delete data.style.layerText.transform;
+            delete data.style.layerText.boundingBox;
+            delete data.style.layerText.bounds;
+            setEditorStyleInfo(data.style);
         });
     };
 
@@ -513,8 +509,7 @@ const BottomBlock = React.memo(function BottomBlock(props) {
         const newStyle = {
             id: editorStyleId,
             name: editorStyleName,
-            text: editorStyleInfo.text,
-            layer: editorStyleInfo.layer
+            style: editorStyleInfo
         };
         if (!editorStyleId) {
             styles.push(newStyle);
@@ -633,9 +628,9 @@ const StyleItem = React.memo(function StyleItem(props) {
     };
     const insertStyle = e => {
         e.stopPropagation();
-        setActiveLayerText('', props.style)
+        setActiveLayerText('', props.style.style)
     };
-    const textStyle = props.style.text.layerText.textStyleRange[0]?.textStyle || {};
+    const textStyle = props.style.style.layerText.textStyleRange[0]?.textStyle || {};
     const styleObject = getStyleObject(textStyle);
     return (
         <div className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
@@ -666,11 +661,15 @@ StyleItem.propTypes = {
 
 const StyleEdit = React.memo(function StyleEdit(props) {
     const nameInputRef = React.useRef();
+    const onSubmit = e => {
+        e.preventDefault();
+        props.saveStyle();
+    };
     React.useEffect(() => {
         if (nameInputRef.current) nameInputRef.current.focus();
     }, []);
     return (
-        <form className="style-edit hostBgdLight" onSubmit={props.saveStyle}>
+        <form className="style-edit hostBgdLight" onSubmit={onSubmit}>
             <div className="style-edit-header">
                 <div className="style-edit-title">
                     {props.editorNewStyle ? locale.styleCreateTile : locale.styleEditTitle}
@@ -722,10 +721,8 @@ StyleEdit.propTypes = {
 
 
 const StyleInfo = React.memo(function StyleInfo(props) {
-    const text = props.style.text;
-    const layer = props.style.layer;
-    const unit = text.typeUnit.substr(0, 3);
-    const textStyle = text.layerText.textStyleRange[0].textStyle;
+    const unit = props.style.typeUnit.substr(0, 3);
+    const textStyle = props.style.layerText.textStyleRange[0].textStyle;
     return (
         <React.Fragment>
             {textStyle.fontName}
@@ -744,8 +741,7 @@ const StyleInfo = React.memo(function StyleInfo(props) {
             {(textStyle.fontCaps === 'smallCaps') && (', small')}
             {(textStyle.underline && (textStyle.underline !== 'underlineOff')) && (', _u_')}
             {(textStyle.strikethrough && (textStyle.strikethrough !== 'strikethroughOff')) && (', -s-')}
-            , {text.layerText.antiAlias.replace('antiAlias', '')}
-            {!!layer.layerEffects && (', Layer Effects')}
+            , {props.style.layerText.antiAlias.replace('antiAlias', '')}
             ...
         </React.Fragment>
     );

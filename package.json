@@ -2,7 +2,9 @@
   "name": "typertools",
   "author": "Swirt",
   "main": "app/index.js",
-  "browserslist": ["since 2012"],
+  "browserslist": [
+    "since 2012"
+  ],
   "scripts": {
     "build": "rimraf app && webpack --mode=production",
     "build_dev": "rimraf app && webpack --mode=development",
@@ -49,8 +51,11 @@
     "rimraf": "^3.0.2",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "uglify-js": "^2.8.29",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
-  }
+    "webpack-cli": "^3.3.11",
+    "webpack-merge-and-include-globally": "^2.1.24"
+  },
+  "devDependencies": {}
 }

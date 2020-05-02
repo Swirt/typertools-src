@@ -573,9 +573,9 @@ if (typeof jamJSON !== 'object')
                             partial[i] = str (value[i]);
                         }
                         // Join all of the elements together, separated with commas, and wrap them in brackets.
-                        v = (partial.length === 0) ?
-                            (gap ? '[\n' + prefixIndent + mind + ']' : '[ ]') :
-                            (gap ? '[\n' + prefixIndent + gap + partial.join (',\n' + prefixIndent + gap) + '\n' + prefixIndent + mind + ']' : '[ ' + partial.join (', ') + ' ]');
+                        var x1 = gap ? '[\n' + prefixIndent + mind + ']' : '[ ]';
+                        var x2 = gap ? '[\n' + prefixIndent + gap + partial.join (',\n' + prefixIndent + gap) + '\n' + prefixIndent + mind + ']' : '[ ' + partial.join (', ') + ' ]';
+                        v = (partial.length === 0) ? x1 : x2;
                         gap = mind;
                         return v;
                     }
@@ -594,9 +594,9 @@ if (typeof jamJSON !== 'object')
                             }
                         }
                         // Join all of the member texts together, separated with commas, and wrap them in braces.
-                        v = (partial.length === 0) ?
-                            (gap ? '{\n' + prefixIndent + mind + '}' : '{ }') :
-                            (gap ? '{\n' + prefixIndent + gap + partial.join (',\n' + prefixIndent + gap) + '\n' + prefixIndent + mind + '}' : '{ ' + partial.join (', ') + ' }');
+                        var x3 = gap ? '{\n' + prefixIndent + mind + '}' : '{ }';
+                        var x4 = gap ? '{\n' + prefixIndent + gap + partial.join (',\n' + prefixIndent + gap) + '\n' + prefixIndent + mind + '}' : '{ ' + partial.join (', ') + ' }';
+                        v = (partial.length === 0) ? x3 : x4;
                         gap = mind;
                         return v;
                     }

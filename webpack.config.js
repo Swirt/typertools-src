@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
 const autoprefixer = require('autoprefixer');
 const postcssCssnano = require('cssnano');
+const UglifyJS = require('uglify-js');
 
 
 const defaultConfig = {
@@ -179,6 +180,12 @@ const hostConfig = () => {
                         __dirname + '/app_src/jam/jamUtils.jsxinc',
                         __dirname + '/app_src/host.js'
                     ]
+                },
+                transform: {
+                    'host.jsx': code => {
+                        var res = UglifyJS.minify(code, {fromString: true, compress: false, output: {beautify: true, indent_level: 0, quote_keys: true}});
+                        return res.code;
+                    }
                 }
             })
         ]

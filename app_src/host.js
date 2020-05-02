@@ -50,8 +50,7 @@ function getActiveLayerText() {
         return '';
     }
     return jamJSON.stringify({
-        text: jamText.getLayerText(),
-        layer: jamStyles.getLayerStyle()
+        style: jamText.getLayerText()
     });
 }
 
@@ -61,31 +60,20 @@ function setActiveLayerText(data) {
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
         return 'layer';
     }
-    if (data.text) {
-        const newText = {
+    if (data.text && data.style) {
+        data.style.layerText.textKey = data.text;
+        data.style.layerText.textStyleRange[0].to = data.text.length;
+        data.style.layerText.paragraphStyleRange[0].to = data.text.length;
+        jamText.setLayerText(data.style);
+    } else if (data.text) {
+        const style = {
             "layerText": {
                 "textKey": data.text
             }
         }
-        jamText.setLayerText(newText);
-    }
-    if (data.style) {
-        if (data.style.layer) {
-            if (data.style.layer.layerEffects) {
-                var currentLayerStyle = jamStyles.getLayerStyle();
-                if (currentLayerStyle.layerEffects) {
-                    jamStyles.setLayerStyle(null);
-                }
-            }
-            jamStyles.setLayerStyle(data.style.layer);
-        }
-        if (data.style.text) {
-            if (data.text) {
-                data.style.text.layerText.textStyleRange[0].to = data.text.length;
-                data.style.text.layerText.paragraphStyleRange[0].to = data.text.length;
-            }
-            jamText.setLayerText(data.style.text);
-        }
+        jamText.setLayerText(style);
+    } else if (data.style) {
+        jamText.setLayerText(data.style);
     }
     return '';
 }
