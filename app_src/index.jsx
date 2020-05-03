@@ -100,12 +100,12 @@ const resizeTextArea = () => {
     textArea.style.height = textLines.offsetHeight + 'px';
 };
 
-const scrollToLine = lineNum => {
+const scrollToLine = (lineNum, delay=300) => {
     lineNum = (lineNum < 5) ? 0 : (lineNum - 5);
-    const line = document.querySelectorAll('.text-line')[lineNum];
     setTimeout(() => {
+        const line = document.querySelectorAll('.text-line')[lineNum];
         if (line) line.scrollIntoView();
-    }, 300);
+    }, delay);
 };
 
 const rgbToHex = (rgb={}) => {
@@ -243,13 +243,13 @@ const App = React.memo(function App() {
         getAllLayers();
         window.lastSetAppSizeFunc();
         if (currentText) {
-            scrollToLine(currentLineIndex);
+            scrollToLine(currentLineIndex, 600);
         } else if (lines.length) {
             let hasLine = false;
             for (let i = 0; i < lines.length; i++) {
                 if (lines[i].trim()) {
                     setCurrentLineIndex(i);
-                    scrollToLine(i);
+                    scrollToLine(i, 600);
                     hasLine = true;
                     break;
                 }
@@ -415,13 +415,13 @@ const MiddleBlock = React.memo(function MiddleBlock(props) {
                         <div className="text-line-num">
                             {line.trim() ? lineCounter++ : ' '}
                         </div>
-                        <div className="text-line-select" title={line.trim() ? locale.selectLine : ' '}>
+                        <div className="text-line-select" title={line.trim() ? locale.selectLine : ''}>
                             {line.trim() ? <FiTarget size={14} onClick={() => props.setCurrentLineIndex(i)} /> : ' '}
                         </div>
                         <div className="text-line-text">
                             {line || ' '}
                         </div>
-                        <div className="text-line-insert" title={line.trim() ? locale.insertText : ' '}>
+                        <div className="text-line-insert" title={line.trim() ? locale.insertText : ''}>
                             {line.trim() ? <FiArrowRightCircle size={14} onClick={() => setActiveLayerText(line)} /> : ' '}
                         </div>
                     </div>
