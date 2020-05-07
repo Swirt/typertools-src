@@ -1,7 +1,7 @@
 import './CSInterface';
 
-import LightTheme from '../topcoat/css/topcoat-desktop-light.min.css';
-import DarkTheme from '../topcoat/css/topcoat-desktop-dark.min.css';
+import LightTheme from './topcoat/css/topcoat-desktop-light.min.css';
+import DarkTheme from './topcoat/css/topcoat-desktop-dark.min.css';
 
 
 function computeValue(value, delta) {
@@ -46,26 +46,35 @@ function updateThemeWithAppSkinInfo(appSkinInfo) {
     var fontColor = isLight ? "000000" : "F0F0F0";
     var styleId = "hostStyle";
     
-    addRule(styleId, ".hostElt", "background-color:" + "#" + bgdColor);
-    addRule(styleId, ".hostElt", "font-size:" + appSkinInfo.baseFontSize + "px;");
-    addRule(styleId, ".hostElt", "font-family:" + appSkinInfo.baseFontFamily);
-    addRule(styleId, ".hostElt", "color:" + "#" + fontColor);
+    addRule(styleId, ".hostElt", "background-color: #" + bgdColor);
+    addRule(styleId, ".hostElt", "font-size: " + appSkinInfo.baseFontSize + "px;");
+    addRule(styleId, ".hostElt", "font-family: " + appSkinInfo.baseFontFamily);
+    addRule(styleId, ".hostElt", "color: #" + fontColor);
     
-    addRule(styleId, ".hostBgd", "background-color:" + "#" + bgdColor);
-    addRule(styleId, ".hostBgdDark", "background-color: " + "#" + darkBgdColor);
-    addRule(styleId, ".hostBgdLight", "background-color: " + "#" + lightBgdColor);
+    addRule(styleId, ".hostBgd", "background-color: #" + bgdColor);
+    addRule(styleId, ".hostBgdDark", "background-color: #" + darkBgdColor);
+    addRule(styleId, ".hostBgdLight", "background-color: #" + lightBgdColor);
 
-    addRule(styleId, ".hostFontSize", "font-size:" + appSkinInfo.baseFontSize + "px;");
-    addRule(styleId, ".hostFontFamily", "font-family:" + appSkinInfo.baseFontFamily);
-    addRule(styleId, ".hostFontColor", "color:" + "#" + fontColor);
-    addRule(styleId, ".hostFont", "font-size:" + appSkinInfo.baseFontSize + "px;");
-    addRule(styleId, ".hostFont", "font-family:" + appSkinInfo.baseFontFamily);
-    addRule(styleId, ".hostFont", "color:" + "#" + fontColor);
+    addRule(styleId, ".hostBrdTop", "border-top: 1px solid #" + bgdColor);
+    addRule(styleId, ".hostBrdTopDark", "border-top: 1px solid #" + darkBgdColor);
+    addRule(styleId, ".hostBrdTopLight", "border-top: 1px solid #" + lightBgdColor);
+    addRule(styleId, ".hostBrdTopContrast", "border-top: 1px solid rgba(" + (isLight ? "0, 0, 0" : "255, 255, 255") + ", 0.2)");
+    addRule(styleId, ".hostBrdBot", "border-bottom: 1px solid #" + bgdColor);
+    addRule(styleId, ".hostBrdBotDark", "border-bottom: 1px solid #" + darkBgdColor);
+    addRule(styleId, ".hostBrdBotLight", "border-bottom: 1px solid #" + lightBgdColor);
+    addRule(styleId, ".hostBrdBotContrast", "border-bottom: 1px solid rgba(" + (isLight ? "0, 0, 0" : "255, 255, 255") + ", 0.2)");
+
+    addRule(styleId, ".hostFontSize", "font-size: " + appSkinInfo.baseFontSize + "px;");
+    addRule(styleId, ".hostFontFamily", "font-family: " + appSkinInfo.baseFontFamily);
+    addRule(styleId, ".hostFontColor", "color: #" + fontColor);
+    addRule(styleId, ".hostFont", "font-size: " + appSkinInfo.baseFontSize + "px;");
+    addRule(styleId, ".hostFont", "font-family: " + appSkinInfo.baseFontFamily);
+    addRule(styleId, ".hostFont", "color: #" + fontColor);
     
-    addRule(styleId, ".hostButton", "background-color:" + "#" + darkBgdColor);
-    addRule(styleId, ".hostButton:hover", "background-color:" + "#" + bgdColor);
-    addRule(styleId, ".hostButton:active", "background-color:" + "#" + darkBgdColor);
-    addRule(styleId, ".hostButton", "border-color: " + "#" + lightBgdColor);
+    addRule(styleId, ".hostButton", "background-color: #" + darkBgdColor);
+    addRule(styleId, ".hostButton:hover", "background-color: #" + bgdColor);
+    addRule(styleId, ".hostButton:active", "background-color: #" + darkBgdColor);
+    addRule(styleId, ".hostButton", "border-color: #" + lightBgdColor);
     
     var topcoatCSS = document.getElementById('topcoat');
     topcoatCSS.href = isLight ? LightTheme : DarkTheme;

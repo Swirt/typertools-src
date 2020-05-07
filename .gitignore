@@ -1,6 +1,7 @@
 .vscode
 node_modules
 app
+storage
 typertools
 typertools.zip
 typertools.zxp

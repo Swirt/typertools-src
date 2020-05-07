@@ -1,0 +1,31 @@
+.app-body {
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+}
+
+.top-block {
+    flex: 0 0 auto;
+}
+.top-divider {
+    flex: 0 0 auto;
+    height: 4px;
+}
+.middle-block {
+    flex-grow: 2;
+}
+.middle-divider {
+    cursor: ns-resize;
+    padding: 3px 0;
+    flex: 0 0 auto;
+    & > DIV {
+        height: 2px;
+    }
+}
+.bottom-block {
+    flex: 0 0 auto;
+}
+.footer-block {
+    flex: 0 0 auto;
+}

@@ -1,0 +1,15 @@
+.footer-block {
+    box-sizing: border-box;
+    padding: 2px 10px 6px;
+    min-height: 20px;
+    font-size: 12px;
+    .link {
+        opacity: .7;
+        &:hover {
+            opacity: 1;
+        }
+    }
+    .link + .link {
+        margin-left: 8px;
+    }
+}

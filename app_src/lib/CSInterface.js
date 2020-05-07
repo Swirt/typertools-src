@@ -116,7 +116,7 @@ function Runtime(name, versionRange)
 * @param mainPath        The path of the "index.html" file.
 * @param basePath        The base path of this extension.
 * @param windowType      The window type of the main window of this extension.
-                 Valid values are defined by \c #CSXSWindowType.
+                Valid values are defined by \c #CSXSWindowType.
 * @param width           The default width in pixels of the main window of this extension.
 * @param height          The default height in pixels of the main window of this extension.
 * @param minWidth        The minimum width in pixels of the main window of this extension.
@@ -132,7 +132,7 @@ function Runtime(name, versionRange)
 * @return A new \c Extension object.
 */
 function Extension(id, name, mainPath, basePath, windowType, width, height, minWidth, minHeight, maxWidth, maxHeight,
-                   defaultExtensionDataXml, specialExtensionDataXml, requiredRuntimeList, isAutoVisible, isPluginExtension)
+                    defaultExtensionDataXml, specialExtensionDataXml, requiredRuntimeList, isAutoVisible, isPluginExtension)
 {
     this.id = id;
     this.name = name;
@@ -554,7 +554,7 @@ CSInterface.prototype.loadBinSync  = function(pathName)
         {
             if (OSVersion.indexOf("Windows") >= 0)
             {
-               pathName = pathName.replace("file:///", "");
+                pathName = pathName.replace("file:///", "");
             }
             else if (OSVersion.indexOf("Mac") >= 0)
             {
@@ -757,29 +757,29 @@ CSInterface.prototype.initResourceBundle = function()
     var resElms = document.querySelectorAll('[data-locale]');
     for (var n = 0; n < resElms.length; n++)
     {
-       var resEl = resElms[n];
-       // Get the resource key from the element.
-       var resKey = resEl.getAttribute('data-locale');
-       if (resKey)
-       {
-           // Get all the resources that start with the key.
-           for (var key in resourceBundle)
-           {
-               if (key.indexOf(resKey) === 0)
-               {
-                   var resValue = resourceBundle[key];
-                   if (key.length == resKey.length)
-                   {
+        var resEl = resElms[n];
+        // Get the resource key from the element.
+        var resKey = resEl.getAttribute('data-locale');
+        if (resKey)
+        {
+            // Get all the resources that start with the key.
+            for (var key in resourceBundle)
+            {
+                if (key.indexOf(resKey) === 0)
+                {
+                    var resValue = resourceBundle[key];
+                    if (key.length == resKey.length)
+                    {
                         resEl.innerHTML = resValue;
-                   }
-                   else if ('.' == key.charAt(resKey.length))
-                   {
+                    }
+                    else if ('.' == key.charAt(resKey.length))
+                    {
                         var attrKey = key.substring(resKey.length + 1);
                         resEl[attrKey] = resValue;
-                   }
-               }
-           }
-       }
+                    }
+                }
+            }
+        }
     }
     return resourceBundle;
 };
@@ -1045,8 +1045,8 @@ CSInterface.prototype.updatePanelMenuItem = function(menuItemLabel, enabled, che
  * - if the item name is "---" (three hyphens) then it is treated as a separator. The menu ID in this case will always be NULL.
  * - Checkable attribute takes precedence over Checked attribute.
  * - a PNG icon. For optimal display results please supply a 16 x 16px icon as larger dimensions will increase the size of the menu item.
-     The Chrome extension contextMenus API was taken as a reference.
-     https://developer.chrome.com/extensions/contextMenus
+    The Chrome extension contextMenus API was taken as a reference.
+    https://developer.chrome.com/extensions/contextMenus
  * - the items with icons and checkable items cannot coexist on the same menu level. The former take precedences over the latter.
  *
  * @param menu      A XML string which describes menu structure.
@@ -1085,9 +1085,9 @@ CSInterface.prototype.setContextMenu = function(menu, callback)
  * - if the item label is "---" (three hyphens) then it is treated as a separator. The menu ID in this case will always be NULL.
  * - Checkable attribute takes precedence over Checked attribute.
  * - a PNG icon. For optimal display results please supply a 16 x 16px icon as larger dimensions will increase the size of the menu item.
-     The Chrome extension contextMenus API was taken as a reference.
+    The Chrome extension contextMenus API was taken as a reference.
  * - the items with icons and checkable items cannot coexist on the same menu level. The former take precedences over the latter.
-     https://developer.chrome.com/extensions/contextMenus
+    https://developer.chrome.com/extensions/contextMenus
  *
  * @param menu      A JSON string which describes menu structure.
  * @param callback  The callback function which is called when a menu item is clicked. The only parameter is the returned ID of clicked menu item.
@@ -1230,7 +1230,7 @@ CSInterface.prototype.registerInvalidCertificateCallback = function(callback)
  * Since 6.1.0
  *
  * @param keyEventsInterest      A JSON string describing those key events you are interested in. A null object or
-                                 an empty string will lead to removing the interest
+                                an empty string will lead to removing the interest
  *
  * This JSON string should be an array, each object has following keys:
  *

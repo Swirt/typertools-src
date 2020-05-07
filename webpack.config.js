@@ -16,6 +16,9 @@ const defaultConfig = {
         path: __dirname + '/app/',
         filename: 'index.js',
         publicPath: './'
+    },
+    resolve: {
+        extensions: ['.js', '.jsx']
     }
 };
 
@@ -77,7 +80,8 @@ const devConfig = {
     plugins: [
         new LodashWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: './app_src/index.html'
+            template: './app_src/index.html',
+            filename: 'index.html'
         }),
         new MiniCssExtractPlugin()
     ]
@@ -135,6 +139,7 @@ const prodConfig = {
         new LodashWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: './app_src/index.html',
+            filename: 'index.html',
             minify: {
                 removeComments: true,
                 collapseWhitespace: true,
@@ -157,40 +162,61 @@ function clientConfig(env, argv) {
 
 
 
-const hostConfig = () => {
-    return {
-        entry: {
-            index: ['./app_src/host.js']
-        },
-        output: {
-            path: __dirname + '/app/',
-            filename: 'host.jsx',
-            publicPath: './'
-        },
-        plugins: [
-            new MergeIntoSingleFilePlugin({
-                files: {
-                    'host.jsx': [
-                        __dirname + '/app_src/jam/jamActions.jsxinc',
-                        __dirname + '/app_src/jam/jamEngine.jsxinc',
-                        __dirname + '/app_src/jam/jamHelpers.jsxinc',
-                        __dirname + '/app_src/jam/jamJSON.jsxinc',
-                        __dirname + '/app_src/jam/jamText.jsxinc',
-                        __dirname + '/app_src/jam/jamStyles.jsxinc',
-                        __dirname + '/app_src/jam/jamUtils.jsxinc',
-                        __dirname + '/app_src/host.js'
-                    ]
-                },
-                transform: {
-                    'host.jsx': code => {
-                        var res = UglifyJS.minify(code, {fromString: true, compress: false, output: {beautify: true, indent_level: 0, quote_keys: true}});
-                        return res.code;
-                    }
-                }
-            })
-        ]
+const hostFiles = [
+    __dirname + '/app_src/lib/jam/jamActions.jsxinc',
+    __dirname + '/app_src/lib/jam/jamEngine.jsxinc',
+    __dirname + '/app_src/lib/jam/jamHelpers.jsxinc',
+    __dirname + '/app_src/lib/jam/jamJSON.jsxinc',
+    __dirname + '/app_src/lib/jam/jamText.jsxinc',
+    __dirname + '/app_src/lib/jam/jamStyles.jsxinc',
+    __dirname + '/app_src/lib/jam/jamUtils.jsxinc',
+    __dirname + '/app_src/host.js'
+];
+
+const defaultHostConfig = {
+    entry: {
+        index: ['./app_src/host.js']
+    },
+    output: {
+        path: __dirname + '/app/',
+        filename: 'host.jsx',
+        publicPath: './'
+    },
+    resolve: {
+        extensions: ['.js', '.jsx', 'jsxinc']
     }
 };
+
+const devHostConfig = {
+    plugins: [
+        new MergeIntoSingleFilePlugin({
+            files: {
+                'host.jsx': hostFiles
+            }
+        })
+    ]
+};
+
+const prodHostConfig = {
+    plugins: [
+        new MergeIntoSingleFilePlugin({
+            files: {
+                'host.jsx': hostFiles
+            },
+            transform: {
+                'host.jsx': code => {
+                    const res = UglifyJS.minify(code, {compress: false, output: {beautify: true, indent_level: 0, quote_keys: true}});
+                    return res.code.replace(/([{};:,])\s*\n+\s*/gi, '$1').replace(/\s*\n+\s*([})\];:,])/gi, '$1');
+                }
+            }
+        })
+    ]
+};
+
+function hostConfig(env, argv) {
+    const envConfig = (argv.mode === 'development') ? devHostConfig : prodHostConfig;
+    return Object.assign({}, defaultHostConfig, envConfig);
+}
 
 
 module.exports = [clientConfig, hostConfig];

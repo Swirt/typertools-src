@@ -1,0 +1,170 @@
+.text-block {
+    background: #eee;
+    position: relative;
+    overflow-y: auto;
+    display: flex;
+}
+.text-lines {
+    box-sizing: border-box;
+    position: absolute;
+    padding: 4px 0;
+    min-height: 100%;
+    width: 100%;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    &:before {
+        background: #ccc;
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 50px;
+        content: '';
+        left: 0;
+        top: 0;
+    }
+    &:after {
+        background: #ccc;
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 20px;
+        content: '';
+        right: 0;
+        top: 0;
+    }
+}
+.text-line {
+    justify-content: space-between;
+    position: relative;
+    display: flex;
+    font-family: monospace;
+    line-height: 17px;
+    font-size: 14px;
+    color: #777;
+    z-index: 1;
+    & + &:before {
+        border-top: 1px dashed #a9a9a9;
+        position: absolute;
+        display: block;
+        content: '';
+        width: 100%;
+        height: 0;
+        left: 0;
+        top: 0;
+    }
+    &.m-current {
+        background: rgba(#608fbf, .6);
+        color: #000;
+        z-index: 2;
+        &:before {
+            border-top: 2px solid #608fbf;
+            position: absolute;
+            display: block;
+            content: '';
+            width: 100%;
+            height: 0;
+            left: 0;
+            top: 0;
+        }
+        &:after {
+            border-bottom: 2px solid #608fbf;
+            position: absolute;
+            display: block;
+            content: '';
+            width: 100%;
+            bottom: -1px;
+            height: 0;
+            left: 0;
+        }
+    }
+}
+.text-line-num {
+    text-align: center;
+    flex: 0 0 auto;
+    width: 32px;
+}
+.text-line-select {
+    flex: 0 0 auto;
+    width: 18px;
+    & > SVG {
+        margin-bottom: -5px;
+        position: relative;
+        cursor: pointer;
+        top: -2px;
+        &:hover {
+            color: #000;
+        }
+    }
+    .text-line.m-current & > SVG {
+        cursor: auto;
+    }
+}
+.text-line-text {
+    word-break: break-word;
+    white-space: pre-wrap;
+    padding: 0 5px 0 7px;
+    color: rgba(#fff, 0);
+    background: #fff;
+    flex-grow: 2;
+    .text-line.m-current & {
+        background: #bed6ef;
+    }
+    .text-line.m-empty & {
+        background: rgba(#fff, 0);
+    }
+}
+.text-line-insert {
+    text-align: center;
+    flex: 0 0 auto;
+    width: 20px;
+    & > SVG {
+        margin-bottom: -5px;
+        position: relative;
+        cursor: pointer;
+        top: -2px;
+        &:hover {
+            color: #000;
+        }
+        .text-line.m-current &:hover {
+            color: #073357;
+        }
+    }
+}
+.text-area {
+    box-sizing: border-box;
+    font-family: monospace;
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: relative;
+    overflow: hidden;
+    background: none;
+    padding: 4px 6px;
+    margin-right: 20px;
+    margin-left: 50px;
+    line-height: 17px;
+    font-size: 14px;
+    color: #000;
+    border: none;
+    resize: none;
+    width: 100%;
+    z-index: 3;
+}
+.text-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    background: #ddd;
+    pointer-events: none;
+    z-index: 4;
+    cursor: text;
+    height: 100%;
+    right: 20px;
+    left: 50px;
+    top: 0;
+    & > DIV {
+        font-size: 18px;
+        color: #777;
+    }
+}

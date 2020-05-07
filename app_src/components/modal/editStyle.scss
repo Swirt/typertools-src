@@ -1,0 +1,20 @@
+.style-edit-details {
+    border: 1px solid rgba(#000, .12);
+    background: rgba(#000, .06);
+    border-radius: 3px;
+    padding: 5px 8px;
+    margin-top: 6px;
+    font-size: 12px;
+}
+.style-edit-empty {
+    text-align: center;
+    font-weight: bold;
+    max-height: 38px;
+    font-size: 12px;
+    overflow: auto;
+    padding: 5px 0;
+}
+.style-edit-actions {
+    justify-content: space-between;
+    display: flex;
+}
