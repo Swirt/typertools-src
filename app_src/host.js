@@ -62,14 +62,14 @@ function setActiveLayerText(data) {
         return 'layer';
     }
     if (data.text && data.style) {
-        data.style.textProps.layerText.textKey = data.text;
+        data.style.textProps.layerText.textKey = data.text.replace(/\n+/gi, '');
         data.style.textProps.layerText.textStyleRange[0].to = data.text.length;
         data.style.textProps.layerText.paragraphStyleRange[0].to = data.text.length;
         jamText.setLayerText(data.style.textProps);
     } else if (data.text) {
         var style = {
             "layerText": {
-                "textKey": data.text
+                "textKey": data.text.replace(/\n+/gi, '')
             }
         }
         jamText.setLayerText(style);
@@ -92,41 +92,37 @@ function _hasSelection() {
     }
 }
 
-function _getSelectionSize() {
+function _getSelectionRegion(fixed) {
     try {
-        var bounds = activeDocument.selection.bounds;
-        return [Number(bounds[2]) - Number(bounds[0]), Number(bounds[3]) - Number(bounds[1])];
-    } catch (error) {
-        return '';
-    }
-}
-
-function _getSelectionRegion() {
-    try {
+        if (!fixed) activeDocument.selection.smooth(5);
         var bounds = activeDocument.selection.bounds;
         var width = Number(bounds[2]) - Number(bounds[0]);
         var height = Number(bounds[3]) - Number(bounds[1]);
-        return [
+        var region = [
             [Number(bounds[0]), Number(bounds[1])],
             [Number(bounds[0]) + width, Number(bounds[1])],
             [Number(bounds[0]) + width, Number(bounds[1]) + height],
             [Number(bounds[0]), Number(bounds[1]) + height],
             [Number(bounds[0]), Number(bounds[1])]
         ];
+        region.width = width;
+        region.height = height;
+        return region;
     } catch (error) {
         return '';
     }
 }
 
-function _fitTextLayerSizeToSelection() {
-    var selection = _getSelectionSize();
+function _fitTextLayerSizeToSelection(selFixed) {
+    var region = _getSelectionRegion(selFixed);
     var textItem = activeDocument.activeLayer.textItem;
-    textItem.kind = TextType.PARAGRAPHTEXT;
-    textItem.width = selection[0] * 0.8;
-    textItem.height = selection[1] * 0.8;
-    textItem.kind = TextType.POINTTEXT;
-    textItem.kind = TextType.PARAGRAPHTEXT;
-    textItem.height += parseInt(textItem.size * (0.7 - textItem.verticalScale / 100));
+    if (textItem.kind !== TextType.PARAGRAPHTEXT) {
+        textItem.kind = TextType.PARAGRAPHTEXT;
+    }
+    textItem.width = region.width * 0.8;
+    textItem.height = region.height * 10;
+    var textProps = jamText.getLayerText();
+    textItem.height = textProps.layerText.boundingBox.bottom;
     return '';
 }
 
@@ -160,39 +156,48 @@ function _alignToSelectionAction() {
     return '';
 }
 
-function alignTextLayerToSelection(checked) {
-    if (!checked) {
-        if (!documents.length) {
-            return 'doc';
-        } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
-            return 'layer';
-        } else if (!_hasSelection()) {
-            return 'selection';
-        }
+function alignTextLayerToSelection() {
+    if (!documents.length) {
+        return 'doc';
+    } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
+        return 'layer';
+    } else if (!_hasSelection()) {
+        return 'selection';
     }
     _fitTextLayerSizeToSelection();
     _alignToSelectionAction();
     return '';
 }
 
+
+function _createTextLayerAction() {
+    var ref = new ActionReference();
+    var desc = new ActionDescriptor();
+    var idMk = charIDToTypeID( "Mk  " );
+    var idnull = charIDToTypeID( "null" );
+    var idLyr = charIDToTypeID( "Lyr " );
+    var idLyrI = charIDToTypeID( "LyrI" );
+    ref.putClass( idLyr );
+    desc.putReference( idnull, ref );
+    desc.putInteger( idLyrI, 3 );
+    executeAction( idMk, desc, DialogModes.NO );
+    // convert to text
+    var newLayer = activeDocument.activeLayer;
+    var region = _getSelectionRegion();
+    newLayer.kind = LayerKind.TEXT;
+    if (region) activeDocument.selection.select(region);
+    return newLayer;
+}
+
 function createTextLayerInSelection(textAndStyle) {
     if (!documents.length) {
         return 'doc';
-    }
-    var region = _getSelectionRegion();
-    if (!region) {
+    } else if (!_hasSelection()) {
         return 'selection';
     }
-    var current = activeDocument.activeLayer;
-    var newLayer = activeDocument.artLayers.add();
-    if (current.typename === 'LayerSet') {
-        newLayer.move(current, ElementPlacement.INSIDE);
-    } else {
-        newLayer.moveBefore(current);
-    }
-    newLayer.kind = LayerKind.TEXT;
-    activeDocument.selection.select(region);
+    _createTextLayerAction();
     setActiveLayerText(textAndStyle);
-    alignTextLayerToSelection(true);
+    _fitTextLayerSizeToSelection(true);
+    _alignToSelectionAction();
     return '';
 }

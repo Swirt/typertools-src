@@ -69,13 +69,25 @@
         width: calc(50% - 2px);
     }
 }
+.style-markers {
+    flex: 0 0 auto;
+}
 .style-color {
     box-shadow: 0 0 4px 1px rgba(#000, .4);
     border: 1px solid rgba(#fff, .8);
     border-radius: 50%;
-    flex: 0 0 auto;
-    height: 10px;
-    width: 10px;
+    height: 8px;
+    width: 8px;
+}
+.style-prefix-color {
+    box-shadow: 0 0 4px 1px rgba(#000, .4);
+    background: #fff;
+    margin-top: 3px;
+    padding: 1px;
+    DIV {
+        opacity: .9;
+        height: 5px;
+    }
 }
 .style-name {
     -webkit-font-smoothing: antialiased;

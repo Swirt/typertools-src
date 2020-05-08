@@ -11,6 +11,7 @@ import {useContext} from '../../context';
 const SettingsModal = React.memo(function SettingsModal() {
     const context = useContext();
     const [ignoreLinePrefixes, setIgnoreLinePrefixes] = React.useState(context.state.ignoreLinePrefixes.join(' '));
+    const [defaultStyleId, setDefaultStyleId] = React.useState(context.state.defaultStyleId || '');
     const [edited, setEdited] = React.useState(false);
 
     const close = () => {
@@ -22,12 +23,25 @@ const SettingsModal = React.memo(function SettingsModal() {
         setEdited(true);
     };
 
+    const changeDefaultStyle = e => {
+        setDefaultStyleId(e.target.value);
+        setEdited(true);
+    };
+
     const save = e => {
         e.preventDefault();
-        context.dispatch({
-            type: 'setIgnoreLinePrefixes',
-            data: ignoreLinePrefixes
-        });
+        if (ignoreLinePrefixes !== context.state.ignoreLinePrefixes.join(' ')) {
+            context.dispatch({
+                type: 'setIgnoreLinePrefixes',
+                data: ignoreLinePrefixes
+            });
+        }
+        if (defaultStyleId !== context.state.defaultStyleId) {
+            context.dispatch({
+                type: 'setDeaultStyleId',
+                id: defaultStyleId
+            });
+        }
         setEdited(false);
     };
 
@@ -56,6 +70,7 @@ const SettingsModal = React.memo(function SettingsModal() {
         if (!pathSelect?.data) return false;
         window.cep.fs.writeFile(pathSelect.data, JSON.stringify({
             ignoreLinePrefixes: context.state.ignoreLinePrefixes,
+            defaultStyleId: context.state.defaultStyleId,
             styles: context.state.styles
         }));
     };
@@ -89,7 +104,27 @@ const SettingsModal = React.memo(function SettingsModal() {
                                 {locale.settingsLinePrefixesDescr}
                             </div>
                         </div>
-                        <div className="field">
+                        <div className="field hostBrdTopContrast">
+                            <div className="field-label">
+                                {locale.settingsDefaultStyleLabel}
+                            </div>
+                            <div className="field-input">
+                                <select 
+                                    value={defaultStyleId} 
+                                    onChange={changeDefaultStyle}
+                                    className="topcoat-textarea"
+                                >
+                                    <option key="none" value="">{locale.settingsDefaultStyleNone}</option>
+                                    {context.state.styles.map(style => (
+                                        <option key={style.id} value={style.id}>{style.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="field-descr">
+                                {locale.settingsDefaultStyleDescr}
+                            </div>
+                        </div>
+                        <div className="field hostBrdTopContrast">
                             <button type="submit" className={edited ? 'topcoat-button--large--cta' : 'topcoat-button--large'}>
                                 <MdSave size={18} /> {locale.save}
                             </button>

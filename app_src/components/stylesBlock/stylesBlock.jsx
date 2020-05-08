@@ -6,6 +6,7 @@ import {ReactSortable} from "react-sortablejs";
 import {FiArrowRightCircle, FiPlus} from "react-icons/fi";
 import {MdEdit} from "react-icons/md";
 
+import config from '../../config';
 import {locale, setActiveLayerText, rgbToHex, getStyleObject} from '../../utils';
 import {useContext} from '../../context';
 
@@ -57,7 +58,14 @@ const StyleItem = React.memo(function StyleItem(props) {
     const styleObject = getStyleObject(textStyle);
     return (
         <div className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
-            <div className="style-color" style={{background: rgbToHex(textStyle.color)}} title={rgbToHex(textStyle.color)}></div>
+            <div className="style-marker">
+                <div className="style-color" style={{background: rgbToHex(textStyle.color)}} title={locale.styleTextColor + ': ' + rgbToHex(textStyle.color)}></div>
+                {!!props.style.prefixes.length && (
+                    <div className="style-prefix-color" title={locale.stylePrefixColor + ': ' + (props.style.prefixColor || config.defaultPrefixColor)}>
+                        <div style={{background: props.style.prefixColor || config.defaultPrefixColor}}></div>
+                    </div>
+                )}
+            </div>
             <div className="style-name" style={styleObject}
                 dangerouslySetInnerHTML = {
                     { __html: `<span style='font-family: "${styleObject.fontFamily || 'Tahoma'}"'>${props.style.name}</span>`} 

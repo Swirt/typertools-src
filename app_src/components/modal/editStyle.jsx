@@ -4,8 +4,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {FiCopy, FiX} from "react-icons/fi";
 import {MdDelete, MdSave} from "react-icons/md";
+import {SketchPicker} from 'react-color';
 
-import {locale, nativeAlert, nativeConfirm, getUserFonts, getActiveLayerText, rgbToHex} from '../../utils';
+import config from '../../config';
+import {locale, nativeAlert, nativeConfirm, getActiveLayerText, rgbToHex} from '../../utils';
 import {useContext} from '../../context';
 
 
@@ -15,6 +17,8 @@ const EditStyleModal = React.memo(function EditStyleModal() {
     const [name, setName] = React.useState(currentData.name || '');
     const [textProps, setTextProps] = React.useState(currentData.textProps || null);
     const [prefixes, setPrefixes] = React.useState(currentData.prefixes?.join(' ') || '');
+    const [prefixColor, setPrefixColor] = React.useState(currentData.prefixColor || config.defaultPrefixColor);
+    const [colorPickerOpen, setColorPickerOpen] = React.useState(false);
     const [edited, setEdited] = React.useState(false);
     const nameInputRef = React.useRef();
 
@@ -55,13 +59,23 @@ const EditStyleModal = React.memo(function EditStyleModal() {
         setEdited(true);
     };
 
+    const changePrefixColor = e => {
+        setPrefixColor(e.hex);
+        setEdited(true);
+    };
+
+    const toggleColorPicker = e => {
+        e.preventDefault();
+        setColorPickerOpen(!colorPickerOpen);
+    };
+
     const saveStyle = e => {
         e.preventDefault();
         if (!name || !textProps) {
             nativeAlert(locale.errorStyleCreation, locale.errorTitle, true);
             return false;
         }
-        const data = {name, textProps, prefixes};
+        const data = {name, textProps, prefixes, prefixColor};
         if (currentData.create) {
             data.id = Math.random().toString(36).substr(2, 8);
         } else {
@@ -145,6 +159,35 @@ const EditStyleModal = React.memo(function EditStyleModal() {
                                 </div>
                             </div>
                         )}
+                        {!!textProps && (
+                            <div className="field hostBrdTopContrast">
+                                <div className="field-label">
+                                    {locale.editStylePrefixColorLabel}
+                                </div>
+                                <div className="field-input">
+                                    <div className="style-edit-prefix-color">
+                                        {colorPickerOpen && (
+                                            <React.Fragment>
+                                                <div className="color-picker-overlay" onClick={() => setColorPickerOpen(false)}></div>
+                                                <SketchPicker 
+                                                    disableAlpha={true}
+                                                    color={prefixColor} 
+                                                    onChange={changePrefixColor}
+                                                    presetColors={['#FFA6A4', '#FDD4BB', '#FFF3B0', '#B4E4BA', '#BEDADC', '#C2F2FF', '#C3C9FF', '#EED5FF']}
+                                                />
+                                            </React.Fragment>
+                                        )}
+                                        <button type="button" className="topcoat-button--large" onClick={toggleColorPicker}>
+                                            <div className="color-sample">
+                                                <div style={{background: prefixColor}}></div>
+                                                <span>{prefixColor}</span>
+                                            </div> 
+                                            {locale.editStylePrefixColorButton}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className="fields style-edit-actions hostBrdTopContrast">
                         <button type="submit" className={edited ? 'topcoat-button--large--cta' : 'topcoat-button--large'}>
@@ -175,7 +218,7 @@ const StyleDetails = React.memo(function StyleDetails(props) {
             {!!textStyle.tracking && (' (' + (textStyle.tracking > 0 ? '+' : '') + textStyle.tracking +')')}
             {(textStyle.autoKern === 'opticalKern') && (', optical')}
             {((textStyle.verticalScale && (textStyle.verticalScale !== 100)) || (textStyle.horizontalScale && (textStyle.horizontalScale !== 100))) && (
-                ', ' + (textStyle.verticalScale ? parseInt(textStyle.verticalScale) : '100') + '%/' + (textStyle.horizontalScale ? parseInt(textStyle.horizontalScale) : '100') + '%'
+                ', ' + (textStyle.verticalScale ? Math.round(textStyle.verticalScale) : '100') + '%/' + (textStyle.horizontalScale ? Math.round(textStyle.horizontalScale) : '100') + '%'
             )}
             {!!textStyle.baselineShift && (' [' + (textStyle.baselineShift > 0 ? '+' : '') + textStyle.baselineShift + unit + ']')}
             , {rgbToHex(textStyle.color)}

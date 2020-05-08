@@ -4,7 +4,8 @@ import {readStorage, writeToStorage, scrollToLine} from './utils';
 
 
 const storage = readStorage();
-const storeFields = ['notFirstTime', 'text', 'styles', 'currentLineIndex', 'currentStyleId', 'ignoreLinePrefixes'];
+const storeFields = ['notFirstTime', 'text', 'styles', 'currentLineIndex', 'currentStyleId', 'ignoreLinePrefixes', 'defaultStyleId'];
+
 const initialState = {
     notFirstTime: false,
     text: '',
@@ -15,6 +16,7 @@ const initialState = {
     currentStyle: null,
     currentStyleId: null,
     ignoreLinePrefixes: ['##'],
+    defaultStyleId: null,
     modalType: null,
     modalData: {},
     ...storage.data
@@ -24,6 +26,7 @@ const reducer = (state, action) => {
     console.log('CONTEXT:', action);
 
     let thenScroll = false;
+    let thenSelectStyle = false;
     const newState = Object.assign({}, state);
     switch (action.type) {
 
@@ -49,6 +52,7 @@ const reducer = (state, action) => {
 
         case 'setCurrentLineIndex': {
             newState.currentLineIndex = action.index;
+            thenSelectStyle = true;
             break;
         }
 
@@ -61,6 +65,7 @@ const reducer = (state, action) => {
                 }
             }
             thenScroll = true;
+            thenSelectStyle = true;
             break;
         }
 
@@ -73,6 +78,7 @@ const reducer = (state, action) => {
                 }
             }
             thenScroll = true;
+            thenSelectStyle = true;
             break;
         }
 
@@ -119,6 +125,11 @@ const reducer = (state, action) => {
             break;
         }
 
+        case 'setDeaultStyleId': {
+            newState.defaultStyleId = action.id || null;
+            break;
+        }
+
         case 'setModal': {
             newState.modalType = action.modal || null;
             newState.modalData = action.data || {};
@@ -126,14 +137,27 @@ const reducer = (state, action) => {
         }
     }
 
+    const stylePrefixes = [];
+    for (const style of newState.styles) {
+        for (const prefix of style.prefixes) {
+            stylePrefixes.push({prefix, style});
+        }
+    }
+    if (newState.defaultStyleId) {
+        const hasDefault = newState.styles.find(s => (s.id === newState.defaultStyleId));
+        if (!hasDefault) newState.defaultStyleId = null;
+    }
     let linesCounter = 0;
     const rawLines = newState.text ? newState.text.split('\n') : [];
     newState.lines = rawLines.map((rawText, rawIndex) => {
         const ignorePrefix = newState.ignoreLinePrefixes.find(pr => rawText.startsWith(pr)) || '';
-        const text = rawText.replace(ignorePrefix, '').trim();
+        const hasStylePrefix = stylePrefixes.find(sp => rawText.startsWith(sp.prefix));
+        const stylePrefix = hasStylePrefix ? hasStylePrefix.prefix : '';
+        const style = hasStylePrefix ? hasStylePrefix.style : null;
+        const text = rawText.replace(ignorePrefix, '').replace(stylePrefix, '').trim();
         const ignore = !!ignorePrefix || !text;
         const index = ignore ? 0 : ++linesCounter;
-        return {rawText, rawIndex, ignorePrefix, ignore, index, text};
+        return {rawText, rawIndex, ignorePrefix, stylePrefix, style, ignore, index, text};
     });
     newState.lines.lastIndex = linesCounter;
     newState.currentLine = newState.lines[newState.currentLineIndex] || null;
@@ -150,6 +174,13 @@ const reducer = (state, action) => {
     }
     if (thenScroll) {
         scrollToLine(newState.currentLineIndex);
+    }
+    if (thenSelectStyle) {
+        if (newState.currentLine.style) {
+            newState.currentStyleId = newState.currentLine.style.id;
+        } else if (newState.defaultStyleId) {
+            newState.currentStyleId = newState.defaultStyleId;
+        }
     }
     newState.currentStyle = newState.styles.find(s => (s.id === newState.currentStyleId));
     if (!newState.currentStyle) {
