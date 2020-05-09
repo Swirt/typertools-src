@@ -104,18 +104,24 @@
 
 
 .article-format {
+    & > *:first-child {
+        margin-top: 0;
+    }
     H1, H2, H3, H4, H5 {
         margin-bottom: .6em;
         margin-top: 1.2em;
     }
     P {
-        margin-bottom: 1em;
-        margin-top: 0;
+        margin-bottom: 0;
+        margin-top: 1em;
     }
     UL, OL {
         padding-left: 30px;
-        margin-bottom: .6em;
-        margin-top: 0;
+        margin-bottom: 0;
+        margin-top: .6em;
+        & + P {
+            margin-top: .6em;
+        }
     }
     LI + LI {
         margin-top: .3em;

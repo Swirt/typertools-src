@@ -13,7 +13,7 @@ const TextBlock = React.memo(function TextBlock() {
     const [focused, setFocused] = React.useState(false);
     React.useEffect(resizeTextArea);
     React.useEffect(() => {
-        scrollToLine(context.state.currentLineIndex, 600);
+        scrollToLine(context.state.currentLineIndex, 1000);
     }, []);
     return (
         <React.Fragment>

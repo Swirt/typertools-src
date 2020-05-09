@@ -84,7 +84,8 @@ const createTextLayerInSelection = (text, style, callback) => {
     }
     const data = JSON.stringify({text, style});
     csInterface.evalScript('createTextLayerInSelection(' + data + ')', error => {
-        if (error) nativeAlert(locale.errorNoSelection, locale.errorTitle, true);
+        if (error === 'smallSelection') nativeAlert(locale.errorSmallSelection, locale.errorTitle, true);
+        else if (error) nativeAlert(locale.errorNoSelection, locale.errorTitle, true);
         callback(!error);
     });
 }

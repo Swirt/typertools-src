@@ -83,12 +83,21 @@ function setActiveLayerText(data) {
 }
 
 
-function _hasSelection() {
+function _noSelection() {
     try {
         var bounds = activeDocument.selection.bounds;
-        return !!bounds
+        if (!bounds) {
+            return 'noSelection';
+        }
+        var width = Number(bounds[2]) - Number(bounds[0]);
+        var height = Number(bounds[3]) - Number(bounds[1]);
+        if (width * height < 200) {
+            return 'smallSelection';
+        } else {
+            return '';
+        }
     } catch (error) {
-        return false;
+        return 'noSelection';
     }
 }
 
@@ -113,8 +122,8 @@ function _getSelectionRegion(fixed) {
     }
 }
 
-function _fitTextLayerSizeToSelection(selFixed) {
-    var region = _getSelectionRegion(selFixed);
+function _fitTextLayerSizeToSelection(fixed) {
+    var region = _getSelectionRegion(fixed);
     var textItem = activeDocument.activeLayer.textItem;
     if (textItem.kind !== TextType.PARAGRAPHTEXT) {
         textItem.kind = TextType.PARAGRAPHTEXT;
@@ -161,8 +170,8 @@ function alignTextLayerToSelection() {
         return 'doc';
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
         return 'layer';
-    } else if (!_hasSelection()) {
-        return 'selection';
+    } else if (_noSelection()) {
+        return _noSelection();
     }
     _fitTextLayerSizeToSelection();
     _alignToSelectionAction();
@@ -189,14 +198,14 @@ function _createTextLayerAction() {
     return newLayer;
 }
 
-function createTextLayerInSelection(textAndStyle) {
+function createTextLayerInSelection(data) {
     if (!documents.length) {
         return 'doc';
-    } else if (!_hasSelection()) {
-        return 'selection';
+    } else if (_noSelection()) {
+        return _noSelection();
     }
     _createTextLayerAction();
-    setActiveLayerText(textAndStyle);
+    setActiveLayerText(data);
     _fitTextLayerSizeToSelection(true);
     _alignToSelectionAction();
     return '';

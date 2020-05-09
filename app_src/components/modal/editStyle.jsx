@@ -64,11 +64,6 @@ const EditStyleModal = React.memo(function EditStyleModal() {
         setEdited(true);
     };
 
-    const toggleColorPicker = e => {
-        e.preventDefault();
-        setColorPickerOpen(!colorPickerOpen);
-    };
-
     const saveStyle = e => {
         e.preventDefault();
         if (!name || !textProps) {
@@ -173,17 +168,14 @@ const EditStyleModal = React.memo(function EditStyleModal() {
                                                     disableAlpha={true}
                                                     color={prefixColor} 
                                                     onChange={changePrefixColor}
-                                                    presetColors={['#FFA6A4', '#FDD4BB', '#FFF3B0', '#B4E4BA', '#BEDADC', '#C2F2FF', '#C3C9FF', '#EED5FF']}
+                                                    presetColors={['#FFA6A4', '#FDD4BB', '#FFF3B0', '#CDFDD3', '#BEDADC', '#C2F2FF', '#C3C9FF', '#F6D5FF']}
                                                 />
                                             </React.Fragment>
                                         )}
-                                        <button type="button" className="topcoat-button--large" onClick={toggleColorPicker}>
-                                            <div className="color-sample">
-                                                <div style={{background: prefixColor}}></div>
-                                                <span>{prefixColor}</span>
-                                            </div> 
-                                            {locale.editStylePrefixColorButton}
-                                        </button>
+                                        <div className="style-edit-color-sample" title={locale.editStylePrefixColorButton} onClick={() => setColorPickerOpen(true)}>
+                                            <div style={{background: prefixColor}}></div>
+                                            <span>{prefixColor}</span>
+                                        </div> 
                                     </div>
                                 </div>
                             </div>
