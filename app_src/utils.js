@@ -137,6 +137,60 @@ const getStyleObject = textStyle => {
     return styleObj;
 }
 
+const getDefaultStyle = () => {
+    return {
+        "layerText": {
+            "textGridding":"none",
+            "orientation":"horizontal",
+            "antiAlias":"antiAliasCrisp",
+            "textStyleRange":[{
+                "from":0,
+                "to":100,
+                "textStyle":{
+                    "fontPostScriptName":"Tahoma",
+                    "fontName":"Tahoma",
+                    "fontStyleName":"Regular",
+                    "fontScript":0,
+                    "fontTechnology":1,
+                    "fontAvailable":true,
+                    "size":18,
+                    "impliedFontSize":18,
+                    "horizontalScale":100,
+                    "verticalScale":100,
+                    "autoLeading":true,
+                    "tracking":0,
+                    "baselineShift":0,
+                    "impliedBaselineShift":0,
+                    "autoKern":"metricsKern",
+                    "fontCaps":"normal",
+                    "digitSet":"defaultDigits",
+                    "markYDistFromBaseline":100,
+                    "otbaseline":"normal",
+                    "ligature":false,
+                    "altligature":false,
+                    "connectionForms":false,
+                    "contextualLigatures":false,
+                    "baselineDirection":"withStream",
+                    "color":{"red":0,"green":0,"blue":0}
+                }
+            }],
+            "paragraphStyleRange":[{
+                "from":0,
+                "to":100,
+                "paragraphStyle":{
+                    "burasagari":"burasagariNone",
+                    "singleWordJustification":"justifyAll",
+                    "justificationMethodType":"justifMethodAutomatic",
+                    "textEveryLineComposer":false,
+                    "alignment":"center",
+                    "hangingRoman":true
+                }
+            }]
+        },
+        "typeUnit":"pixelsUnit"
+    };
+};
+
 export {
     locale, 
     openUrl, 
@@ -153,5 +207,6 @@ export {
     resizeTextArea, 
     scrollToLine, 
     rgbToHex, 
-    getStyleObject
+    getStyleObject,
+    getDefaultStyle
 };

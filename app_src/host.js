@@ -23,7 +23,12 @@ function nativeConfirm(data) {
 function getUserFonts() {
     var fontNamesArr = [];
     for (var i = 0; i < app.fonts.length; i++) {
-        fontNamesArr.push(app.fonts[i].name);
+        fontNamesArr.push({
+            name: app.fonts[i].name,
+            postScriptName: app.fonts[i].postScriptName,
+            family: app.fonts[i].family,
+            style: app.fonts[i].style
+        });
     }
     return jamJSON.stringify({
         fonts: fontNamesArr
@@ -125,13 +130,11 @@ function _getSelectionRegion(fixed) {
 function _fitTextLayerSizeToSelection(fixed) {
     var region = _getSelectionRegion(fixed);
     var textItem = activeDocument.activeLayer.textItem;
-    if (textItem.kind !== TextType.PARAGRAPHTEXT) {
-        textItem.kind = TextType.PARAGRAPHTEXT;
-    }
+    textItem.kind = TextType.PARAGRAPHTEXT;
     textItem.width = region.width * 0.8;
-    textItem.height = region.height * 10;
+    textItem.height = region.height * 5;
     var textProps = jamText.getLayerText();
-    textItem.height = textProps.layerText.boundingBox.bottom;
+    textItem.height = textProps.layerText.boundingBox.bottom + 2;
     return '';
 }
 
@@ -185,20 +188,19 @@ function _createTextLayerAction() {
     var idMk = charIDToTypeID( "Mk  " );
     var idnull = charIDToTypeID( "null" );
     var idLyr = charIDToTypeID( "Lyr " );
-    var idLyrI = charIDToTypeID( "LyrI" );
     ref.putClass( idLyr );
     desc.putReference( idnull, ref );
-    desc.putInteger( idLyrI, 3 );
     executeAction( idMk, desc, DialogModes.NO );
     // convert to text
-    var newLayer = activeDocument.activeLayer;
     var region = _getSelectionRegion();
+    var newLayer = activeDocument.activeLayer;
     newLayer.kind = LayerKind.TEXT;
-    if (region) activeDocument.selection.select(region);
+    activeDocument.selection.select(region);
     return newLayer;
 }
 
 function createTextLayerInSelection(data) {
+    var t1 = Date.now();
     if (!documents.length) {
         return 'doc';
     } else if (_noSelection()) {
@@ -208,5 +210,6 @@ function createTextLayerInSelection(data) {
     setActiveLayerText(data);
     _fitTextLayerSizeToSelection(true);
     _alignToSelectionAction();
+    alert(Date.now() - t1);
     return '';
 }

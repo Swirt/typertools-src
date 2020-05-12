@@ -42,7 +42,7 @@ const SettingsModal = React.memo(function SettingsModal() {
                 id: defaultStyleId
             });
         }
-        setEdited(false);
+        context.dispatch({type: 'setModal'});
     };
 
     const importSettings = () => {

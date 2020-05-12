@@ -50,6 +50,12 @@
     padding: 4px 10px;
 }
 
+.sketch-picker {
+    INPUT + SPAN {
+        width: 80%;
+    }
+}
+
 
 .link {
     text-decoration: underline;
