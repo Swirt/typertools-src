@@ -15,6 +15,7 @@ const initialState = {
     currentLineIndex: 0,
     currentStyle: null,
     currentStyleId: null,
+    currentFontSize: 14,
     ignoreLinePrefixes: ['##'],
     defaultStyleId: null,
     modalType: null,
@@ -84,6 +85,11 @@ const reducer = (state, action) => {
 
         case 'setCurrentStyleId': {
             newState.currentStyleId = action.id;
+            break;
+        }
+
+        case 'setCurrentFontSize': {
+            newState.currentFontSize = action.size;
             break;
         }
 

@@ -1,12 +1,13 @@
+import _ from 'lodash';
 import React from 'react';
 
 import {createTextLayerInSelection, alignTextLayerToSelection, getHotkeyPressed} from './utils';
 import {useContext} from './context';
 
 
-const intervalTime = 150;
-let kayboardInterval = 0;
 const repeatTime = 2000;
+const intervalTime = 120;
+let kayboardInterval = 0;
 let canRepeat = true;
 let keyUp = true;
 
@@ -29,8 +30,10 @@ const HotkeysListner = React.memo(function HotkeysListner() {
     const checkState = state => {
         if (state === 'metaCtrl') {
             if (!checkRepeatTime()) return;
-            const line = context.state.currentLine || {};
-            createTextLayerInSelection((line.text || ''), context.state.currentStyle, ok => {
+            const line = context.state.currentLine || {text: ''};
+            const resizedStyle = context.state.currentStyle ? _.cloneDeep(context.state.currentStyle) : null;
+            if (resizedStyle) resizedStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+            createTextLayerInSelection(line.text, resizedStyle, ok => {
                 if (ok) context.dispatch({type: 'nextLine'});
             });
         } else if (state === 'metaAlt') {

@@ -130,12 +130,36 @@ function _getSelectionRegion(fixed) {
 function _fitTextLayerSizeToSelection(fixed) {
     var region = _getSelectionRegion(fixed);
     var textItem = activeDocument.activeLayer.textItem;
+    var factor = _getTransformFactorAction() * (72 / activeDocument.resolution);
     textItem.kind = TextType.PARAGRAPHTEXT;
-    textItem.width = region.width * 0.8;
-    textItem.height = region.height * 5;
+    textItem.height = (region.height * 5) * factor;
+    textItem.width = (region.width * 0.8) * factor;
     var textProps = jamText.getLayerText();
-    textItem.height = textProps.layerText.boundingBox.bottom + 2;
+    textItem.height = (textProps.layerText.boundingBox.bottom + 2) * factor;
     return '';
+}
+
+
+function _getTransformFactorAction() {
+    var ref = new ActionReference();
+    var idLyr = charIDToTypeID( "Lyr " );
+    var idOrdn = charIDToTypeID( "Ordn" );
+    var idTrgt = charIDToTypeID( "Trgt" );
+    var idTextKey = stringIDToTypeID('textKey');
+    var idTextStyleRange = stringIDToTypeID('textStyleRange');
+    var idTextStyle = stringIDToTypeID('textStyle');
+    var idSize = stringIDToTypeID('size');
+    var idTransform = stringIDToTypeID('transform');
+    var idYy = stringIDToTypeID("yy");
+    ref.putEnumerated(idLyr, idOrdn, idTrgt);
+    var desc = executeActionGet(ref).getObjectValue(idTextKey);
+    var textSize = desc.getList(idTextStyleRange).getObjectValue(0).getObjectValue(idTextStyle).getDouble(idSize);
+    if (desc.hasKey(idTransform)) {
+        var mFactor = desc.getObjectValue(idTransform).getUnitDoubleValue(idYy);
+        return mFactor;
+    }  else {
+        return 1;
+    }
 }
 
 function _alignToSelectionAction() {
@@ -200,7 +224,7 @@ function _createTextLayerAction() {
 }
 
 function createTextLayerInSelection(data) {
-    var t1 = Date.now();
+    app.preferences.rulerUnits = Units.PIXELS; 
     if (!documents.length) {
         return 'doc';
     } else if (_noSelection()) {
@@ -210,6 +234,5 @@ function createTextLayerInSelection(data) {
     setActiveLayerText(data);
     _fitTextLayerSizeToSelection(true);
     _alignToSelectionAction();
-    alert(Date.now() - t1);
     return '';
 }
