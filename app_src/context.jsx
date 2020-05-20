@@ -58,6 +58,7 @@ const reducer = (state, action) => {
         }
 
         case 'prevLine': {
+            if (!state.text) break;
             let newIndex = state.currentLineIndex;
             for (let i = newIndex - 1; i >= 0; i--) {
                 if (!state.lines[i].ignore) {
@@ -71,6 +72,7 @@ const reducer = (state, action) => {
         }
 
         case 'nextLine': {
+            if (!state.text) break;
             let newIndex = state.currentLineIndex;
             for (let i = newIndex + 1; i < state.lines.length; i++) {
                 if (!state.lines[i].ignore) {
@@ -167,7 +169,7 @@ const reducer = (state, action) => {
     });
     newState.lines.lastIndex = linesCounter;
     newState.currentLine = newState.lines[newState.currentLineIndex] || null;
-    if (!newState.currentLine) {
+    if (!newState.currentLine || newState.currentLine.ignore) {
         let newIndex = 0;
         for (let line of newState.lines) {
             if (!line.ignore) {

@@ -59,9 +59,9 @@
     transition: opacity .2s linear;
     line-height: 16px;
     flex-grow: 2;
-    opacity: .7;
+    opacity: .5;
     .preview-current:hover & {
-        opacity: 1;
+        opacity: .8;
     }
 }
 .preview-line-style-name {
