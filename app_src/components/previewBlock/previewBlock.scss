@@ -45,7 +45,6 @@
     border-bottom: 1px solid rgba(#fff, .12);
     background: rgba(#fff, .06);
     padding: 2px 4px 2px 8px;
-    font-size: 12px;
     flex: 0 0 auto;
     display: flex;
     align-items: center;
@@ -58,8 +57,12 @@
 .preview-line-info-text {
     transition: opacity .2s linear;
     line-height: 16px;
+    font-size: 11px;
     flex-grow: 2;
     opacity: .5;
+    & > B {
+        font-size: 12px;
+    }
     .preview-current:hover & {
         opacity: .8;
     }
@@ -70,7 +73,7 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    max-width: 75px;
+    max-width: 86px;
 }
 .preview-line-info-color {
     box-shadow: 0 0 4px 1px rgba(#000, .4);
@@ -104,9 +107,9 @@
         text-align: center;
         line-height: 12px;
         font-size: 12px;
-        padding: 0 4px;
-        margin: 0 4px;
-        width: 30px;
+        padding: 0 2px;
+        margin: 0 3px;
+        width: 26px;
         &::-webkit-inner-spin-button, 
         &::-webkit-outer-spin-button { 
             -webkit-appearance: none;

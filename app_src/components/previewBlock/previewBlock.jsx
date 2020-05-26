@@ -19,17 +19,23 @@ const PreviewBlock = React.memo(function PreviewBlock() {
     const sizeInputRef = React.useRef();
 
     const createLayer = () => {
-        const resizedStyle = context.state.currentStyle ? _.cloneDeep(style) : null;
-        if (resizedStyle) resizedStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
-        createTextLayerInSelection((line.text || ''), resizedStyle, ok => {
+        let lineStyle = context.state.currentStyle;
+        if (lineStyle && context.state.currentFontSize) {
+            lineStyle = _.cloneDeep(lineStyle);
+            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+        }
+        createTextLayerInSelection((line.text || ''), lineStyle, ok => {
             if (ok) context.dispatch({type: 'nextLine'});
         });
     };
 
     const insertStyledText = () => {
-        const resizedStyle = context.state.currentStyle ? _.cloneDeep(style) : null;
-        if (resizedStyle) resizedStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
-        setActiveLayerText((line.text || ''), resizedStyle)
+        let lineStyle = context.state.currentStyle;
+        if (lineStyle && context.state.currentFontSize) {
+            lineStyle = _.cloneDeep(lineStyle);
+            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+        }
+        setActiveLayerText((line.text || ''), lineStyle);
     };
 
     const currentLineClick = () => {
@@ -38,15 +44,17 @@ const PreviewBlock = React.memo(function PreviewBlock() {
     };
 
     const setCurrentSize = size => {
+        const currentSize = context.state.currentFontSize || textStyle.size || 14;
         if (size === '+1') {
-            size = context.state.currentFontSize + 1;
-            context.dispatch({type: 'setCurrentFontSize', size});
+            size = currentSize + 1;
         } else if (size === '-1') {
-            size = (context.state.currentFontSize > 1) ? (context.state.currentFontSize - 1) : size;
-            context.dispatch({type: 'setCurrentFontSize', size});
+            size = (currentSize > 1) ? (currentSize - 1) : size;
+        } else if (size === '') {
+            size = null;
         } else {
-            context.dispatch({type: 'setCurrentFontSize', size: Number(size) || 14});
+            size = Number(size) || null;
         }
+        context.dispatch({type: 'setCurrentFontSize', size});
     };
 
     React.useEffect(() => {
@@ -85,7 +93,8 @@ const PreviewBlock = React.memo(function PreviewBlock() {
                                 <input 
                                     min={1} 
                                     type="number" 
-                                    value={context.state.currentFontSize} 
+                                    placeholder={textStyle.size || ''}
+                                    value={context.state.currentFontSize || ''} 
                                     onChange={e => setCurrentSize(e.target.value)} 
                                     className="topcoat-text-input"
                                     ref={sizeInputRef}

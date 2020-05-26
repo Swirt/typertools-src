@@ -191,6 +191,9 @@ const getDefaultStyle = () => {
     };
 };
 
+const keyInterests = [{"keyCode": 27}];
+csInterface.registerKeyEventsInterest(JSON.stringify(keyInterests));
+
 export {
     locale, 
     openUrl, 

@@ -224,7 +224,6 @@ function _createTextLayerAction() {
 }
 
 function createTextLayerInSelection(data) {
-    app.preferences.rulerUnits = Units.PIXELS; 
     if (!documents.length) {
         return 'doc';
     } else if (_noSelection()) {

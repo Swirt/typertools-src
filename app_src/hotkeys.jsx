@@ -31,9 +31,12 @@ const HotkeysListner = React.memo(function HotkeysListner() {
         if (state === 'metaCtrl') {
             if (!checkRepeatTime()) return;
             const line = context.state.currentLine || {text: ''};
-            const resizedStyle = context.state.currentStyle ? _.cloneDeep(context.state.currentStyle) : null;
-            if (resizedStyle) resizedStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
-            createTextLayerInSelection(line.text, resizedStyle, ok => {
+            let style = context.state.currentStyle;
+            if (style && context.state.currentFontSize) {
+                style = _.cloneDeep(style);
+                style.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+            }
+            createTextLayerInSelection(line.text, style, ok => {
                 if (ok) context.dispatch({type: 'nextLine'});
             });
         } else if (state === 'metaAlt') {
@@ -48,6 +51,15 @@ const HotkeysListner = React.memo(function HotkeysListner() {
     kayboardInterval = setInterval(() => {
         getHotkeyPressed(checkState);
     }, intervalTime);
+
+    document.onkeydown = e => {
+        if (e.key === "Escape") {
+            if (context.state.modalType) {
+                context.dispatch({type: 'setModal'});
+            }
+        }
+    };
+
     return <React.Fragment />;
 });
 

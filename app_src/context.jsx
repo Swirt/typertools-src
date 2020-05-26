@@ -15,7 +15,7 @@ const initialState = {
     currentLineIndex: 0,
     currentStyle: null,
     currentStyleId: null,
-    currentFontSize: 14,
+    currentFontSize: null,
     ignoreLinePrefixes: ['##'],
     defaultStyleId: null,
     modalType: null,
