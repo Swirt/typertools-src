@@ -1,6 +1,7 @@
 const config = {
     appTitle: 'Typer Tools',
-    appVersion: '0.7.0',
+    appVersion: '1.0.0',
+    appUrl: 'https://swirt.github.io/typertools/',
     authorName: 'Swirt',
     authorUrl: 'https://telegram.me/swirt',
     exportFileName: 'typerToolsExport',

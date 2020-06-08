@@ -1,4 +1,5 @@
-$name = "typertools"
+$version = Read-Host -Prompt 'Version'
+$name = "typertools-$version"
 
 if (Test-Path .\\$name.zip) {
     Remove-Item .\\$name.zip -force

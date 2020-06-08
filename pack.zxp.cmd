@@ -1,22 +1,24 @@
 TITLE Typer Tools Pack
 
-SET name=typertools
+set /p version=Version: 
+SET name=typertools-%version%
+SET tmpDir=tmpPackDir
 SET sert=selfDB.p12
 SET pass=12345
 
 del %sert%
 del %name%.zxp
-rmdir %name% /S/Q
+rmdir %tmpDir% /S/Q
 
-xcopy app %name%\app\ /E/Y/C
-xcopy CSXS %name%\CSXS\ /E/Y/C
-xcopy icons %name%\icons\ /E/Y/C
-xcopy locale %name%\locale\ /E/Y/C
+xcopy app %tmpDir%\app\ /E/Y/C
+xcopy CSXS %tmpDir%\CSXS\ /E/Y/C
+xcopy icons %tmpDir%\icons\ /E/Y/C
+xcopy locale %tmpDir%\locale\ /E/Y/C
 
 ZXPSignCmd -selfSignedCert RU SPB 34squad "34th squad" %pass% %sert%
-ZXPSignCmd -sign %name% %name%.zxp %sert% %pass% -tsa http://timestamp.digicert.com/
+ZXPSignCmd -sign %tmpDir% %name%.zxp %sert% %pass% -tsa http://timestamp.digicert.com/
 
-rmdir %name% /S/Q
+rmdir %tmpDir% /S/Q
 del %sert%
 del .rnd
 

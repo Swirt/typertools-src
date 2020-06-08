@@ -1,7 +1,7 @@
 @echo off
-echo Установка расширения для Фотошопа Typer Tools v0.7.0
+echo Photoshop extension Typer Tools v1.0.0 will be installed.
 echo.
-echo Закройте Фотошоп, если он открыт.
+echo Close Photoshop (if it is open).
 echo.
 PAUSE
 
@@ -29,8 +29,8 @@ if exist __storage (
 )
 
 echo. & echo.
-echo Установка завершена
-echo Запустите Фотошоп и выберите в меню [Окно] ^> [Расширения] ^> [Typer Tools]
+echo Installation completed.
+echo Open Photoshop and in the upper menu click the following: [Window] ^> [Extensions] ^> [Typer Tools]
 echo.
 
 PAUSE
