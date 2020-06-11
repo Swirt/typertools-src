@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import {createTextLayerInSelection, alignTextLayerToSelection, getHotkeyPressed} from './utils';
+import { setActiveLayerText, createTextLayerInSelection, alignTextLayerToSelection, getHotkeyPressed} from './utils';
 import {useContext} from './context';
 
 
@@ -37,6 +37,17 @@ const HotkeysListner = React.memo(function HotkeysListner() {
                 style.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
             }
             createTextLayerInSelection(line.text, style, ok => {
+                if (ok) context.dispatch({type: 'nextLine'});
+            });
+        } else if (state === 'metaShift') {   
+            if (!checkRepeatTime()) return;
+            const line = context.state.currentLine || {text: ''};
+            let style = context.state.currentStyle;
+            if (style && context.state.currentFontSize) {
+                style = _.cloneDeep(style);
+                style.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+            }
+            setActiveLayerText(line.text, style, ok => {
                 if (ok) context.dispatch({type: 'nextLine'});
             });
         } else if (state === 'metaAlt') {

@@ -35,7 +35,9 @@ const PreviewBlock = React.memo(function PreviewBlock() {
             lineStyle = _.cloneDeep(lineStyle);
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
         }
-        setActiveLayerText((line.text || ''), lineStyle);
+        setActiveLayerText((line.text || ''), lineStyle, ok => {
+            if (ok) context.dispatch({type: 'nextLine'});
+        });
     };
 
     const currentLineClick = () => {

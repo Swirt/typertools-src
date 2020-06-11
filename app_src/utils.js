@@ -66,17 +66,20 @@ const getActiveLayerText = callback => {
     });
 };
 
-const setActiveLayerText = (text, style) => {
+const setActiveLayerText = (text, style, callback=()=>{}) => {
     if (!text && !style) {
-        return nativeAlert(locale.errorNoTextNoStyle, locale.errorTitle, true);
+        nativeAlert(locale.errorNoTextNoStyle, locale.errorTitle, true);
+        callback(false);
+        return false;
     }
     const data = JSON.stringify({text, style});
     csInterface.evalScript('setActiveLayerText(' + data + ')', error => {
         if (error) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
+        callback(!error);
     });
 };
 
-const createTextLayerInSelection = (text, style, callback) => {
+const createTextLayerInSelection = (text, style, callback=()=>{}) => {
     if (!text && !style) {
         nativeAlert(locale.errorNoTextNoStyle, locale.errorTitle, true);
         callback(false);

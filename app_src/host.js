@@ -41,6 +41,8 @@ function getHotkeyPressed() {
         return 'metaCtrl';
     } else if (state.metaKey && state.altKey) {
         return 'metaAlt';
+    } else if (state.metaKey && state.shiftKey) {
+        return 'metaShift';
     } else {
         return '';
     }
@@ -94,8 +96,8 @@ function _noSelection() {
         if (!bounds) {
             return 'noSelection';
         }
-        var width = Number(bounds[2]) - Number(bounds[0]);
-        var height = Number(bounds[3]) - Number(bounds[1]);
+        var width = bounds[2].as('px') - bounds[0].as('px');
+        var height = bounds[3].as('px') - bounds[1].as('px');
         if (width * height < 200) {
             return 'smallSelection';
         } else {
@@ -110,14 +112,17 @@ function _getSelectionRegion(fixed) {
     try {
         if (!fixed) activeDocument.selection.smooth(5);
         var bounds = activeDocument.selection.bounds;
-        var width = Number(bounds[2]) - Number(bounds[0]);
-        var height = Number(bounds[3]) - Number(bounds[1]);
+        for (var i = 0; i < bounds.length; i++) {
+            bounds[i] = bounds[i].as('px');
+        }
+        var width = bounds[2] - bounds[0];
+        var height = bounds[3] - bounds[1];
         var region = [
-            [Number(bounds[0]), Number(bounds[1])],
-            [Number(bounds[0]) + width, Number(bounds[1])],
-            [Number(bounds[0]) + width, Number(bounds[1]) + height],
-            [Number(bounds[0]), Number(bounds[1]) + height],
-            [Number(bounds[0]), Number(bounds[1])]
+            [bounds[0], bounds[1]],
+            [bounds[0] + width, bounds[1]],
+            [bounds[0] + width, bounds[1] + height],
+            [bounds[0], bounds[1] + height],
+            [bounds[0], bounds[1]]
         ];
         region.width = width;
         region.height = height;
@@ -193,6 +198,8 @@ function _alignToSelectionAction() {
 }
 
 function alignTextLayerToSelection() {
+    var oldUnits = preferences.rulerUnits;
+    preferences.rulerUnits = Units.PIXELS;
     if (!documents.length) {
         return 'doc';
     } else if (activeDocument.activeLayer.kind != LayerKind.TEXT) {
@@ -202,6 +209,7 @@ function alignTextLayerToSelection() {
     }
     _fitTextLayerSizeToSelection();
     _alignToSelectionAction();
+    preferences.rulerUnits = oldUnits;
     return '';
 }
 
@@ -224,6 +232,8 @@ function _createTextLayerAction() {
 }
 
 function createTextLayerInSelection(data) {
+    var oldUnits = preferences.rulerUnits;
+    preferences.rulerUnits = Units.PIXELS;
     if (!documents.length) {
         return 'doc';
     } else if (_noSelection()) {
@@ -233,5 +243,6 @@ function createTextLayerInSelection(data) {
     setActiveLayerText(data);
     _fitTextLayerSizeToSelection(true);
     _alignToSelectionAction();
+    preferences.rulerUnits = oldUnits;
     return '';
 }
