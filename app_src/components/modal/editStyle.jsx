@@ -210,7 +210,11 @@ const StyleDetails = React.memo(function StyleDetails(props) {
     const fonts = getUserFonts();
     const textStyle = props.textProps.layerText.textStyleRange[0].textStyle;
     const paragStyle = props.textProps.layerText.paragraphStyleRange[0].paragraphStyle;
-    const currentFont = fonts.find(font => (font.postScriptName === textStyle.fontPostScriptName));
+    const currentFont = fonts.find(font => (font.postScriptName === textStyle.fontPostScriptName)) || {
+        family: '[' + (textStyle.fontName || 'none') + ']', 
+        style: '[' + (textStyle.fontStyleName || 'none') + ']', 
+        notFound: true
+    };
 
     const [family, setFamily] = React.useState(currentFont.family || '');
     const [colorPickerOpen, setColorPickerOpen] = React.useState(false);
@@ -223,12 +227,14 @@ const StyleDetails = React.memo(function StyleDetails(props) {
 
     const changeFamily = familyName => {
         const font = fonts.find(font => (font.family === familyName));
+        if (!font) return false;
         setFamily(familyName);
         changeFont(font);
     };
 
     const changeFontStyle = style => {
         const font = fonts.find(font => (font.style === style));
+        if (!font) return false;
         changeFont(font);
     };
 
@@ -282,11 +288,17 @@ const StyleDetails = React.memo(function StyleDetails(props) {
         <div className="style-edit-props">
             <div className="style-edit-props-row">
                 <select value={family} onChange={e => changeFamily(e.target.value)} className="topcoat-textarea">
+                    {currentFont.notFound && (
+                        <option key={currentFont.family} value={currentFont.family}>{currentFont.family}</option>
+                    )}
                     {families.map(familyName => (
                         <option key={familyName} value={familyName}>{familyName}</option>
                     ))}
                 </select>
                 <select value={textStyle.fontStyleName} onChange={e => changeFontStyle(e.target.value)} className="topcoat-textarea style-edit-font-style">
+                    {currentFont.notFound && (
+                        <option key={currentFont.style} value={currentFont.style}>{currentFont.style}</option>
+                    )}
                     {familyFonts.map(font => (
                         <option key={font.style} value={font.style}>{font.style}</option>
                     ))}
