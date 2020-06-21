@@ -48,7 +48,6 @@ function getHotkeyPressed() {
     }
 }
 
-
 function getActiveLayerText() {
     if (!documents.length) {
         return '';
@@ -89,7 +88,6 @@ function setActiveLayerText(data) {
     return '';
 }
 
-
 function _noSelection() {
     try {
         var bounds = activeDocument.selection.bounds;
@@ -98,6 +96,7 @@ function _noSelection() {
         }
         var width = bounds[2].as('px') - bounds[0].as('px');
         var height = bounds[3].as('px') - bounds[1].as('px');
+
         if (width * height < 200) {
             return 'smallSelection';
         } else {
@@ -231,18 +230,209 @@ function _createTextLayerAction() {
     return newLayer;
 }
 
+var charID = {
+    Bottom : 1114926957, // 'Btom'
+    By : 1115234336, // 'By  '
+    Contract : 1131312227, // 'Cntc'
+    Document : 1147366766, // 'Dcmn'
+    Expand : 1165521006, // 'Expn'
+    FrameSelect : 1718838636, // 'fsel'
+    Horizontal : 1215461998, // 'Hrzn'
+    Layer : 1283027488, // 'Lyr '
+    Left : 1281713780, // 'Left'
+    Move : 1836021349, // 'move'
+    Null : 1853189228, // 'null'
+    Offset : 1332114292, // 'Ofst'
+    Ordinal : 1332896878, // 'Ordn'
+    PixelUnit : 592476268, // '#Pxl'
+    Point : 1349415968, // 'Pnt '
+    Property : 1349677170, // 'Prpr'
+    Right : 1382508660, // 'Rght'
+    Set : 1936028772, // 'setd'
+    Target : 1416783732, // 'Trgt'
+    Text : 1417180192, // 'Txt '
+    TextLayer : 1417170034, // 'TxLr'
+    TextShapeType : 1413830740, // 'TEXT'
+    To : 1411391520, // 'T   '
+    Top : 1416589344, // 'Top '
+    Vertical : 1450341475, // 'Vrtc'
+};
+
+function changeToPointText() {
+    var reference = new ActionReference();
+    reference.putProperty(charID.Property, charID.TextShapeType);
+    reference.putEnumerated(charID.TextLayer, charID.Ordinal, charID.Target);
+    
+    var descriptor = new ActionDescriptor();
+    descriptor.putReference(charID.Null, reference);
+    descriptor.putEnumerated(charID.To, charID.TextShapeType, charID.Point);
+    
+    executeAction(charID.Set, descriptor, DialogModes.NO);
+}
+
+function convertPointToPercentage(x, y) {
+    return [x / parseInt(activeDocument.width) * 100, y / parseInt(activeDocument.height) * 100];
+}
+
+function convertPixelToPoint(value) {
+    return parseInt(value) / activeDocument.resolution * 72;
+}
+
+function createCurrent(target, id) 
+{
+    var reference = new ActionReference();
+    
+    if ( id > 0) 
+    {
+        reference.putProperty(charID.Property, id);
+    }
+
+    reference.putEnumerated(target, charID.Ordinal, charID.Target);
+    
+    return reference;
+}
+
+function getCurrent(target, id)
+{
+    return  executeActionGet(createCurrent(target, id));
+}
+
+function getBoundsFromDescriptor(bounds)
+{
+    var top = bounds.getInteger(charID.Top);
+    var left = bounds.getInteger(charID.Left);
+    var right = bounds.getInteger(charID.Right);
+    var bottom = bounds.getInteger(charID.Bottom);
+    
+    return {left: left,
+                 top: top,
+                 right: right,
+                 bottom: bottom,
+                 width: right - left,
+                 height: bottom - top,
+                 xMid: (left + right) / 2,
+                 yMid: (top + bottom) / 2};
+}
+
+function getCurrentSelectionBounds()
+{
+    var doc = getCurrent(charID.Document, charID.FrameSelect);
+
+    if (doc.hasKey(charID.FrameSelect))
+    {
+        var bounds = doc.getObjectValue(charID.FrameSelect);
+        return getBoundsFromDescriptor(bounds);
+    }    
+}
+
+function getCurrentTextLayerBounds() 
+{
+    var layer = getCurrent(charID.Layer, charID.Text);
+    var boundsID = stringIDToTypeID("bounds");
+    
+    if (layer.hasKey(charID.Text)) 
+    {
+        var bounds = getCurrent(charID.Layer, boundsID).getObjectValue(boundsID);
+        
+        return getBoundsFromDescriptor(bounds);
+    }
+}
+
+function modifySelectionBounds(amount) {
+    if (amount == 0) return;
+    
+    var size = new ActionDescriptor();
+        size.putUnitDouble(charID.By, charID.PixelUnit, Math.abs(amount));
+    
+    executeAction(amount > 0 ? charID.Expand : charID.Contract, size, DialogModes.NO);
+}
+
+function moveLayer(layer, offsetX, offsetY)
+{
+    var amount = new ActionDescriptor();
+    amount.putUnitDouble(charID.Horizontal, charID.PixelUnit, offsetX);
+    amount.putUnitDouble(charID.Vertical, charID.PixelUnit, offsetY);
+    
+    var target = new ActionDescriptor();
+    target.putReference(charID.Null, layer);
+    target.putObject(charID.To, charID.Offset, amount);
+    
+    executeAction(charID.Move, target, DialogModes.NO);
+}
+
+function createAndSetLayerText(data, box)
+{
+    data.style.textProps.layerText.textKey = data.text.replace(/\n+/gi, '');
+    data.style.textProps.layerText.textStyleRange[0].to = data.text.length;
+    data.style.textProps.layerText.paragraphStyleRange[0].to = data.text.length;
+    data.style.textProps.layerText.textShape = box;
+
+    var layerText = data.style.textProps;
+
+    jamEngine.jsonPlay(
+        "make",
+        {
+            "target": [ "<reference>", [ [ "textLayer", [ "<class>", null ] ] ] ],
+            "using": jamText.toLayerTextObject (layerText)
+        }
+    )
+}
+
 function createTextLayerInSelection(data) {
-    var oldUnits = preferences.rulerUnits;
-    preferences.rulerUnits = Units.PIXELS;
     if (!documents.length) {
         return 'doc';
-    } else if (_noSelection()) {
-        return _noSelection();
     }
-    _createTextLayerAction();
-    setActiveLayerText(data);
-    _fitTextLayerSizeToSelection(true);
-    _alignToSelectionAction();
-    preferences.rulerUnits = oldUnits;
+
+    var selection = getCurrentSelectionBounds();
+
+    if (selection === undefined) {
+        return 'noSelection';
+    }
+    
+    modifySelectionBounds(-10); // remove the 'tail' on speech bubbles
+
+    selection = getCurrentSelectionBounds();
+
+    if (selection === undefined) { // check one more time after contracting
+        return 'noSelection';
+    } else if (selection.width * selection.height < 200) {
+        return 'smallSelection';
+    }
+
+    var width = selection.width * .8;
+    var height = selection.height * 15;
+
+    // preemptively create the text box for the text, using the width to bound it
+    box = [
+        {
+            "textType": "box",
+            "orientation": "horizontal",
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "bottom": convertPixelToPoint(height),
+                "right" : convertPixelToPoint(width)
+            }
+        }
+    ];
+
+    createAndSetLayerText(data, box);
+
+    // personally, i'm a bigger fan of point text rather than a text box
+    // if you don't go this route, you'd need to adjust the bounds of the text box
+    // to fit the text tighter since the height is quite a bit larger.
+    // if the height is inadequate to fit the text in the text box, text will get truncated
+    // when converting to point text, that's why the height is set so much larger.
+    // also, this does break your "paste text to current layer" a bit, since it's no longer a
+    // textbox, it would be possible to convert the layer back to a textbox prior to applying
+    changeToPointText();
+
+    // it's worth noting that the bounds retrieved here are the bounds of the text
+    // rather than the text box(if it's still a text box) so it will do a good job
+    // of giving you the midpoint of the actual text
+    var bounds = getCurrentTextLayerBounds();
+    // you could align, but offsetting the text layer by the difference of the midpoints does the same thing in one action
+    moveLayer(createCurrent(charID.Layer), selection.xMid - bounds.xMid, selection.yMid - bounds.yMid);
+
     return '';
 }

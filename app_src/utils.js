@@ -145,7 +145,7 @@ const getDefaultStyle = () => {
         "layerText": {
             "textGridding":"none",
             "orientation":"horizontal",
-            "antiAlias":"antiAliasCrisp",
+            "antiAlias":"antiAliasSmooth",
             "textStyleRange":[{
                 "from":0,
                 "to":100,
@@ -186,7 +186,8 @@ const getDefaultStyle = () => {
                     "justificationMethodType":"justifMethodAutomatic",
                     "textEveryLineComposer":false,
                     "alignment":"center",
-                    "hangingRoman":true
+                    "hangingRoman":true,
+                    "hyphenate": true
                 }
             }]
         },
