@@ -8,7 +8,6 @@ $.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/lib/jam/jamSt
 $.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/lib/jam/jamUtils-min.jsxinc');
 */
 
-
 function nativeAlert(data) {
     if (!data) return '';
     alert(data.text, data.title, data.isError);
@@ -360,50 +359,12 @@ function moveLayer(layer, offsetX, offsetY)
     executeAction(charID.Move, target, DialogModes.NO);
 }
 
-function createAndSetLayerText(data, box)
+function createAndSetLayerText(data, width, height)
 {
     data.style.textProps.layerText.textKey = data.text.replace(/\n+/gi, '');
     data.style.textProps.layerText.textStyleRange[0].to = data.text.length;
     data.style.textProps.layerText.paragraphStyleRange[0].to = data.text.length;
-    data.style.textProps.layerText.textShape = box;
-
-    var layerText = data.style.textProps;
-
-    jamEngine.jsonPlay(
-        "make",
-        {
-            "target": [ "<reference>", [ [ "textLayer", [ "<class>", null ] ] ] ],
-            "using": jamText.toLayerTextObject (layerText)
-        }
-    )
-}
-
-function createTextLayerInSelection(data) {
-    if (!documents.length) {
-        return 'doc';
-    }
-
-    var selection = getCurrentSelectionBounds();
-
-    if (selection === undefined) {
-        return 'noSelection';
-    }
-    
-    modifySelectionBounds(-10); // remove the 'tail' on speech bubbles
-
-    selection = getCurrentSelectionBounds();
-
-    if (selection === undefined) { // check one more time after contracting
-        return 'noSelection';
-    } else if (selection.width * selection.height < 200) {
-        return 'smallSelection';
-    }
-
-    var width = selection.width * .8;
-    var height = selection.height * 15;
-
-    // preemptively create the text box for the text, using the width to bound it
-    box = [
+    data.style.textProps.layerText.textShape = [
         {
             "textType": "box",
             "orientation": "horizontal",
@@ -416,23 +377,94 @@ function createTextLayerInSelection(data) {
         }
     ];
 
-    createAndSetLayerText(data, box);
+    var layerText = data.style.textProps;
 
-    // personally, i'm a bigger fan of point text rather than a text box
-    // if you don't go this route, you'd need to adjust the bounds of the text box
-    // to fit the text tighter since the height is quite a bit larger.
-    // if the height is inadequate to fit the text in the text box, text will get truncated
-    // when converting to point text, that's why the height is set so much larger.
-    // also, this does break your "paste text to current layer" a bit, since it's no longer a
-    // textbox, it would be possible to convert the layer back to a textbox prior to applying
-    changeToPointText();
+    jamEngine.jsonPlay(
+        "make",
+        {
+            "target": [ "<reference>", [ [ "textLayer", [ "<class>", null ] ] ] ],
+            "using": jamText.toLayerTextObject (layerText)
+        }
+    )
+}
+
+// evidently you can't pass class variables with suspendHistory, only simple ones
+// so a global variable seems to be necessary
+var currentTextLayerData;
+// suspendHistory also doesn't return a result, so unfortunately it seems necessary
+// to create a global variable for that as well
+var createTextLayerInSelectionResult;
+
+// just throwing this in here if you decide to actually make it a setting
+var useTextBox = true;
+
+function createTextLayerAction() {
+    if (!documents.length) {
+        createTextLayerInSelectionResult = 'doc';
+        return;
+    }
+
+    var selection = getCurrentSelectionBounds();
+
+    if (selection === undefined) {
+        createTextLayerInSelectionResult = 'noSelection';
+        return;
+    }
+    
+    // remove the 'tail' on speech bubbles, you might want to make this some kind of
+    // option or remove it. I generally use it since i'd expect the user to be using a
+    // magic want selection. For other
+    modifySelectionBounds(-10); 
+
+    selection = getCurrentSelectionBounds();
+
+    if (selection === undefined) { // check one more time after contracting
+        createTextLayerInSelectionResult = 'noSelection';
+        return;
+    } else if (selection.width * selection.height < 200) {
+        createTextLayerInSelectionResult = 'smallSelection';
+        return;
+    }
+
+    // 90% is probably fine with the selection being contracted by 10px
+    var width = selection.width * .9;
+    var height = selection.height * 15;
+    
+    createAndSetLayerText(currentTextLayerData, width, height);
+    
+    var bounds = getCurrentTextLayerBounds();
+
+    if (useTextBox) {
+        // i'll probably look at how to set this with action manager eventually.
+        // it took ~80ms vs ~30ms for the changeToPoint. would think there would be
+        // some decent gains from setting via action manager rather than DOM
+        activeDocument.activeLayer.textItem.height = bounds.height + 2;
+    } else {
+        // personally, i'm a bigger fan of point text rather than a text box
+        // if you don't go this route, you'd need to adjust the bounds of the text box
+        // to fit the text tighter since the height is quite a bit larger.
+        // if the height is inadequate to fit the text in the text box, text will get truncated
+        // when converting to point text, that's why the height is set so much larger.
+        // also, this does break your "paste text to current layer" a bit, since it's no longer a
+        // textbox, it would be possible to convert the layer back to a textbox prior to applying
+        changeToPointText();
+    }
 
     // it's worth noting that the bounds retrieved here are the bounds of the text
     // rather than the text box(if it's still a text box) so it will do a good job
     // of giving you the midpoint of the actual text
-    var bounds = getCurrentTextLayerBounds();
-    // you could align, but offsetting the text layer by the difference of the midpoints does the same thing in one action
-    moveLayer(createCurrent(charID.Layer), selection.xMid - bounds.xMid, selection.yMid - bounds.yMid);
+    var offsetx = selection.xMid - bounds.xMid;
+    var offsety = selection.yMid - bounds.yMid;
 
-    return '';
+    // you could align, but offsetting the text layer by the difference of the midpoints does the same thing in one action
+    moveLayer(createCurrent(charID.Layer), offsetx, offsety);
+
+    createTextLayerInSelectionResult = '';
+}
+
+function createTextLayerInSelection(data) {
+    currentTextLayerData = data;
+    app.activeDocument.suspendHistory('Create Text Layer', 'createTextLayerAction()');
+    
+    return createTextLayerInSelectionResult;
 }
