@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { setActiveLayerText, createTextLayerInSelection, alignTextLayerToSelection, getHotkeyPressed} from './utils';
+import {csInterface, setActiveLayerText, createTextLayerInSelection, alignTextLayerToSelection, getHotkeyPressed} from './utils';
 import {useContext} from './context';
 
 
 const repeatTime = 2000;
 const intervalTime = 120;
-let kayboardInterval = 0;
+let keyboardInterval = 0;
 let canRepeat = true;
 let keyUp = true;
 
@@ -58,8 +58,8 @@ const HotkeysListner = React.memo(function HotkeysListner() {
         }
     };
 
-    clearInterval(kayboardInterval);
-    kayboardInterval = setInterval(() => {
+    clearInterval(keyboardInterval);
+    keyboardInterval = setInterval(() => {
         getHotkeyPressed(checkState);
     }, intervalTime);
 
@@ -70,6 +70,11 @@ const HotkeysListner = React.memo(function HotkeysListner() {
             }
         }
     };
+
+    React.useEffect(() => {
+        const keyInterests = [{"keyCode": 27}];
+        csInterface.registerKeyEventsInterest(JSON.stringify(keyInterests));
+    }, []);
 
     return <React.Fragment />;
 });

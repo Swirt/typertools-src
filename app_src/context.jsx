@@ -4,7 +4,7 @@ import {readStorage, writeToStorage, scrollToLine} from './utils';
 
 
 const storage = readStorage();
-const storeFields = ['notFirstTime', 'text', 'styles', 'currentLineIndex', 'currentStyleId', 'ignoreLinePrefixes', 'defaultStyleId'];
+const storeFields = ['notFirstTime', 'text', 'styles', 'currentLineIndex', 'currentStyleId', 'pastePointText', 'ignoreLinePrefixes', 'defaultStyleId'];
 
 const initialState = {
     notFirstTime: false,
@@ -16,6 +16,7 @@ const initialState = {
     currentStyle: null,
     currentStyleId: null,
     currentFontSize: null,
+    pastePointText: false,
     ignoreLinePrefixes: ['##'],
     defaultStyleId: null,
     modalType: null,
@@ -135,6 +136,11 @@ const reducer = (state, action) => {
 
         case 'setDeaultStyleId': {
             newState.defaultStyleId = action.id || null;
+            break;
+        }
+
+        case 'setPastePointText': {
+            newState.pastePointText = !!action.isPoint;
             break;
         }
 

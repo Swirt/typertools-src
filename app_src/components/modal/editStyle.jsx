@@ -266,8 +266,9 @@ const StyleDetails = React.memo(function StyleDetails(props) {
     const changeLeading = val => {
         const newProps = _.cloneDeep(props.textProps);
         const newStyle = newProps.layerText.textStyleRange[0].textStyle;
-        newStyle.autoLeading = val ? null : true;
-        newStyle.leading = val ? val : null;
+        newStyle.autoLeading = !val;
+        if (val) newStyle.leading = val;
+        else delete newStyle.leading;
         props.setTextProps(newProps);
     };
 
@@ -379,8 +380,9 @@ const StyleDetails = React.memo(function StyleDetails(props) {
                         <option value="antiAliasCrisp">{locale.editStyleAACrisp}</option>
                         <option value="antiAliasStrong">{locale.editStyleAAStrong}</option>
                         <option value="antiAliasSmooth">{locale.editStyleAASmooth}</option>
-                        <option value="antiAliasPlatformLCD">{locale.editStyleAAPlatformLCD}</option>
-                        <option value="antiAliasPlatformGray">{locale.editStyleAAPlatformGray}</option>
+                        {['antiAliasPlatformLCD', 'antiAliasPlatformGray'].includes(props.textProps.layerText.antiAlias) && (
+                            <option value={props.textProps.layerText.antiAlias}>{locale.editStyleAAOther}</option>
+                        )}
                     </select>
                 </div>
                 <div className="style-edit-props-col m-justify">

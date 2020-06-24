@@ -79,14 +79,14 @@ const setActiveLayerText = (text, style, callback=()=>{}) => {
     });
 };
 
-const createTextLayerInSelection = (text, style, callback=()=>{}) => {
+const createTextLayerInSelection = (text, style, pointText, callback=()=>{}) => {
     if (!text && !style) {
         nativeAlert(locale.errorNoTextNoStyle, locale.errorTitle, true);
         callback(false);
         return false;
     }
     const data = JSON.stringify({text, style});
-    csInterface.evalScript('createTextLayerInSelection(' + data + ')', error => {
+    csInterface.evalScript('createTextLayerInSelection(' + data + ', ' + !!pointText + ')', error => {
         if (error === 'smallSelection') nativeAlert(locale.errorSmallSelection, locale.errorTitle, true);
         else if (error) nativeAlert(locale.errorNoSelection, locale.errorTitle, true);
         callback(!error);
@@ -95,7 +95,9 @@ const createTextLayerInSelection = (text, style, callback=()=>{}) => {
 
 const alignTextLayerToSelection = () => {
     csInterface.evalScript('alignTextLayerToSelection()', error => {
-        if (error) nativeAlert(locale.errorNoSelection, locale.errorTitle, true);
+        if (error === 'smallSelection') nativeAlert(locale.errorSmallSelection, locale.errorTitle, true);
+        else if (error === 'noSelection') nativeAlert(locale.errorNoSelection, locale.errorTitle, true);
+        else if (error) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
     });
 }
 
@@ -195,10 +197,8 @@ const getDefaultStyle = () => {
     };
 };
 
-const keyInterests = [{"keyCode": 27}];
-csInterface.registerKeyEventsInterest(JSON.stringify(keyInterests));
-
 export {
+    csInterface,
     locale, 
     openUrl, 
     readStorage, 

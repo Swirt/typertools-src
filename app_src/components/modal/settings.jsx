@@ -10,12 +10,18 @@ import {useContext} from '../../context';
 
 const SettingsModal = React.memo(function SettingsModal() {
     const context = useContext();
+    const [pastePointText, setPastePointText] = React.useState(context.state.pastePointText ? '1' : '');
     const [ignoreLinePrefixes, setIgnoreLinePrefixes] = React.useState(context.state.ignoreLinePrefixes.join(' '));
     const [defaultStyleId, setDefaultStyleId] = React.useState(context.state.defaultStyleId || '');
     const [edited, setEdited] = React.useState(false);
 
     const close = () => {
         context.dispatch({type: 'setModal'});
+    };
+
+    const changePastePointText = e => {
+        setPastePointText(e.target.value);
+        setEdited(true);
     };
 
     const changeLinePrefixes = e => {
@@ -30,6 +36,12 @@ const SettingsModal = React.memo(function SettingsModal() {
 
     const save = e => {
         e.preventDefault();
+        if (pastePointText !== context.state.pastePointText) {
+            context.dispatch({
+                type: 'setPastePointText',
+                isPoint: !!pastePointText
+            });
+        }
         if (ignoreLinePrefixes !== context.state.ignoreLinePrefixes.join(' ')) {
             context.dispatch({
                 type: 'setIgnoreLinePrefixes',
@@ -71,6 +83,7 @@ const SettingsModal = React.memo(function SettingsModal() {
         window.cep.fs.writeFile(pathSelect.data, JSON.stringify({
             ignoreLinePrefixes: context.state.ignoreLinePrefixes,
             defaultStyleId: context.state.defaultStyleId,
+            textItemKind: context.state.setTextItemKind,
             styles: context.state.styles
         }));
     };
@@ -89,6 +102,22 @@ const SettingsModal = React.memo(function SettingsModal() {
                 <div className="app-modal-body-inner">
                     <form className="fields" onSubmit={save}>
                         <div className="field">
+                            <div className="field-label">
+                                {locale.settingsTextItemKindLabel}
+                            </div>
+                            <div className="field-input">
+                                <select 
+                                    value={pastePointText} 
+                                    onChange={changePastePointText}
+                                    className="topcoat-textarea"
+                                >
+                                    <option value="">{locale.settingsTextItemKindBox}</option>
+                                    <option value="1">{locale.settingsTextItemKindPoint}</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div className="field hostBrdTopContrast">
                             <div className="field-label">
                                 {locale.settingsLinePrefixesLabel}
                             </div>

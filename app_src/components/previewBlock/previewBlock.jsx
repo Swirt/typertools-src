@@ -24,7 +24,8 @@ const PreviewBlock = React.memo(function PreviewBlock() {
             lineStyle = _.cloneDeep(lineStyle);
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
         }
-        createTextLayerInSelection((line.text || ''), lineStyle, ok => {
+        const pointText = context.state.pastePointText;
+        createTextLayerInSelection((line.text || ''), lineStyle, pointText, ok => {
             if (ok) context.dispatch({type: 'nextLine'});
         });
     };
