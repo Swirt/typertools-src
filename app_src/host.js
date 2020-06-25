@@ -8,7 +8,7 @@ $.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/lib/jam/jamSt
 $.evalFile(Folder.userData + '/Adobe/CEP/extensions/typertools/app/lib/jam/jamUtils-min.jsxinc');
 */
 
-/* globals app, documents, activeDocument, ScriptUI, DialogModes, LayerKind, ActionReference, ActionDescriptor, executeAction, executeActionGet, jamEngine, jamJSON, jamText */
+/* globals app, documents, activeDocument, ScriptUI, DialogModes, LayerKind, ActionReference, ActionDescriptor, executeAction, executeActionGet, stringIDToTypeID, jamEngine, jamJSON, jamText */
 
 
 var charID = {
@@ -41,14 +41,6 @@ var charID = {
     Vertical: 1450341475, // 'Vrtc'
 };
 
-var stringID = {
-    Bounds: 1484, // 'bounds'
-    Box: 2440, // 'box'
-    TextKey: 1417180192, // 'textKey'
-    TextShape: 1470, // 'textShape'
-    TextType: 1413830740, // 'textType'
-};
-
 
 function _changeToPointText() {
     var reference = new ActionReference();
@@ -67,7 +59,7 @@ function _changeToBoxText() {
     reference.putEnumerated(charID.TextLayer, charID.Ordinal, charID.Target);
     var descriptor = new ActionDescriptor();
     descriptor.putReference(charID.Null, reference);
-    descriptor.putEnumerated(charID.To, charID.TextShapeType, stringID.Box);
+    descriptor.putEnumerated(charID.To, charID.TextShapeType, stringIDToTypeID('box'));
     executeAction(charID.Set, descriptor, DialogModes.NO);
 }
 
@@ -79,8 +71,8 @@ function _layerIsTextLayer() {
 
 
 function _textLayerIsPointText() {
-    var textKey = _getCurrent(charID.Layer, stringID.TextKey).getObjectValue(stringID.TextKey);
-    var textType = textKey.getList(stringID.TextShape).getObjectValue(0).getEnumerationValue(stringID.TextType);
+    var textKey = _getCurrent(charID.Layer, charID.Text).getObjectValue(charID.Text);
+    var textType = textKey.getList(stringIDToTypeID('textShape')).getObjectValue(0).getEnumerationValue(charID.TextShapeType);
     return (textType === charID.Point);
 }
 
@@ -141,7 +133,8 @@ function _getCurrentSelectionBounds() {
 
 
 function _getCurrentTextLayerBounds() {
-    var bounds = _getCurrent(charID.Layer, stringID.Bounds).getObjectValue(stringID.Bounds);
+    var boundsTypeId = stringIDToTypeID('bounds');
+    var bounds = _getCurrent(charID.Layer, boundsTypeId).getObjectValue(boundsTypeId);
     return _getBoundsFromDescriptor(bounds);
 }
 
