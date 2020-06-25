@@ -12,8 +12,8 @@ import {useContext} from '../../context';
 
 const PreviewBlock = React.memo(function PreviewBlock() {
     const context = useContext();
-    const line = context.state.currentLine || {};
     const style = context.state.currentStyle || {};
+    const line = context.state.currentLine || {text: ''};
     const textStyle = style.textProps?.layerText.textStyleRange[0].textStyle || {};
     const styleObject = getStyleObject(textStyle);
     const sizeInputRef = React.useRef();
@@ -25,7 +25,7 @@ const PreviewBlock = React.memo(function PreviewBlock() {
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
         }
         const pointText = context.state.pastePointText;
-        createTextLayerInSelection((line.text || ''), lineStyle, pointText, ok => {
+        createTextLayerInSelection(line.text, lineStyle, pointText, ok => {
             if (ok) context.dispatch({type: 'nextLine'});
         });
     };
@@ -36,12 +36,13 @@ const PreviewBlock = React.memo(function PreviewBlock() {
             lineStyle = _.cloneDeep(lineStyle);
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
         }
-        setActiveLayerText((line.text || ''), lineStyle, ok => {
+        setActiveLayerText(line.text, lineStyle, ok => {
             if (ok) context.dispatch({type: 'nextLine'});
         });
     };
 
     const currentLineClick = () => {
+        if (line.rawIndex === void 0) return;
         scrollToLine(line.rawIndex);
         sizeInputRef.current.focus();
     };

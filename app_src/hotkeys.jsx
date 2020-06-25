@@ -6,7 +6,7 @@ import {useContext} from './context';
 
 
 const repeatTime = 2000;
-const intervalTime = 120;
+const intervalTime = 100;
 let keyboardInterval = 0;
 let canRepeat = true;
 let keyUp = true;
@@ -36,10 +36,11 @@ const HotkeysListner = React.memo(function HotkeysListner() {
                 style = _.cloneDeep(style);
                 style.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
             }
-            createTextLayerInSelection(line.text, style, ok => {
+            const pointText = context.state.pastePointText;
+            createTextLayerInSelection(line.text, style, pointText, ok => {
                 if (ok) context.dispatch({type: 'nextLine'});
             });
-        } else if (state === 'metaShift') {   
+        } else if (state === 'metaShift') {
             if (!checkRepeatTime()) return;
             const line = context.state.currentLine || {text: ''};
             let style = context.state.currentStyle;
