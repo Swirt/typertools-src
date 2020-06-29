@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="6.0" ExtensionBundleId="com.swirt.tools" ExtensionBundleVersion="0.1" ExtensionBundleName="Swirt Tools">
     <ExtensionList>
-        <Extension Id="typertools" Version="1.3.0" />
+        <Extension Id="typertools" Version="1.3.1" />
     </ExtensionList>
     <ExecutionEnvironment>
         <HostList>

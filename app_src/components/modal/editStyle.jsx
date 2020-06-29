@@ -272,6 +272,14 @@ const StyleDetails = React.memo(function StyleDetails(props) {
         props.setTextProps(newProps);
     };
 
+    const changeAutoleading = val => {
+        const newProps = _.cloneDeep(props.textProps);
+        const newStyle = newProps.layerText.paragraphStyleRange[0].paragraphStyle;
+        if (val) newStyle.autoLeadingPercentage = val / 100;
+        else newStyle.autoLeadingPercentage = 1.2;
+        props.setTextProps(newProps);
+    };
+
     const changeColor = rgb => {
         const newProps = _.cloneDeep(props.textProps);
         const newStyle = newProps.layerText.textStyleRange[0].textStyle;
@@ -317,6 +325,13 @@ const StyleDetails = React.memo(function StyleDetails(props) {
                     <span className="style-edit-props-unit">{unit}</span>
                 </div>
             </div>
+            {!textStyle.leading && (
+                <div className="style-edit-props-row m-autoleading">
+                    <div className="style-edit-props-label">{locale.editStyleAutoleading}:</div>
+                    <input type="number" min={0} placeholder="120" value={paragStyle.autoLeadingPercentage ? parseInt(paragStyle.autoLeadingPercentage * 100) : 120} onChange={e => changeAutoleading(Number(e.target.value))} className="topcoat-text-input--large" />
+                    <span className="style-edit-props-unit">%</span>
+                </div>
+            )}
             <div className="style-edit-props-row">
                 <div className="style-edit-props-col">
                     <div className="style-edit-props-icon" title={locale.editStyleAutoKern}><GrMonospace size={24} /></div>
