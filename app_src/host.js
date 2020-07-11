@@ -371,39 +371,95 @@ function _changeActiveLayerTextSizeFull() {
         changeActiveLayerTextSizeResult = '';
         return;
     }
-    var oldTextParams = jamText.getLayerText();
-    var text = oldTextParams.layerText.textKey.replace(/\n+/g, '');
-    if (!text) {
-        changeActiveLayerTextSizeResult = 'layer';
-        return;
-    }
-    var oldBounds = _getCurrentTextLayerBounds();
-    var isPoint = _textLayerIsPointText();
-    var newTextParams = {
-        typeUnit: oldTextParams.typeUnit,
-        layerText: {
-            textKey: text,
-            textStyleRange: [oldTextParams.layerText.textStyleRange[0]]
-        }
-    };
-    if (oldTextParams.layerText.paragraphStyleRange) {
-        newTextParams.layerText.paragraphStyleRange = [oldTextParams.layerText.paragraphStyleRange[0]];
-        newTextParams.layerText.paragraphStyleRange[0].to = text.length;
-    }
-    var newTextSize = newTextParams.layerText.textStyleRange[0].textStyle.size + changeActiveLayerTextSizeVal;
-    newTextParams.layerText.textStyleRange[0].textStyle.size = newTextSize;
-    newTextParams.layerText.textStyleRange[0].to = text.length;
-    if (!isPoint) {
-        if (changeActiveLayerTextSizeVal > 0) {
-            newTextParams.layerText.textShape = [oldTextParams.layerText.textShape[0]];
-            newTextParams.layerText.textShape[0].bounds.bottom *= 1.2;
+
+    var increasing = changeActiveLayerTextSizeVal > 0;
+
+    var targetLayers = stringIDToTypeID("targetLayers");
+    
+    var selectedLayers = [];
+    var a = new ActionReference();
+    a.putProperty(1349677170, targetLayers);
+    a.putEnumerated(1147366766, 1332896878, 1416783732);
+    var doc = executeActionGet(a);
+    
+    if (doc.hasKey(targetLayers)) {
+        doc = doc.getList(targetLayers);
+        var a = new ActionReference();
+        a.putProperty(1349677170, 1113811815);
+        a.putEnumerated(1283027488, 1332896878, 1113678699);
+        var offset = executeActionGet(a).getBoolean(1113811815) ? 0 : 1;
+    
+        for (var i = 0; i < doc.count; i++) {
+            selectedLayers.push(doc.getReference(i).getIndex() + offset);
         }
     }
-    jamText.setLayerText(newTextParams);
-    var newBounds = _getCurrentTextLayerBounds();
-    var offsetX = oldBounds.xMid - newBounds.xMid;
-    var offsetY = oldBounds.yMid - newBounds.yMid;
-    _moveLayer(offsetX, offsetY);
+
+    function loop(num) {
+        for (var i = 0; i < num; i++) {
+            var a = new ActionDescriptor();
+            var b = new ActionReference();
+            b.putIndex(1283027488, selectedLayers[i]);
+            a.putReference(1853189228, b);
+            executeAction(1936483188, a, DialogModes.NO);
+            main();
+        }
+
+        var a = new ActionReference();
+        for (var i = 0; i < num; i++) a.putIndex(1283027488, selectedLayers[i]);
+        var b = new ActionDescriptor();
+        b.putReference(1853189228, a);
+        executeAction(1936483188, b, DialogModes.NO);
+    }
+
+    function main() {
+        var a = new ActionReference();
+        a.putProperty(1349677170, 1417180192);
+        a.putEnumerated(1283027488, 1332896878, 1416783732);
+        var currentLayer = executeActionGet(a);
+        if (currentLayer.hasKey(1417180192)) {
+            var settings = currentLayer.getObjectValue(1417180192);
+            var textStyleRange = settings.getList(1417180276);
+            var sizes = [];
+            var units = [];
+            var proceed = true;
+            for (var i = 0; i < textStyleRange.count; i++) {
+                var style = textStyleRange.getObjectValue(i).getObjectValue(1417180243);
+        
+                sizes[i] = style.getDouble(1400512544);
+                units[i] = style.getUnitDoubleType(1400512544);
+
+                if (i > 0 && (sizes[i] != sizes[i - 1] || units[i] != units[i - 1])) {
+                    proceed = false;
+                    break;
+                }
+            }
+
+            var amount = 0.2; // mm
+            if (units[0] === 592476268) amount = 1; // pixel
+            else if (units[0] == 592473716) amount = 0.5; // point
+
+            if (!increasing) amount *= -1;
+
+            if (proceed) {
+                var a = new ActionDescriptor();
+                var d = new ActionReference();
+                d.putProperty(1349677170, 1417180243);
+                d.putEnumerated(1417170034, 1332896878, 1416783732);
+                a.putReference(1853189228, d);
+                var e = new ActionDescriptor();
+                e.putUnitDouble(1400512544, units[0], sizes[0] + amount);
+                a.putObject(1411391520, 1417180243, e);
+                executeAction(1936028772, a, DialogModes.NO);
+            }
+        }
+    }
+
+    if (selectedLayers.length > 1) {
+        loop(selectedLayers.length);
+    } else {
+        main();
+    }
+
     changeActiveLayerTextSizeResult = '';
 }
 
