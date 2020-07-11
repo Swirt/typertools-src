@@ -7,11 +7,25 @@
     justify-content: space-between;
     align-items: center;
     display: flex;
-    BUTTON {
+    .preview-top_big-btn {
+        margin-right: 10px;
+        flex-grow: 2;
         width: 50%;
     }
-    BUTTON + BUTTON {
-        margin-left: 10px;
+    .preview-top_change-size-cont {
+        display: flex;
+        BUTTON {
+            border-radius: 0;
+        }
+        BUTTON + BUTTON {
+            margin-left: -1px;
+        }
+        BUTTON:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        BUTTON:last-child {
+            border-radius: 0 4px 4px 0;
+        }
     }
 }
 

@@ -147,12 +147,12 @@ function _modifySelectionBounds(amount) {
 }
 
 
-function _moveLayer(layer, offsetX, offsetY) {
+function _moveLayer(offsetX, offsetY) {
     var amount = new ActionDescriptor();
     amount.putUnitDouble(charID.Horizontal, charID.PixelUnit, offsetX);
     amount.putUnitDouble(charID.Vertical, charID.PixelUnit, offsetY);
     var target = new ActionDescriptor();
-    target.putReference(charID.Null, layer);
+    target.putReference(charID.Null, _createCurrent(charID.Layer));
     target.putObject(charID.To, charID.Offset, amount);
     executeAction(charID.Move, target, DialogModes.NO);
 }
@@ -247,29 +247,45 @@ function _setActiveLayerTextFull() {
                 textKey: dataText.replace(/\n+/g, '')
             }
         }
+        if (oldTextParams.layerText.textStyleRange && oldTextParams.layerText.textStyleRange[0]) {
+            newTextParams.layerText.textStyleRange = [oldTextParams.layerText.textStyleRange[0]];
+            newTextParams.layerText.textStyleRange[0].to = dataText.length;
+        }
+        if (oldTextParams.layerText.paragraphStyleRange && oldTextParams.layerText.paragraphStyleRange[0]) {
+            newTextParams.layerText.paragraphStyleRange = [oldTextParams.layerText.paragraphStyleRange[0]];
+            newTextParams.layerText.paragraphStyleRange[0].to = dataText.length;
+        }
     } else if (dataStyle) {
-        var text = activeDocument.activeLayer.textItem.contents;
+        var text = oldTextParams.layerText.textKey || '';
         newTextParams = dataStyle.textProps;
         newTextParams.layerText.textStyleRange[0].to = text.length;
         newTextParams.layerText.paragraphStyleRange[0].to = text.length;
     }
-    newTextParams.layerText.textShape = oldTextParams.layerText.textShape;
+    newTextParams.layerText.textShape = [oldTextParams.layerText.textShape[0]];
     newTextParams.layerText.textShape[0].bounds.bottom *= 15;
+    newTextParams.typeUnit = oldTextParams.typeUnit;
     jamText.setLayerText(newTextParams);
     var newBounds = _getCurrentTextLayerBounds();
     if (isPoint) {
         _changeToPointText();
     } else {
-        newTextParams.layerText.textShape[0].bounds.bottom = _convertPixelToPoint(newBounds.height + 2);
+        var textSize = 12;
+        if (dataStyle) {
+            textSize = dataStyle.textProps.layerText.textStyleRange[0].textStyle.size;
+        } else if (oldTextParams.layerText.textStyleRange && oldTextParams.layerText.textStyleRange[0]) {
+            textSize = oldTextParams.layerText.textStyleRange[0].textStyle.size;
+        }
+        newTextParams.layerText.textShape[0].bounds.bottom = _convertPixelToPoint(newBounds.height + textSize + 2);
         jamText.setLayerText({
             layerText: {
                 textShape: newTextParams.layerText.textShape
             }
         });
     }
+    if (!oldBounds.bottom) oldBounds = newBounds;
     var offsetX = oldBounds.xMid - newBounds.xMid;
     var offsetY = oldBounds.yMid - newBounds.yMid;
-    _moveLayer(_createCurrent(charID.Layer), offsetX, offsetY);
+    _moveLayer(offsetX, offsetY);
     setActiveLayerTextResult = '';
 }
 
@@ -295,11 +311,13 @@ function _createTextLayerInSelectionFull() {
     if (createTextLayerInSelectionPoint) {
         _changeToPointText();
     } else {
-        _setTextBoxSize(width, bounds.height + 2);
+        var textParams = jamText.getLayerText();
+        var textSize = textParams.layerText.textStyleRange[0].textStyle.size;
+        _setTextBoxSize(width, bounds.height + textSize + 2);
     }
     var offsetX = selection.xMid - bounds.xMid;
     var offsetY = selection.yMid - bounds.yMid;
-    _moveLayer(_createCurrent(charID.Layer), offsetX, offsetY);
+    _moveLayer(offsetX, offsetY);
     createTextLayerInSelectionResult = '';
 }
 
@@ -327,13 +345,66 @@ function _alignTextLayerToSelectionFull() {
     if (isPoint) {
         _changeToPointText();
     } else {
-        _setTextBoxSize(width, bounds.height + 2);
+        var textParams = jamText.getLayerText();
+        var textSize = textParams.layerText.textStyleRange[0].textStyle.size;
+        _setTextBoxSize(width, bounds.height + textSize + 2);
     }
     _deselect();
     var offsetX = selection.xMid - bounds.xMid;
     var offsetY = selection.yMid - bounds.yMid;
-    _moveLayer(_createCurrent(charID.Layer), offsetX, offsetY);
+    _moveLayer(offsetX, offsetY);
     alignTextLayerToSelectionResult = '';
+}
+
+
+var changeActiveLayerTextSizeVal;
+var changeActiveLayerTextSizeResult;
+
+function _changeActiveLayerTextSizeFull() {
+    if (!documents.length) {
+        changeActiveLayerTextSizeResult = 'doc';
+        return;
+    } else if (!_layerIsTextLayer()) {
+        changeActiveLayerTextSizeResult = 'layer';
+        return;
+    } else if (!changeActiveLayerTextSizeVal) {
+        changeActiveLayerTextSizeResult = '';
+        return;
+    }
+    var oldTextParams = jamText.getLayerText();
+    var text = oldTextParams.layerText.textKey.replace(/\n+/g, '');
+    if (!text) {
+        changeActiveLayerTextSizeResult = 'layer';
+        return;
+    }
+    var oldBounds = _getCurrentTextLayerBounds();
+    var isPoint = _textLayerIsPointText();
+    var newTextParams = {
+        typeUnit: oldTextParams.typeUnit,
+        layerText: {
+            textKey: text,
+            textStyleRange: [oldTextParams.layerText.textStyleRange[0]]
+        }
+    };
+    if (oldTextParams.layerText.paragraphStyleRange) {
+        newTextParams.layerText.paragraphStyleRange = [oldTextParams.layerText.paragraphStyleRange[0]];
+        newTextParams.layerText.paragraphStyleRange[0].to = text.length;
+    }
+    var newTextSize = newTextParams.layerText.textStyleRange[0].textStyle.size + changeActiveLayerTextSizeVal;
+    newTextParams.layerText.textStyleRange[0].textStyle.size = newTextSize;
+    newTextParams.layerText.textStyleRange[0].to = text.length;
+    if (!isPoint) {
+        if (changeActiveLayerTextSizeVal > 0) {
+            newTextParams.layerText.textShape = [oldTextParams.layerText.textShape[0]];
+            newTextParams.layerText.textShape[0].bounds.bottom *= 1.2;
+        }
+    }
+    jamText.setLayerText(newTextParams);
+    var newBounds = _getCurrentTextLayerBounds();
+    var offsetX = oldBounds.xMid - newBounds.xMid;
+    var offsetY = oldBounds.yMid - newBounds.yMid;
+    _moveLayer(offsetX, offsetY);
+    changeActiveLayerTextSizeResult = '';
 }
 
 
@@ -417,4 +488,11 @@ function createTextLayerInSelection(data, point) {
 function alignTextLayerToSelection() {
     app.activeDocument.suspendHistory('TyperTools Align', '_alignTextLayerToSelectionFull()');
     return alignTextLayerToSelectionResult;
+}
+
+
+function changeActiveLayerTextSize(val) {
+    changeActiveLayerTextSizeVal = val;
+    app.activeDocument.suspendHistory('TyperTools Resize', '_changeActiveLayerTextSizeFull()');
+    return changeActiveLayerTextSizeResult;
 }

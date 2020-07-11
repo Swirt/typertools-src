@@ -6,7 +6,7 @@ import {FiArrowRightCircle, FiPlusCircle, FiMinusCircle, FiArrowUp, FiArrowDown}
 import {AiOutlineBorderInner} from "react-icons/ai";
 import {MdCenterFocusWeak} from "react-icons/md";
 
-import {locale, setActiveLayerText, createTextLayerInSelection, alignTextLayerToSelection, getStyleObject, scrollToLine} from '../../utils';
+import {locale, setActiveLayerText, createTextLayerInSelection, alignTextLayerToSelection, changeActiveLayerTextSize, getStyleObject, scrollToLine} from '../../utils';
 import {useContext} from '../../context';
 
 
@@ -68,12 +68,20 @@ const PreviewBlock = React.memo(function PreviewBlock() {
     return (
         <React.Fragment>
             <div className="preview-top">
-                <button className="topcoat-button--large--cta" title={locale.createLayerDescr} onClick={createLayer}>
+                <button className="preview-top_big-btn topcoat-button--large--cta" title={locale.createLayerDescr} onClick={createLayer}>
                     <AiOutlineBorderInner size={18} /> {locale.createLayer}
                 </button>
-                <button className="topcoat-button--large" title={locale.alignLayerDescr} onClick={() => alignTextLayerToSelection()}>
+                <button className="preview-top_big-btn topcoat-button--large" title={locale.alignLayerDescr} onClick={() => alignTextLayerToSelection()}>
                     <MdCenterFocusWeak size={18} /> {locale.alignLayer}
                 </button>
+                <div className="preview-top_change-size-cont">
+                    <button className="topcoat-icon-button--large" title={locale.layerTextSizeMinus} onClick={() => changeActiveLayerTextSize(-1)}>
+                        <FiMinusCircle size={18} />
+                    </button>
+                    <button className="topcoat-icon-button--large" title={locale.layerTextSizePlus} onClick={() => changeActiveLayerTextSize(1)}>
+                        <FiPlusCircle size={18} />
+                    </button>
+                </div>
             </div>
             <div className="preview-bottom">
                 <div className="preview-nav">

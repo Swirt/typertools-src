@@ -101,6 +101,13 @@ const alignTextLayerToSelection = () => {
     });
 }
 
+const changeActiveLayerTextSize = (val, callback=()=>{}) => {
+    csInterface.evalScript('changeActiveLayerTextSize(' + val + ')', error => {
+        if (error) nativeAlert(locale.errorNoTextLayer, locale.errorTitle, true);
+        callback(!error);
+    });
+}
+
 const getHotkeyPressed = callback => {
     csInterface.evalScript('getHotkeyPressed()', callback);
 }
@@ -210,6 +217,7 @@ export {
     setActiveLayerText, 
     createTextLayerInSelection,
     alignTextLayerToSelection,
+    changeActiveLayerTextSize,
     getHotkeyPressed,
     resizeTextArea, 
     scrollToLine, 
