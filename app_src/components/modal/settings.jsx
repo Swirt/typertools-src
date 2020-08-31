@@ -84,7 +84,10 @@ const SettingsModal = React.memo(function SettingsModal() {
             ignoreLinePrefixes: context.state.ignoreLinePrefixes,
             defaultStyleId: context.state.defaultStyleId,
             textItemKind: context.state.setTextItemKind,
-            styles: context.state.styles
+            folders: context.state.folders,
+            styles: context.state.styles,
+            version: config.appVersion,
+            exported: new Date()
         }));
     };
 

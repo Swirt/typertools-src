@@ -87,7 +87,7 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    max-width: 86px;
+    max-width: 82px;
 }
 .preview-line-info-color {
     box-shadow: 0 0 4px 1px rgba(#000, .4);
@@ -100,22 +100,12 @@
     width: 10px;
     top: 1px;
 }
-.preview-line-size {
+.preview-line-scale {
     justify-content: space-between;
     vertical-align: bottom;
     display: inline-flex;
     align-items: center;
-    margin-left: 5px;
-    & > SPAN {
-        height: 16px;
-    }
-    SVG {
-        cursor: pointer;
-        opacity: .4;
-        &:hover {
-            opacity: .8;
-        }
-    }
+    margin-left: 3px;
     INPUT {
         appearance: textfield;
         text-align: center;

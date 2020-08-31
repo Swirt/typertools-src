@@ -55,6 +55,10 @@ function updateThemeWithAppSkinInfo(appSkinInfo) {
     addRule(styleId, ".hostBgdDark", "background-color: #" + darkBgdColor);
     addRule(styleId, ".hostBgdLight", "background-color: #" + lightBgdColor);
 
+    addRule(styleId, ".hostBrd", "border: 1px solid #" + bgdColor);
+    addRule(styleId, ".hostBrdDark", "border: 1px solid #" + darkBgdColor);
+    addRule(styleId, ".hostBrdLight", "border: 1px solid #" + lightBgdColor);
+    addRule(styleId, ".hostBrdContrast", "border: 1px solid rgba(" + (isLight ? "0, 0, 0" : "255, 255, 255") + ", 0.2)");
     addRule(styleId, ".hostBrdTop", "border-top: 1px solid #" + bgdColor);
     addRule(styleId, ".hostBrdTopDark", "border-top: 1px solid #" + darkBgdColor);
     addRule(styleId, ".hostBrdTopLight", "border-top: 1px solid #" + lightBgdColor);

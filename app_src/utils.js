@@ -80,10 +80,13 @@ const setActiveLayerText = (text, style, callback=()=>{}) => {
 };
 
 const createTextLayerInSelection = (text, style, pointText, callback=()=>{}) => {
-    if (!text && !style) {
-        nativeAlert(locale.errorNoTextNoStyle, locale.errorTitle, true);
+    if (!text) {
+        nativeAlert(locale.errorNoText, locale.errorTitle, true);
         callback(false);
         return false;
+    }
+    if (!style) {
+        style = {textProps: getDefaultStyle()};
     }
     const data = JSON.stringify({text, style});
     csInterface.evalScript('createTextLayerInSelection(' + data + ', ' + !!pointText + ')', error => {
@@ -165,8 +168,8 @@ const getDefaultStyle = () => {
                     "fontScript":0,
                     "fontTechnology":1,
                     "fontAvailable":true,
-                    "size":18,
-                    "impliedFontSize":18,
+                    "size":14,
+                    "impliedFontSize":14,
                     "horizontalScale":100,
                     "verticalScale":100,
                     "autoLeading":true,

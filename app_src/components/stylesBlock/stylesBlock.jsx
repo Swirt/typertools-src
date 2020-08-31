@@ -3,8 +3,8 @@ import './stylesBlock.scss';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {ReactSortable} from "react-sortablejs";
-import {FiArrowRightCircle, FiPlus} from "react-icons/fi";
-import {MdEdit} from "react-icons/md";
+import {FiArrowRightCircle, FiPlus, FiFolderPlus, FiChevronDown, FiChevronUp} from "react-icons/fi";
+import {MdEdit, MdLock} from "react-icons/md";
 
 import config from '../../config';
 import {locale, setActiveLayerText, rgbToHex, getStyleObject} from '../../utils';
@@ -13,22 +13,26 @@ import {useContext} from '../../context';
 
 const StylesBlock = React.memo(function StylesBlock() {
     const context = useContext();
-    
+    const unsortedStyles = context.state.styles.filter(s => !s.folder);
     return (
         <React.Fragment>
-            <div className="styles-list-cont">
-                {context.state.styles.length ? (
-                    <ReactSortable className="styles-list" list={context.state.styles} setList={data => context.dispatch({type: 'setStyles', data})}>
-                        {context.state.styles.map(style => (
-                            <StyleItem 
-                                key={style.id} 
-                                active={context.state.currentStyleId === style.id}
-                                selectStyle={() => context.dispatch({type: 'setCurrentStyleId', id: style.id})}
-                                openStyle={() => context.dispatch({type: 'setModal', modal: 'editStyle', data: style})}
-                                style={style}
+            <div className="folders-list">
+                {(context.state.folders.length || context.state.styles.length) ? (
+                    <React.Fragment>
+                        {(unsortedStyles.length > 0) && (
+                            <FolderItem 
+                                data={{name: locale.noFolderTitle}}
                             />
-                        ))}
-                    </ReactSortable >
+                        )}
+                        <ReactSortable className="folders-sortable" list={context.state.folders} setList={data => context.dispatch({type: 'setFolders', data})}>
+                            {context.state.folders.map(folder => (
+                                <FolderItem 
+                                    key={folder.id} 
+                                    data={folder}
+                                />
+                            ))}
+                        </ReactSortable>
+                    </React.Fragment>
                 ) : (
                     <div className="styles-empty">
                         <span>{locale.addStylesHint}</span>
@@ -36,6 +40,9 @@ const StylesBlock = React.memo(function StylesBlock() {
                 )}
             </div>
             <div className="style-add hostBrdTopContrast">
+                <button className="topcoat-button--large" onClick={() => context.dispatch({type: 'setModal', modal: 'editFolder', data: {create: true}})}>
+                    <FiFolderPlus size={18} /> {locale.addFolder}
+                </button>
                 <button className="topcoat-button--large" onClick={() => context.dispatch({type: 'setModal', modal: 'editStyle', data: {create: true}})}>
                     <FiPlus size={18} /> {locale.addStyle}
                 </button>
@@ -43,6 +50,69 @@ const StylesBlock = React.memo(function StylesBlock() {
         </React.Fragment>
     );
 });
+
+
+const FolderItem = React.memo(function FolderItem(props) {
+    const context = useContext();
+    const openFolder = e => {
+        e.stopPropagation();
+        context.dispatch({type: 'setModal', modal: 'editFolder', data: props.data})
+    };
+    const sortFolderStyles = folderStyles => {
+        let styles = props.data.id ? context.state.styles.filter(s => (s.folder !== props.data.id)) : context.state.styles.filter(s => !!s.folder);
+        styles = styles.concat(folderStyles);
+        context.dispatch({type: 'setStyles', data: styles});
+    };
+    const styles = props.data.id ? context.state.styles.filter(s => (s.folder === props.data.id)) : context.state.styles.filter(s => !s.folder);
+    const isOpen = props.data.id ? context.state.openFolders.includes(props.data.id) : context.state.openFolders.includes('unsorted');
+    const hasActive = context.state.currentStyleId ? !!styles.find(s => (s.id === context.state.currentStyleId)) : false;
+    return (
+        <div className={'folder-item hostBrdContrast' + (isOpen ? ' m-open' : '')}>
+            <div className="folder-header" onClick={() => context.dispatch({type: 'toggleFolder', id: props.data.id})}>
+                <div className="folder-marker">
+                    {isOpen ? <FiChevronUp size={18} /> : <FiChevronDown size={18} />}
+                </div>
+                <div className="folder-title">
+                    {hasActive ? <strong>{props.data.name}</strong> : <span>{props.data.name}</span>}
+                    <em className="folder-styles-count">({styles.length})</em>
+                </div>
+                <div className="folder-actions">
+                    {props.data.id ? (
+                        <button className="topcoat-icon-button--large--quiet" title={locale.editFolder} onClick={openFolder}>
+                            <MdEdit size={14} />
+                        </button>
+                    ) : (
+                        <MdLock size={18} className="folder-locked" />
+                    )}
+                </div>
+            </div>
+            {isOpen && (
+                <div className="folder-styles hostBrdTopContrast">
+                    {styles.length ? (
+                        <ReactSortable className="styles-list" list={styles} setList={sortFolderStyles}>
+                            {styles.map(style => (
+                                <StyleItem 
+                                    key={style.id} 
+                                    active={context.state.currentStyleId === style.id}
+                                    selectStyle={() => context.dispatch({type: 'setCurrentStyleId', id: style.id})}
+                                    openStyle={() => context.dispatch({type: 'setModal', modal: 'editStyle', data: style})}
+                                    style={style}
+                                />
+                            ))}
+                        </ReactSortable >
+                    ) : (
+                        <div className="folder-styles-empty">
+                            <span>{locale.noStylesInfolder}</span>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+});
+FolderItem.propTypes = {
+    data: PropTypes.object.isRequired
+};
 
 
 const StyleItem = React.memo(function StyleItem(props) {

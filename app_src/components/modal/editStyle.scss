@@ -49,10 +49,27 @@
     }
     &.m-autoleading {
         position: relative;
+        &:before {
+            border-right: 1px solid rgba(#000, .3);
+            border-left: 1px solid rgba(#000, .3);
+            position: absolute;
+            content: '';
+            height: 10px;
+            width: 1px;
+            right: 70px;
+            top: -10px;
+        }
         .style-edit-props-label {
             text-align: right;
+            font-size: 12px;
+            line-height: 1;
             flex-grow: 2;
-            opacity: .6;
+            opacity: .4;
+            SPAN {
+                display: inline-block;
+                margin-top: -2px;
+                max-width: 100px;
+            }
         }
         INPUT[type=number] {
             width: calc(50% - 37px);

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import {FiCopy, FiX, FiMinus} from "react-icons/fi";
 import {TiSortAlphabetically} from "react-icons/ti";
 import {GiVerticalFlip, GiHorizontalFlip} from "react-icons/gi";
-import {MdDelete, MdSave, MdFormatColorText} from "react-icons/md";
+import {MdDelete, MdCancel, MdSave, MdFormatColorText} from "react-icons/md";
 import {GrSubscript, GrSuperscript, GrBlockQuote, GrMonospace} from "react-icons/gr";
 import {BsTypeBold, BsTypeItalic, BsFonts, BsType, BsTypeUnderline, BsTypeStrikethrough} from "react-icons/bs";
 import {AiOutlineLineHeight, AiOutlineFontSize, AiOutlineColumnHeight, AiOutlineToTop, AiOutlineAlignCenter, AiOutlineAlignLeft, AiOutlineAlignRight} from "react-icons/ai";
@@ -22,6 +22,7 @@ const EditStyleModal = React.memo(function EditStyleModal() {
     const context = useContext();
     const currentData = context.state.modalData;
     const [name, setName] = React.useState(currentData.name || '');
+    const [folder, setFolder] = React.useState(currentData.folder || '');
     const [textProps, setTextProps] = React.useState(currentData.textProps || getDefaultStyle());
     const [prefixes, setPrefixes] = React.useState(currentData.prefixes?.join(' ') || '');
     const [prefixColor, setPrefixColor] = React.useState(currentData.prefixColor || config.defaultPrefixColor);
@@ -35,6 +36,11 @@ const EditStyleModal = React.memo(function EditStyleModal() {
 
     const changeStyleName = e => {
         setName(e.target.value);
+        setEdited(true);
+    };
+
+    const changeStyleFolder = e => {
+        setFolder(e.target.value);
         setEdited(true);
     };
 
@@ -83,7 +89,7 @@ const EditStyleModal = React.memo(function EditStyleModal() {
             nativeAlert(locale.errorStyleCreation, locale.errorTitle, true);
             return false;
         }
-        const data = {name, textProps, prefixes, prefixColor};
+        const data = {name, folder, textProps, prefixes, prefixColor};
         if (currentData.create) {
             data.id = Math.random().toString(36).substr(2, 8);
         } else {
@@ -132,6 +138,19 @@ const EditStyleModal = React.memo(function EditStyleModal() {
                                     onChange={changeStyleName} 
                                     className="topcoat-text-input--large"
                                 />
+                            </div>
+                        </div>
+                        <div className="field hostBrdTopContrast">
+                            <div className="field-label">
+                                {locale.editStyleFolderLabel}
+                            </div>
+                            <div className="field-input">
+                                <select value={folder} onChange={changeStyleFolder} className="topcoat-textarea">
+                                    <option value="">{locale.noFolderTitle}</option>
+                                    {context.state.folders.map(folder => (
+                                        <option key={folder.id} value={folder.id}>{folder.name}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className="field hostBrdTopContrast">
@@ -191,7 +210,11 @@ const EditStyleModal = React.memo(function EditStyleModal() {
                         <button type="submit" className={'style-edit-save ' + (edited ? 'topcoat-button--large--cta' : 'topcoat-button--large')}>
                             <MdSave size={18} /> {locale.save}
                         </button>
-                        {!currentData.create && (
+                        {currentData.create ? (
+                            <button type="button" className="topcoat-button--large--quiet" onClick={close}>
+                                <MdCancel size={18} /> {locale.cancel}
+                            </button>
+                        ) : (
                             <button type="button" className="topcoat-button--large--quiet" onClick={deleteStyle}>
                                 <MdDelete size={18} /> {locale.delete}
                             </button>
@@ -327,7 +350,7 @@ const StyleDetails = React.memo(function StyleDetails(props) {
             </div>
             {!textStyle.leading && (
                 <div className="style-edit-props-row m-autoleading">
-                    <div className="style-edit-props-label">{locale.editStyleAutoleading}:</div>
+                    <div className="style-edit-props-label"><span>{locale.editStyleAutoleading}:</span></div>
                     <input type="number" min={0} placeholder="120" value={paragStyle.autoLeadingPercentage ? parseInt(paragStyle.autoLeadingPercentage * 100) : 120} onChange={e => changeAutoleading(Number(e.target.value))} className="topcoat-text-input--large" />
                     <span className="style-edit-props-unit">%</span>
                 </div>

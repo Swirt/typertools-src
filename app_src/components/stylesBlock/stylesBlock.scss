@@ -4,16 +4,11 @@
     flex-direction: column;
     display: flex;
 }
-.styles-list-cont {
+.folders-list {
     position: relative;
     overflow-y: auto;
     padding: 10px;
     flex-grow: 2;
-}
-.styles-list {
-    justify-content: space-between;
-    flex-wrap: wrap;
-    display: flex;
 }
 .styles-empty {
     display: flex;
@@ -32,21 +27,97 @@
     }
 }
 .style-add  {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     flex: 0 0 auto;
     padding: 10px;
-    & > BUTTON {
-        width: 100%;
+    BUTTON {
+        width: 50%;
+    }
+    BUTTON + BUTTON {
+        margin-left: 8px;
     }
 }
 
 
+.folder-item {
+    background: rgba(#000, .15);
+    margin-bottom: 8px;
+}
+.folder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 4px;
+    opacity: .6;
+    &:hover {
+        outline: 1px solid rgba(#fff, .5);
+        opacity: .8;
+    }
+    .light-theme &:hover {
+        outline: 1px solid rgba(#000, .5);
+    }
+    .folder-item.m-open & {
+        opacity: 1;
+    }
+}
+.folder-marker {
+    flex: 0 0 auto;
+    height: 18px;
+}
+.folder-title {
+    max-width: calc(100% - 50px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    flex-grow: 2;
+    SPAN {
+        opacity: .7;
+    }
+}
+.folder-styles-count {
+    margin-left: 4px;
+    font-size: 12px;
+    opacity: .3;
+}
+.folder-actions {
+    flex: 0 0 auto;
+    width: 18px;
+    BUTTON {
+        height: 18px;
+        width: 18px;
+        padding: 0;
+    }
+}
+.folder-locked {
+    height: 18px;
+    opacity: .3;
+}
+.folder-styles {
+    padding: 6px 4px 2px;
+}
+.folder-styles-empty {
+    padding: 2px 10px 6px;
+    text-align: center;
+    font-size: 14px;
+    opacity: .4;
+}
+
+
+.styles-list {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    display: flex;
+}
 .style-item {
     justify-content: space-between;
     align-items: center;
     display: flex;
     box-sizing: border-box;
     padding: 4px 4px 4px 6px;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     opacity: .8;
     width: 100%;
     cursor: pointer;

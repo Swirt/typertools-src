@@ -16,13 +16,12 @@ const PreviewBlock = React.memo(function PreviewBlock() {
     const line = context.state.currentLine || {text: ''};
     const textStyle = style.textProps?.layerText.textStyleRange[0].textStyle || {};
     const styleObject = getStyleObject(textStyle);
-    const sizeInputRef = React.useRef();
 
     const createLayer = () => {
         let lineStyle = context.state.currentStyle;
-        if (lineStyle && context.state.currentFontSize) {
+        if (lineStyle && context.state.textScale) {
             lineStyle = _.cloneDeep(lineStyle);
-            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
         }
         const pointText = context.state.pastePointText;
         createTextLayerInSelection(line.text, lineStyle, pointText, ok => {
@@ -32,9 +31,9 @@ const PreviewBlock = React.memo(function PreviewBlock() {
 
     const insertStyledText = () => {
         let lineStyle = context.state.currentStyle;
-        if (lineStyle && context.state.currentFontSize) {
+        if (lineStyle && context.state.textScale) {
             lineStyle = _.cloneDeep(lineStyle);
-            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size = context.state.currentFontSize;
+            lineStyle.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
         }
         setActiveLayerText(line.text, lineStyle, ok => {
             if (ok) context.dispatch({type: 'nextLine'});
@@ -44,26 +43,17 @@ const PreviewBlock = React.memo(function PreviewBlock() {
     const currentLineClick = () => {
         if (line.rawIndex === void 0) return;
         scrollToLine(line.rawIndex);
-        sizeInputRef.current.focus();
     };
 
-    const setCurrentSize = size => {
-        const currentSize = context.state.currentFontSize || textStyle.size || 14;
-        if (size === '+1') {
-            size = currentSize + 1;
-        } else if (size === '-1') {
-            size = (currentSize > 1) ? (currentSize - 1) : size;
-        } else if (size === '') {
-            size = null;
-        } else {
-            size = Number(size) || null;
-        }
-        context.dispatch({type: 'setCurrentFontSize', size});
+    const setTextScale = scale => {
+        context.dispatch({type: 'setTextScale', scale});
     };
-
-    React.useEffect(() => {
-        if (textStyle.size) setCurrentSize(textStyle.size);
-    }, [style.id]);
+    const focusScale = () => {
+        if (!context.state.textScale) setTextScale(100);
+    };
+    const blurScale = () => {
+        if (context.state.textScale === 100) setTextScale(null);
+    };
 
     return (
         <React.Fragment>
@@ -97,23 +87,20 @@ const PreviewBlock = React.memo(function PreviewBlock() {
                         <div className="preview-line-info-text">
                             {locale.previewLine}: <b>{line.index || '—'}</b>
                             , {locale.previewStyle}: <b className="preview-line-style-name">{style.name || '—'}</b>
-                            , {locale.previewSize}: 
-                            <div className="preview-line-size">
-                                <span title={locale.previewSizeMinus}>
-                                    <FiMinusCircle size={16} onClick={() => setCurrentSize('-1')} />
-                                </span>
+                            , {locale.previewTextScale}: 
+                            <div className="preview-line-scale">
                                 <input 
                                     min={1} 
+                                    max={999} 
                                     type="number" 
-                                    placeholder={textStyle.size || ''}
-                                    value={context.state.currentFontSize || ''} 
-                                    onChange={e => setCurrentSize(e.target.value)} 
+                                    placeholder="100"
+                                    value={context.state.textScale || ''} 
+                                    onChange={e => setTextScale(e.target.value)} 
+                                    onFocus={focusScale}
+                                    onBlur={blurScale}
                                     className="topcoat-text-input"
-                                    ref={sizeInputRef}
                                 />
-                                <span title={locale.previewSizePlus}>
-                                    <FiPlusCircle size={16} onClick={() => setCurrentSize('+1')} />
-                                </span>
+                                <span>%</span>
                             </div>
                         </div>
                         <div className="preview-line-info-actions" title={locale.insertStyledText}>

@@ -5,6 +5,7 @@ import {useContext} from '../../context';
 import HelpModal from './help';
 import SettingsModal from './settings';
 import EditStyleModal from './editStyle';
+import EditFolderModal from './editFolder';
 
 
 const Modal = React.memo(function Modal() {
@@ -15,6 +16,7 @@ const Modal = React.memo(function Modal() {
     if (modalType === 'help') modalContent = <HelpModal />;
     else if (modalType === 'settings') modalContent = <SettingsModal />;
     else if (modalType === 'editStyle') modalContent = <EditStyleModal />;
+    else if (modalType === 'editFolder') modalContent = <EditFolderModal />;
 
     React.useEffect(() => {
         if (!context.state.notFirstTime) {

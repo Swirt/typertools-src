@@ -4,18 +4,21 @@ import {readStorage, writeToStorage, scrollToLine} from './utils';
 
 
 const storage = readStorage();
-const storeFields = ['notFirstTime', 'text', 'styles', 'currentLineIndex', 'currentStyleId', 'pastePointText', 'ignoreLinePrefixes', 'defaultStyleId'];
+const storeFields = ['notFirstTime', 'text', 'styles', 'folders', 'textScale', 'currentLineIndex', 'currentStyleId', 'pastePointText', 'ignoreLinePrefixes', 'defaultStyleId'];
 
 const initialState = {
     notFirstTime: false,
+    initiated: false,
     text: '',
     lines: [],
     styles: [],
+    folders: [],
+    openFolders: [],
+    textScale: null,
     currentLine: null,
     currentLineIndex: 0,
     currentStyle: null,
     currentStyleId: null,
-    currentFontSize: null,
     pastePointText: false,
     ignoreLinePrefixes: ['##'],
     defaultStyleId: null,
@@ -91,9 +94,54 @@ const reducer = (state, action) => {
             break;
         }
 
-        case 'setCurrentFontSize': {
-            newState.currentFontSize = action.size;
+        case 'setTextScale': {
+            let scale = parseInt(action.scale) || null;
+            if (scale) {
+                if (scale < 1) scale = 1;
+                if (scale > 999) scale = 999;
+            }
+            newState.textScale = scale;
             break;
+        }
+
+        case 'saveFolder': {
+            const folders = state.folders.concat([]);
+            const editId = action.id || action.data.id;
+            const folder = folders.find(f => (f.id === editId));
+            if (folder) Object.assign(folder, action.data);
+            else folders.push(action.data);
+            newState.folders = folders;
+            if (action.data.styleIds) {
+                let styles = state.styles.concat([]);
+                styles.filter(s => (s.folder === editId)).forEach(style => {
+                    if (!action.data.styleIds.includes(style.id)) style.folder = null;
+                });
+                action.data.styleIds.forEach(sid => {
+                    const style = styles.find(s => (s.id === sid));
+                    if (style) style.folder = editId;
+                });
+                newState.styles = styles;
+            }
+            break
+        }
+
+        case 'deleteFolder': {
+            newState.folders = state.folders.filter(f => (f.id !== action.id));
+            break
+        }
+
+        case 'toggleFolder': {
+            let open = state.openFolders.concat([]);
+            const id = action.id || 'unsorted';
+            if (open.includes(id)) open = open.filter(f => (f !== id));
+            else open.push(id);
+            newState.openFolders = open;
+            break;
+        } 
+
+        case 'setFolders': {
+            newState.folders = action.data || [];
+            break
         }
 
         case 'saveStyle': {
@@ -153,6 +201,9 @@ const reducer = (state, action) => {
 
     const stylePrefixes = [];
     for (const style of newState.styles) {
+        const folder = style.folder || '';
+        const hasFolder = newState.folders.find(f => (f.id === folder));
+        if (!hasFolder) style.folder = null;
         for (const prefix of style.prefixes) {
             stylePrefixes.push({prefix, style});
         }
@@ -202,6 +253,13 @@ const reducer = (state, action) => {
         newState.currentStyle = newId ? newState.styles[0] : null;
         newState.currentStyleId = newId;
     }
+    if (!newState.initiated) {
+        if (newState.currentStyle?.folder) {
+            newState.openFolders = [newState.currentStyle.folder];
+        } else {
+            newState.openFolders = ['unsorted'];
+        }
+    }
 
     const dataToStore = {};
     for (let field in newState) {
@@ -210,6 +268,7 @@ const reducer = (state, action) => {
             dataToStore[field] = newState[field];
         }
     }
+    newState.initiated = true;
     writeToStorage(dataToStore);
 
     return newState;
