@@ -131,6 +131,13 @@ const scrollToLine = (lineIndex, delay=300) => {
     }, delay);
 };
 
+const scrollToStyle = (styleId, delay=100) => {
+    setTimeout(() => {
+        const style = document.getElementById(styleId);
+        if (style) style.scrollIntoView();
+    }, delay);
+};
+
 const rgbToHex = (rgb={}) => {
     const componentToHex = (c=0) => ('0' + c.toString(16)).substr(-2).toUpperCase();
     return "#" + componentToHex(rgb.red) + componentToHex(rgb.green) + componentToHex(rgb.blue);
@@ -224,6 +231,7 @@ export {
     getHotkeyPressed,
     resizeTextArea, 
     scrollToLine, 
+    scrollToStyle,
     rgbToHex, 
     getStyleObject,
     getDefaultStyle

@@ -50,7 +50,7 @@ const SettingsModal = React.memo(function SettingsModal() {
         }
         if (defaultStyleId !== context.state.defaultStyleId) {
             context.dispatch({
-                type: 'setDeaultStyleId',
+                type: 'setDefaultStyleId',
                 id: defaultStyleId
             });
         }
@@ -67,10 +67,7 @@ const SettingsModal = React.memo(function SettingsModal() {
             try {
                 const data = JSON.parse(result.data);
                 context.dispatch({type: 'import', data});
-                if (data.ignoreLinePrefixes) {
-                    setIgnoreLinePrefixes(data.ignoreLinePrefixes.join(' '));
-                }
-                setEdited(false);
+                close();
             } catch (error) {
                 nativeAlert(locale.errorImportStyles, locale.errorTitle, true);
             }

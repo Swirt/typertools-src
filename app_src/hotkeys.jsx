@@ -6,7 +6,7 @@ import {useContext} from './context';
 
 
 const repeatTime = 2000;
-const intervalTime = 100;
+const intervalTime = 50;
 let keyboardInterval = 0;
 let canRepeat = true;
 let keyUp = true;
@@ -35,6 +35,9 @@ const HotkeysListner = React.memo(function HotkeysListner() {
             if (style && context.state.textScale) {
                 style = _.cloneDeep(style);
                 style.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
+                if (style.textProps.layerText.textStyleRange[0].textStyle.leading) {
+                    style.textProps.layerText.textStyleRange[0].textStyle.leading *= context.state.textScale / 100;
+                }
             }
             const pointText = context.state.pastePointText;
             createTextLayerInSelection(line.text, style, pointText, ok => {
@@ -47,6 +50,9 @@ const HotkeysListner = React.memo(function HotkeysListner() {
             if (style && context.state.textScale) {
                 style = _.cloneDeep(style);
                 style.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
+                if (style.textProps.layerText.textStyleRange[0].textStyle.leading) {
+                    style.textProps.layerText.textStyleRange[0].textStyle.leading *= context.state.textScale / 100;
+                }
             }
             setActiveLayerText(line.text, style, ok => {
                 if (ok) context.dispatch({type: 'nextLine'});

@@ -22,6 +22,9 @@ const PreviewBlock = React.memo(function PreviewBlock() {
         if (lineStyle && context.state.textScale) {
             lineStyle = _.cloneDeep(lineStyle);
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
+            if (lineStyle.textProps.layerText.textStyleRange[0].textStyle.leading) {
+                lineStyle.textProps.layerText.textStyleRange[0].textStyle.leading *= context.state.textScale / 100;
+            }
         }
         const pointText = context.state.pastePointText;
         createTextLayerInSelection(line.text, lineStyle, pointText, ok => {
@@ -34,6 +37,9 @@ const PreviewBlock = React.memo(function PreviewBlock() {
         if (lineStyle && context.state.textScale) {
             lineStyle = _.cloneDeep(lineStyle);
             lineStyle.textProps.layerText.textStyleRange[0].textStyle.size *= context.state.textScale / 100;
+            if (lineStyle.textProps.layerText.textStyleRange[0].textStyle.leading) {
+                lineStyle.textProps.layerText.textStyleRange[0].textStyle.leading *= context.state.textScale / 100;
+            }
         }
         setActiveLayerText(line.text, lineStyle, ok => {
             if (ok) context.dispatch({type: 'nextLine'});

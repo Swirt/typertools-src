@@ -127,7 +127,7 @@ const StyleItem = React.memo(function StyleItem(props) {
     const textStyle = props.style.textProps.layerText.textStyleRange[0]?.textStyle || {};
     const styleObject = getStyleObject(textStyle);
     return (
-        <div className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
+        <div id={props.style.id} className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
             <div className="style-marker">
                 <div className="style-color" style={{background: rgbToHex(textStyle.color)}} title={locale.styleTextColor + ': ' + rgbToHex(textStyle.color)}></div>
                 {!!props.style.prefixes.length && (

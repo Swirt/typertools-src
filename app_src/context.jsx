@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {readStorage, writeToStorage, scrollToLine} from './utils';
+import {readStorage, writeToStorage, scrollToLine, scrollToStyle} from './utils';
 
 
 const storage = readStorage();
@@ -105,12 +105,7 @@ const reducer = (state, action) => {
         }
 
         case 'saveFolder': {
-            const folders = state.folders.concat([]);
             const editId = action.id || action.data.id;
-            const folder = folders.find(f => (f.id === editId));
-            if (folder) Object.assign(folder, action.data);
-            else folders.push(action.data);
-            newState.folders = folders;
             if (action.data.styleIds) {
                 let styles = state.styles.concat([]);
                 styles.filter(s => (s.folder === editId)).forEach(style => {
@@ -121,7 +116,13 @@ const reducer = (state, action) => {
                     if (style) style.folder = editId;
                 });
                 newState.styles = styles;
+                delete action.data.styleIds;
             }
+            const folders = state.folders.concat([]);
+            const folder = folders.find(f => (f.id === editId));
+            if (folder) Object.assign(folder, action.data);
+            else folders.push(action.data);
+            newState.folders = folders;
             break
         }
 
@@ -182,7 +183,7 @@ const reducer = (state, action) => {
             break;
         }
 
-        case 'setDeaultStyleId': {
+        case 'setDefaultStyleId': {
             newState.defaultStyleId = action.id || null;
             break;
         }
@@ -199,19 +200,32 @@ const reducer = (state, action) => {
         }
     }
 
-    const stylePrefixes = [];
     for (const style of newState.styles) {
-        const folder = style.folder || '';
-        const hasFolder = newState.folders.find(f => (f.id === folder));
+        const folderId = style.folder || null;
+        const hasFolder = newState.folders.find(f => (f.id === folderId));
         if (!hasFolder) style.folder = null;
-        for (const prefix of style.prefixes) {
-            stylePrefixes.push({prefix, style});
-        }
     }
+
     if (newState.defaultStyleId) {
         const hasDefault = newState.styles.find(s => (s.id === newState.defaultStyleId));
         if (!hasDefault) newState.defaultStyleId = null;
     }
+
+    let sortedStyles = newState.styles.filter(s => !s.folder);
+    for (const folder of newState.folders) {
+        const folderStyles = newState.styles.filter(s => (s.folder === folder.id));
+        sortedStyles = sortedStyles.concat(folderStyles);
+    }
+    newState.styles = sortedStyles;
+
+    const stylePrefixes = [];
+    for (const style of newState.styles) {
+        const folder = style.folder || null;
+        for (const prefix of style.prefixes) {
+            stylePrefixes.push({prefix, style, folder});
+        }
+    }
+
     let linesCounter = 0;
     const rawLines = newState.text ? newState.text.split('\n') : [];
     newState.lines = rawLines.map((rawText, rawIndex) => {
@@ -224,7 +238,7 @@ const reducer = (state, action) => {
         const index = ignore ? 0 : ++linesCounter;
         return {rawText, rawIndex, ignorePrefix, stylePrefix, style, ignore, index, text};
     });
-    newState.lines.lastIndex = linesCounter;
+    
     newState.currentLine = newState.lines[newState.currentLineIndex] || null;
     if (!newState.currentLine || newState.currentLine.ignore) {
         let newIndex = 0;
@@ -237,9 +251,6 @@ const reducer = (state, action) => {
         newState.currentLine = newState.lines[newIndex] || null;
         newState.currentLineIndex = newIndex;
     }
-    if (thenScroll) {
-        scrollToLine(newState.currentLineIndex);
-    }
     if (thenSelectStyle) {
         if (newState.currentLine.style) {
             newState.currentStyleId = newState.currentLine.style.id;
@@ -247,18 +258,28 @@ const reducer = (state, action) => {
             newState.currentStyleId = newState.defaultStyleId;
         }
     }
+
     newState.currentStyle = newState.styles.find(s => (s.id === newState.currentStyleId));
     if (!newState.currentStyle) {
-        let newId = newState.styles.length ? newState.styles[0].id : null;
+        const newId = newState.styles.length ? newState.styles[0].id : null;
         newState.currentStyle = newId ? newState.styles[0] : null;
         newState.currentStyleId = newId;
     }
+    
     if (!newState.initiated) {
         if (newState.currentStyle?.folder) {
             newState.openFolders = [newState.currentStyle.folder];
         } else {
             newState.openFolders = ['unsorted'];
         }
+    }
+    if (newState.currentStyle && (newState.currentStyleId !== state.currentStyleId)) {
+        const folder = newState.currentStyle.folder || 'unsorted';
+        if (!newState.openFolders.includes(folder)) newState.openFolders.push(folder);
+        scrollToStyle(newState.currentStyleId);
+    }
+    if (thenScroll) {
+        scrollToLine(newState.currentLineIndex);
     }
 
     const dataToStore = {};

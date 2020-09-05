@@ -434,11 +434,17 @@ function _changeActiveLayerTextSize() {
             typeUnit: oldTextParams.typeUnit,
             layerText: {
                 textKey: text,
-                textStyleRange: [oldTextParams.layerText.textStyleRange[0]]
+                textGridding: oldTextParams.textGridding || 'none',
+                orientation: oldTextParams.orientation || 'horizontal',
+                antiAlias: oldTextParams.antiAlias || 'antiAliasSmooth',
+                textStyleRange: [oldTextParams.layerText.textStyleRange[0]],
             }
         };
         if (oldTextParams.layerText.paragraphStyleRange) {
+            var oldParStyle = oldTextParams.layerText.paragraphStyleRange[0].paragraphStyle;
             newTextParams.layerText.paragraphStyleRange = [oldTextParams.layerText.paragraphStyleRange[0]];
+            newTextParams.layerText.paragraphStyleRange[0].paragraphStyle.textEveryLineComposer = oldParStyle.textEveryLineComposer || false;
+            newTextParams.layerText.paragraphStyleRange[0].paragraphStyle.burasagari  = oldParStyle.burasagari ||'burasagariNone';
             newTextParams.layerText.paragraphStyleRange[0].to = text.length;
         }
         var newTextSize = newTextParams.layerText.textStyleRange[0].textStyle.size + changeActiveLayerTextSizeVal;
