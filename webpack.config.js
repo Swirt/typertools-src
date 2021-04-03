@@ -8,6 +8,18 @@ const postcssCssnano = require('cssnano');
 const UglifyJS = require('uglify-js');
 
 
+const hostFiles = [
+    __dirname + '/app_src/lib/jam/jamActions.jsxinc',
+    __dirname + '/app_src/lib/jam/jamEngine.jsxinc',
+    __dirname + '/app_src/lib/jam/jamHelpers.jsxinc',
+    __dirname + '/app_src/lib/jam/jamJSON.jsxinc',
+    __dirname + '/app_src/lib/jam/jamText.jsxinc',
+    __dirname + '/app_src/lib/jam/jamStyles.jsxinc',
+    __dirname + '/app_src/lib/jam/jamUtils.jsxinc',
+    __dirname + '/app_src/host.js'
+];
+
+
 const defaultConfig = {
     entry: {
         index: ['./app_src/index.jsx']
@@ -18,7 +30,7 @@ const defaultConfig = {
         publicPath: './'
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx', '.jsxinc']
     }
 };
 
@@ -55,11 +67,12 @@ const devConfig = {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: true,
-                            ident: 'postcss',
-                            plugins: [
-                                postcssPresetEnv(), 
-                                autoprefixer()
-                            ]
+                            postcssOptions: {
+                                plugins: [
+                                    postcssPresetEnv(),
+                                    autoprefixer()
+                                ]
+                            }
                         }
                     }, {
                         loader: 'sass-loader',
@@ -83,7 +96,12 @@ const devConfig = {
             template: './app_src/index.html',
             filename: 'index.html'
         }),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin(),
+        new MergeIntoSingleFilePlugin({
+            files: {
+                'host.jsx': hostFiles
+            }
+        })
     ]
 };
 
@@ -115,12 +133,13 @@ const prodConfig = {
                     }, {
                         loader: 'postcss-loader',
                         options: {
-                            ident: 'postcss',
-                            plugins: [
-                                postcssPresetEnv(),
-                                postcssCssnano(),
-                                autoprefixer()
-                            ]
+                            postcssOptions: {
+                                plugins: [
+                                    postcssPresetEnv(),
+                                    postcssCssnano(),
+                                    autoprefixer()
+                                ]
+                            }
                         }
                     }, {
                         loader: 'sass-loader'
@@ -150,55 +169,7 @@ const prodConfig = {
                 removeStyleLinkTypeAttributes: true
             }
         }),
-        new MiniCssExtractPlugin()
-    ]
-};
-
-function clientConfig(env, argv) {
-    const envConfig = (argv.mode === 'development') ? devConfig : prodConfig;
-    return Object.assign({}, defaultConfig, envConfig);
-}
-
-
-
-
-const hostFiles = [
-    __dirname + '/app_src/lib/jam/jamActions.jsxinc',
-    __dirname + '/app_src/lib/jam/jamEngine.jsxinc',
-    __dirname + '/app_src/lib/jam/jamHelpers.jsxinc',
-    __dirname + '/app_src/lib/jam/jamJSON.jsxinc',
-    __dirname + '/app_src/lib/jam/jamText.jsxinc',
-    __dirname + '/app_src/lib/jam/jamStyles.jsxinc',
-    __dirname + '/app_src/lib/jam/jamUtils.jsxinc',
-    __dirname + '/app_src/host.js'
-];
-
-const defaultHostConfig = {
-    entry: {
-        index: ['./app_src/host.js']
-    },
-    output: {
-        path: __dirname + '/app/',
-        filename: 'host.jsx',
-        publicPath: './'
-    },
-    resolve: {
-        extensions: ['.js', '.jsx', 'jsxinc']
-    }
-};
-
-const devHostConfig = {
-    plugins: [
-        new MergeIntoSingleFilePlugin({
-            files: {
-                'host.jsx': hostFiles
-            }
-        })
-    ]
-};
-
-const prodHostConfig = {
-    plugins: [
+        new MiniCssExtractPlugin(),
         new MergeIntoSingleFilePlugin({
             files: {
                 'host.jsx': hostFiles
@@ -213,10 +184,9 @@ const prodHostConfig = {
     ]
 };
 
-function hostConfig(env, argv) {
-    const envConfig = (argv.mode === 'development') ? devHostConfig : prodHostConfig;
-    return Object.assign({}, defaultHostConfig, envConfig);
+function clientConfig(env, argv) {
+    const envConfig = (argv.mode === 'development') ? devConfig : prodConfig;
+    return Object.assign({}, defaultConfig, envConfig);
 }
 
-
-module.exports = [clientConfig, hostConfig];
+module.exports = [clientConfig];
