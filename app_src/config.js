@@ -1,10 +1,10 @@
 const config = {
     appTitle: 'Typer Tools',
-    appVersion: '1.4.2',
+    appVersion: '1.4.3',
     appUrl: 'https://swirt.github.io/typertools/',
     authorName: 'Swirt',
     authorUrl: 'https://telegram.me/swirt',
-    exportFileName: 'typerToolsExport',
+    exportFileName: 'TyperToolsExport',
     defaultPrefixColor: '#FFF3B0'
 };
 
