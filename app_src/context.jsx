@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {readStorage, writeToStorage, scrollToLine, scrollToStyle} from './utils';
+import {locale, readStorage, writeToStorage, scrollToLine, scrollToStyle} from './utils';
 
 
 const storage = readStorage();
@@ -45,7 +45,34 @@ const reducer = (state, action) => {
             for (const field in action.data) {
                 if (!action.data.hasOwnProperty(field)) continue;
                 if (!initialState.hasOwnProperty(field)) continue;
-                newState[field] = action.data[field];
+                if ((field === 'styles') && state.styles) {
+                    const styles = [];
+                    let asked = false;
+                    let keep = false;
+                    for (const style of state.styles) {
+                        const inImport = action.data.styles.find(s => (s.id === style.id));
+                        if (!inImport || (style.edited && !inImport.edited) || (style.edited && inImport.edited && (style.edited > inImport.edited))) {
+                            if (!asked) {
+                                keep = confirm(locale.settingsImportReplace);
+                                asked = true;
+                            }
+                            if (keep) styles.push(style);
+                        }
+                    }
+                    for (const style of action.data.styles) {
+                        if (!keep) {
+                            styles.push(style);
+                        } else {
+                            const oldStyle = state.styles.find(s => (s.id === style.id));
+                            if (!oldStyle?.edited || (style.edited && (style.edited >= oldStyle.edited))) {
+                                styles.push(style);
+                            }
+                        }
+                    }
+                    newState[field] = styles;
+                } else {
+                    newState[field] = action.data[field];
+                }
             }
             break;
         }

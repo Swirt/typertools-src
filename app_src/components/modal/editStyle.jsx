@@ -95,6 +95,7 @@ const EditStyleModal = React.memo(function EditStyleModal() {
         } else {
             data.id = currentData.id;
         }
+        data.edited = Date.now();
         context.dispatch({type: 'saveStyle', data});
         close();
     };

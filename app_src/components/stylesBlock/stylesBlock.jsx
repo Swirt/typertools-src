@@ -7,7 +7,7 @@ import {FiArrowRightCircle, FiPlus, FiFolderPlus, FiChevronDown, FiChevronUp} fr
 import {MdEdit, MdLock} from "react-icons/md";
 
 import config from '../../config';
-import {locale, setActiveLayerText, rgbToHex, getStyleObject} from '../../utils';
+import {locale, getActiveLayerText, setActiveLayerText, rgbToHex, getStyleObject} from '../../utils';
 import {useContext} from '../../context';
 
 
@@ -116,16 +116,23 @@ FolderItem.propTypes = {
 
 
 const StyleItem = React.memo(function StyleItem(props) {
+    const textStyle = props.style.textProps.layerText.textStyleRange[0]?.textStyle || {};
+    const styleObject = getStyleObject(textStyle);
     const openStyle = e => {
         e.stopPropagation();
         props.openStyle();
     };
     const insertStyle = e => {
         e.stopPropagation();
-        setActiveLayerText('', props.style)
+        if (e.ctrlKey) {
+            getActiveLayerText(data => {
+                textStyle.size = data.textProps.layerText.textStyleRange[0].textStyle.size;
+                setActiveLayerText('', props.style);
+            });
+        } else {
+            setActiveLayerText('', props.style);
+        }
     };
-    const textStyle = props.style.textProps.layerText.textStyleRange[0]?.textStyle || {};
-    const styleObject = getStyleObject(textStyle);
     return (
         <div id={props.style.id} className={'style-item hostBgdLight' + (props.active ? ' m-current' : '')} onClick={props.selectStyle}>
             <div className="style-marker">

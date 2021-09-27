@@ -1,5 +1,5 @@
 @echo off
-echo Photoshop extension Typer Tools v1.4.3 will be installed.
+echo Photoshop extension Typer Tools v1.4.4 will be installed.
 echo.
 echo Close Photoshop (if it is open).
 echo.
