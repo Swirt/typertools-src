@@ -39,7 +39,7 @@
     "lodash": "^4.17.21",
     "lodash-webpack-plugin": "^0.11.6",
     "mini-css-extract-plugin": "^2.3.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.0",
     "npm-check-updates": "^11.8.5",
     "postcss-loader": "^6.1.1",
     "postcss-preset-env": "^6.7.0",
