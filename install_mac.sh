@@ -2,7 +2,7 @@
 
 set -e
 cat << EOF
-Photoshop extension Typer Tools v1.4.5 will be installed.
+Photoshop extension Typer Tools v1.4.6 will be installed.
 
 Close Photoshop (if it is open).
 
