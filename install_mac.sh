@@ -2,7 +2,7 @@
 
 set -e
 cat << EOF
-Photoshop extension Typer Tools v1.4.7 will be installed.
+Photoshop extension Typer Tools v1.4.8 will be installed.
 
 Close Photoshop (if it is open).
 
@@ -16,7 +16,7 @@ is_preferences_domain_exists() {
   defaults read "$1" > /dev/null 2> /dev/null
 }
 
-for version in {4..10}; do
+for version in {6..12}; do
   if is_preferences_domain_exists com.adobe.CSXS.${version} ; then
     defaults write com.adobe.CSXS.${version} PlayerDebugMode 1
   fi
