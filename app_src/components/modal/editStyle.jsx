@@ -257,7 +257,7 @@ const StyleDetails = React.memo(function StyleDetails(props) {
     };
 
     const changeFontStyle = style => {
-        const font = fonts.find(font => (font.style === style));
+        const font = fonts.find(font => ((font.family === family) && (font.style === style)));
         if (!font) return false;
         changeFont(font);
     };
