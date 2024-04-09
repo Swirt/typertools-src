@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="6.0" ExtensionBundleId="com.swirt.tools" ExtensionBundleVersion="0.1" ExtensionBundleName="Swirt Tools">
     <ExtensionList>
-        <Extension Id="typertools" Version="1.4.9" />
+        <Extension Id="typer" Version="0.0.1" />
     </ExtensionList>
     <ExecutionEnvironment>
         <HostList>
@@ -16,7 +16,7 @@
         </RequiredRuntimeList>
     </ExecutionEnvironment>
     <DispatchInfoList>
-        <Extension Id="typertools">
+        <Extension Id="typer">
             <DispatchInfo >
                 <Resources>
                     <MainPath>./app/index.html</MainPath>
@@ -31,7 +31,7 @@
                 </Lifecycle>
                 <UI>
                     <Type>Panel</Type>
-                    <Menu>Typer Tools</Menu>
+                    <Menu>TypeR</Menu>
                     <Geometry>
                         <Size>
                             <Height>900</Height>

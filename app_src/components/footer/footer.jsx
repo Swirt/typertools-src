@@ -3,7 +3,6 @@ import "./footer.scss";
 import React from "react";
 import { locale, openFile as utilsOpenFile } from "../../utils";
 import { useContext } from "../../context";
-import { fromEvent } from "file-selector";
 
 const AppFooter = React.memo(function AppFooter() {
   const context = useContext();
