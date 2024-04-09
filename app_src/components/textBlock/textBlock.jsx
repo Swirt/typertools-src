@@ -18,7 +18,7 @@ const TextBlock = React.memo(function TextBlock() {
     <React.Fragment>
       <div className="text-lines">
         {context.state.lines.map((line) => (
-          <div key={line.rawIndex} className={"text-line" + (line.ignore ? " m-empty" : "") + (context.state.currentLineIndex === line.rawIndex ? " m-current" : "")}>
+          <div key={line.rawIndex} className={classNameLine(line, context)}>
             <div className="text-line-num">{line.ignore ? " " : line.index}</div>
             <div className="text-line-select" title={line.ignore ? "" : locale.selectLine}>
               {line.ignore ? " " : <FiTarget size={14} onClick={() => context.dispatch({ type: "setCurrentLineIndex", index: line.rawIndex })} />}
@@ -67,6 +67,7 @@ const classNameLine = (line, context) => {
   if (line.rawText.match("Page [0-9]+")) {
     style += " m-page";
   }
+  return style;
 };
 
 export default TextBlock;
