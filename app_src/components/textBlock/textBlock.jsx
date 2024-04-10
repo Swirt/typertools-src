@@ -4,7 +4,7 @@ import React from "react";
 import { FiArrowRightCircle, FiTarget } from "react-icons/fi";
 
 import config from "../../config";
-import { locale, setActiveLayerText, resizeTextArea, scrollToLine } from "../../utils";
+import { locale, setActiveLayerText, resizeTextArea, scrollToLine, openFile } from "../../utils";
 import { useContext } from "../../context";
 
 const TextBlock = React.memo(function TextBlock() {
@@ -14,12 +14,45 @@ const TextBlock = React.memo(function TextBlock() {
   React.useEffect(() => {
     scrollToLine(context.state.currentLineIndex, 1000);
   }, []);
+
+  let currentPage = 0;
+
+  const classNameLine = (line) => {
+    let style = "text-line";
+    if (line.ignore) {
+      style += " m-empty";
+    }
+    if (context.state.currentLineIndex === line.rawIndex) {
+      style += " m-current";
+    }
+    if (line.rawText.match("Page [0-9]+")) {
+      style += " m-page";
+    }
+    return style;
+  };
+
+  const getTextLineNum = (line) => {
+    if (line.ignore) {
+      const page = line.rawText.match("Page ([0-9]+)");
+      if (page && context.state.images[page[1] - 1]) {
+        const currentImage = context.state.images[page[1] - 1];
+        currentPage = context.state.images.indexOf(currentImage);
+        return currentImage.name;
+      }
+      return " ";
+    }
+    if (context.state.currentLineIndex === line.rawIndex && context.state.images[currentPage]) {
+      openFile(context.state.images[currentPage].path);
+    }
+    return line.index;
+  };
+
   return (
     <React.Fragment>
       <div className="text-lines">
         {context.state.lines.map((line) => (
           <div key={line.rawIndex} className={classNameLine(line, context)}>
-            <div className="text-line-num">{line.ignore ? " " : line.index}</div>
+            <div className="text-line-num">{getTextLineNum(line)}</div>
             <div className="text-line-select" title={line.ignore ? "" : locale.selectLine}>
               {line.ignore ? " " : <FiTarget size={14} onClick={() => context.dispatch({ type: "setCurrentLineIndex", index: line.rawIndex })} />}
             </div>
@@ -55,19 +88,5 @@ const TextBlock = React.memo(function TextBlock() {
     </React.Fragment>
   );
 });
-
-const classNameLine = (line, context) => {
-  let style = "text-line";
-  if (line.ignore) {
-    style += " m-empty";
-  }
-  if (context.state.currentLineIndex === line.rawIndex) {
-    style += " m-current";
-  }
-  if (line.rawText.match("Page [0-9]+")) {
-    style += " m-page";
-  }
-  return style;
-};
 
 export default TextBlock;

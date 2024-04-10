@@ -1,7 +1,7 @@
 import "./footer.scss";
 
 import React from "react";
-import { locale, openFile as utilsOpenFile } from "../../utils";
+import { locale, openFile, openFile as utilsOpenFile } from "../../utils";
 import { useContext } from "../../context";
 
 const AppFooter = React.memo(function AppFooter() {
@@ -19,7 +19,24 @@ const AppFooter = React.memo(function AppFooter() {
     });
   };
   const openRepository = (e) => {
-    const directory = window.showDirectoryPicker().then((e) => alert(e));
+    const extension = ["psd", "png", "jpg", "jpeg"];
+    const result = window.cep.fs.showOpenDialogEx(true, false, "Open Images", "", extension);
+    if (result.err == 0) {
+      const images = result.data
+        .map((url) => {
+          const name = url.split(/\/|\\/).pop();
+          const extName = name.split(/\./).pop();
+          const baseName = name.substring(0, name.length - extName.length - 1);
+          return { name: name, baseName: baseName, path: url };
+        })
+        .sort((a, b) => a.baseName - b.baseName);
+      context.dispatch({
+        type: "setImages",
+        images: images,
+      });
+    } else {
+      console.log(result.err);
+    }
   };
   return (
     <React.Fragment>

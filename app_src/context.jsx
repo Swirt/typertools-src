@@ -24,6 +24,7 @@ const initialState = {
   modalType: null,
   modalData: {},
   ...storage.data,
+  images: [],
 };
 
 const reducer = (state, action) => {
@@ -223,6 +224,11 @@ const reducer = (state, action) => {
     case "setModal": {
       newState.modalType = action.modal || null;
       newState.modalData = action.data || {};
+      break;
+    }
+
+    case "setImages": {
+      newState.images = action.images;
       break;
     }
   }

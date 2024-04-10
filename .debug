@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <ExtensionList>
-    <Extension Id="typertools">
+    <Extension Id="typer">
         <HostList>
             <Host Name="PHXS" Port="8001" />
             <Host Name="PHSP" Port="8002" />
