@@ -367,16 +367,9 @@ function _alignTextLayerToSelection() {
     return;
   }
   var isPoint = _textLayerIsPointText();
-  var width = selection.width * 0.9;
-  var height = selection.height * 15;
-  _setTextBoxSize(width, height);
   var bounds = _getCurrentTextLayerBounds();
   if (isPoint) {
     _changeToPointText();
-  } else {
-    var textParams = jamText.getLayerText();
-    var textSize = textParams.layerText.textStyleRange[0].textStyle.size;
-    _setTextBoxSize(width, bounds.height + textSize + 2);
   }
   _deselect();
   var offsetX = selection.xMid - bounds.xMid;
