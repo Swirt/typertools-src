@@ -413,9 +413,9 @@ function _changeActiveLayerTextSize() {
       typeUnit: oldTextParams.typeUnit,
       layerText: {
         textKey: text,
-        textGridding: oldTextParams.textGridding || "none",
-        orientation: oldTextParams.orientation || "horizontal",
-        antiAlias: oldTextParams.antiAlias || "antiAliasSmooth",
+        textGridding: oldTextParams.layerText.textGridding || "none",
+        orientation: oldTextParams.layerText.orientation || "horizontal",
+        antiAlias: oldTextParams.layerText.antiAlias || "antiAliasSmooth",
         textStyleRange: [oldTextParams.layerText.textStyleRange[0]],
       },
     };
