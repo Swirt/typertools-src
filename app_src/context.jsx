@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { locale, readStorage, writeToStorage, scrollToLine, scrollToStyle } from "./utils";
 
 const storage = readStorage();
-const storeFields = ["notFirstTime", "text", "styles", "folders", "textScale", "currentLineIndex", "currentStyleId", "pastePointText", "ignoreLinePrefixes", "defaultStyleId"];
+const storeFields = ["notFirstTime", "text", "styles", "folders", "textScale", "currentLineIndex", "currentStyleId", "pastePointText", "ignoreLinePrefixes", "defaultStyleId", "shortcut"];
 
 const initialState = {
   notFirstTime: false,
@@ -25,6 +25,11 @@ const initialState = {
   modalData: {},
   ...storage.data,
   images: [],
+  shortcut: {
+    add: ["WIN", "CTRL"],
+    center: ["WIN", "ALT"],
+    next: ["WIN", "SHIFT"],
+  },
 };
 
 const reducer = (state, action) => {
@@ -229,6 +234,12 @@ const reducer = (state, action) => {
 
     case "setImages": {
       newState.images = action.images;
+      break;
+    }
+
+    case "updateShortcut": {
+      console.log(action);
+      newState.shortcut = action.shortcut;
       break;
     }
   }

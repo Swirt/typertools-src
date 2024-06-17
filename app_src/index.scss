@@ -4,132 +4,138 @@
 .topcoat-icon-button--large--cta,
 .topcoat-button--large--quiet,
 .topcoat-icon-button--large--quiet {
-    justify-content: center;
-    align-items: center;
-    display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 .topcoat-button--large--cta,
 .topcoat-icon-button--large--cta {
-    &.m-danger {
-        border-color: #690000;
-        background: #af2121;
-    }
-    &.m-danger:hover {
-        background: #d82424;
-    }
-    &.m-danger:active {
-        background: #9a0000;
-    }
+  &.m-danger {
+    border-color: #690000;
+    background: #af2121;
+  }
+  &.m-danger:hover {
+    background: #d82424;
+  }
+  &.m-danger:active {
+    background: #9a0000;
+  }
 }
 .topcoat-button--large--quiet,
 .topcoat-icon-button--large--quiet {
-    &.m-cta {
-        color: #fff;
-    }
-    &.m-cta:hover {
-        box-shadow: inset 0 1px rgba(#fff, .36);
-        border-color: #134f7f;
-        background: #4ca1e4;
-    }
-    &.m-cta:active {
-        box-shadow: inset 0 1px rgba(#000, .12);
-        border-color: #134f7f;
-        background: #1e7dc8;
-    }
+  &.m-cta {
+    color: #fff;
+  }
+  &.m-cta:hover {
+    box-shadow: inset 0 1px rgba(#fff, 0.36);
+    border-color: #134f7f;
+    background: #4ca1e4;
+  }
+  &.m-cta:active {
+    box-shadow: inset 0 1px rgba(#000, 0.12);
+    border-color: #134f7f;
+    background: #1e7dc8;
+  }
 }
 .topcoat-button--large,
 .topcoat-button--large--cta,
 .topcoat-button--large--quiet {
-    & > SVG {
-        margin-right: 4px;
-    }
+  & > SVG {
+    margin-right: 4px;
+  }
 }
 .topcoat-textarea {
-    font-size: 0.875rem;
-    line-height: 1.1rem;
-    padding: 4px 10px;
+  font-size: 0.875rem;
+  line-height: 1.1rem;
+  padding: 4px 10px;
 }
 
 .sketch-picker {
-    INPUT + SPAN {
-        width: 80%;
-    }
+  INPUT + SPAN {
+    width: 80%;
+  }
 }
-
 
 .link {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
-
 
 .fields {
-    & + & {
-        padding-top: 10px;
-        margin-top: 10px;
-    }
+  & + & {
+    padding-top: 10px;
+    margin-top: 10px;
+  }
 }
 .field {
-    &.hostBrdTopContrast {
-        border-top-style: dashed;
-        padding-top: 6px;
-        margin-top: 6px;
-    }
-    & + & {
-        margin-top: 10px;
-    }
-    & > BUTTON {
-        width: 100%;
-    }
+  &.hostBrdTopContrast {
+    border-top-style: dashed;
+    padding-top: 6px;
+    margin-top: 6px;
+  }
+  & + & {
+    margin-top: 10px;
+  }
+  & > BUTTON {
+    width: 100%;
+  }
 }
 .field-label {
-    margin-bottom: 5px;
-    font-size: 14px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+.field-mini-label {
+  margin-bottom: 5px;
+  font-size: 10px;
 }
 .field-input {
-    INPUT {
-        box-sizing: border-box;
-        width: 100%;
-    }
-    TEXTAREA {
-        box-sizing: border-box;
-        min-height: 29px;
-        resize: vertical;
-        width: 100%;
-    }
-    SELECT {
-        width: 100%;
-    }
+  INPUT {
+    box-sizing: border-box;
+    width: 100%;
+  }
+  TEXTAREA {
+    box-sizing: border-box;
+    min-height: 29px;
+    resize: vertical;
+    width: 100%;
+  }
+  SELECT {
+    width: 100%;
+  }
 }
 .field-descr {
-    font-style: italic;
-    margin-top: 4px;
-    font-size: 12px;
-    opacity: .7;
+  font-style: italic;
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.7;
 }
 
-
 .article-format {
-    & > *:first-child {
-        margin-top: 0;
+  & > *:first-child {
+    margin-top: 0;
+  }
+  H1,
+  H2,
+  H3,
+  H4,
+  H5 {
+    margin-bottom: 0.6em;
+    margin-top: 1.2em;
+  }
+  P {
+    margin-bottom: 0;
+    margin-top: 1em;
+  }
+  UL,
+  OL {
+    padding-left: 30px;
+    margin-bottom: 0;
+    margin-top: 0.6em;
+    & + P {
+      margin-top: 0.6em;
     }
-    H1, H2, H3, H4, H5 {
-        margin-bottom: .6em;
-        margin-top: 1.2em;
-    }
-    P {
-        margin-bottom: 0;
-        margin-top: 1em;
-    }
-    UL, OL {
-        padding-left: 30px;
-        margin-bottom: 0;
-        margin-top: .6em;
-        & + P {
-            margin-top: .6em;
-        }
-    }
-    LI + LI {
-        margin-top: .3em;
-    }
+  }
+  LI + LI {
+    margin-top: 0.3em;
+  }
 }

@@ -514,15 +514,24 @@ function getUserFonts() {
 
 function getHotkeyPressed() {
   var state = ScriptUI.environment.keyboardState;
-  if (state.metaKey && state.ctrlKey) {
-    return "metaCtrl";
-  } else if (state.metaKey && state.altKey) {
-    return "metaAlt";
-  } else if (state.metaKey && state.shiftKey) {
-    return "metaShift";
-  } else {
-    return "";
+  var string = "a";
+
+  if (state.metaKey) {
+    string += "WINa";
   }
+  if (state.ctrlKey) {
+    string += "CTRLa";
+  }
+  if (state.altKey) {
+    string += "ALTa";
+  }
+  if (state.shiftKey) {
+    string += "SHIFTa";
+  }
+  if (state.keyName) {
+    string += state.keyName + "a";
+  }
+  return string;
 }
 
 function getActiveLayerText() {
