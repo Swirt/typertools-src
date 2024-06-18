@@ -107,7 +107,7 @@ const reducer = (state, action) => {
     }
 
     case "nextLine": {
-      if (!state.text) break;
+      if (!state.text || (action.add && newState.currentLine.last)) break;
       let newIndex = state.currentLineIndex;
       for (let i = newIndex + 1; i < state.lines.length; i++) {
         if (!state.lines[i].ignore) {
@@ -272,15 +272,23 @@ const reducer = (state, action) => {
 
   let linesCounter = 0;
   const rawLines = newState.text ? newState.text.split("\n") : [];
+  const last = [];
   newState.lines = rawLines.map((rawText, rawIndex) => {
     const ignorePrefix = newState.ignoreLinePrefixes.find((pr) => rawText.startsWith(pr)) || "";
     const hasStylePrefix = stylePrefixes.find((sp) => rawText.startsWith(sp.prefix));
     const stylePrefix = hasStylePrefix ? hasStylePrefix.prefix : "";
     const style = hasStylePrefix ? hasStylePrefix.style : null;
     const text = rawText.replace(ignorePrefix, "").replace(stylePrefix, "").trim();
-    const ignore = !!ignorePrefix || !text || rawText.match(/Page [0-9]+/);
+    const isPage = rawText.match(/Page [0-9]+/);
+    const ignore = !!ignorePrefix || !text || isPage;
+    if (isPage) {
+      last.push(linesCounter);
+    }
     const index = ignore ? 0 : ++linesCounter;
     return { rawText, rawIndex, ignorePrefix, stylePrefix, style, ignore, index, text };
+  });
+  last.forEach((index) => {
+    newState.lines.find((line) => line.index == index).last = true;
   });
 
   newState.currentLine = newState.lines[newState.currentLineIndex] || null;
