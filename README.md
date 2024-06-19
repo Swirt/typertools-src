@@ -51,8 +51,6 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
    For macOS:
    ```sh
    chmod +x install_mac.sh
-   ```
-   ```sh
    ./install_mac.sh
    ```
 
