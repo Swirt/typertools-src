@@ -10,6 +10,7 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
 - **Customizable Shortcuts**: You can now modify shortcuts for centering and pasting text.
 - **Automatic Page Detection**: Automatically detects pages when importing.
 - **Automatic Page Switching**: Automatically switches pages for seamless workflow.
+- **Resize TypeR**: Decreased size limit of the TypeR window so it can be way smaller.
 
 ## Requirements
 
@@ -32,16 +33,17 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
    cd TypeR
    ```
 
-2. Build the project using npm.
-
-   ```sh
-   npm run build
-   ```
-
-3. Install the necessary dependencies.
+2. Install the necessary dependencies.
 
    ```sh
    npm install
+   ```
+
+3. Build the project using npm. 
+
+
+   ```sh
+   npm run build
    ```
 
 4. Execute the installation script for your operating system.
