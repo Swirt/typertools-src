@@ -12,6 +12,7 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
 - **Automatic Page Switching**: Automatically switches pages for seamless workflow.
 - **Resize TypeR**: Decreased size limit of the TypeR window so it can be way smaller.
 
+
 ## Requirements
 
 - Windows 8/macOS 10.9 or newer.
@@ -19,7 +20,7 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
   (There may be problems with some portable or lightweight builds)
 
 ## Installation Guide
-
+# If you download from the source code :
 ### Prerequisites
 
 - Ensure you have Node.js installed on your system. You can download it from [Node.js official website](https://nodejs.org/).
@@ -59,6 +60,19 @@ TypeR is an enhanced fork of TyperTools, a Photoshop extension designed for type
    install_win.cmd
    ```
 
+# If you download from the release :
+1. Extract the archive and execute the installation script for your operating system.
+
+   For macOS:
+   ```sh
+   chmod +x install_mac.sh
+   ./install_mac.sh
+   ```
+
+   For Windows:
+   ```sh
+   install_win.cmd
+   ```
 ## Usage
 
 After installation, you can access TypeR within Adobe Photoshop Extensions tab. 
