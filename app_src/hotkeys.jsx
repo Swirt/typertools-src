@@ -15,11 +15,11 @@ let keyboardInterval = 0;
 let canRepeat = true;
 let keyUp = true;
 
-const checkRepeatTime = () => {
+const checkRepeatTime = (time = repeatTime) => {
   if (canRepeat && keyUp) {
     setTimeout(() => {
       canRepeat = true;
-    }, repeatTime);
+    }, time);
     canRepeat = false;
     keyUp = false;
     return true;
@@ -53,7 +53,7 @@ const HotkeysListner = React.memo(function HotkeysListner() {
       createTextLayerInSelection(line.text, style, pointText, (ok) => {
         if (ok) context.dispatch({ type: "nextLine", add: true });
       });
-    } else if (checkShortcut(realState, context.state.shortcut.next)) {
+    } else if (checkShortcut(realState, context.state.shortcut.apply)) {
       if (!checkRepeatTime()) return;
       const line = context.state.currentLine || { text: "" };
       let style = context.state.currentStyle;
@@ -65,11 +65,17 @@ const HotkeysListner = React.memo(function HotkeysListner() {
         }
       }
       setActiveLayerText(line.text, style, (ok) => {
-        if (ok) context.dispatch({ type: "nextLine" });
+        if (ok) context.dispatch({ type: "nextLine", add: true });
       });
     } else if (checkShortcut(realState, context.state.shortcut.center)) {
       if (!checkRepeatTime()) return;
       alignTextLayerToSelection();
+    } else if (checkShortcut(realState, context.state.shortcut.next)) {
+      if (!checkRepeatTime(300)) return;
+      context.dispatch({ type: "nextLine"});
+    } else if (checkShortcut(realState, context.state.shortcut.previous)) {
+      if (!checkRepeatTime(300)) return;
+      context.dispatch({ type: "prevLine"});
     } else {
       keyUp = true;
     }

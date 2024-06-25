@@ -529,7 +529,7 @@ function getHotkeyPressed() {
     string += "SHIFTa";
   }
   if (state.keyName) {
-    string += state.keyName + "a";
+    string += state.keyName.toUpperCase() + "a";
   }
   return string;
 }

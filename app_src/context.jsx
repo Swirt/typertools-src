@@ -28,7 +28,9 @@ const initialState = {
   shortcut: {
     add: ["WIN", "CTRL"],
     center: ["WIN", "ALT"],
-    next: ["WIN", "SHIFT"],
+    apply: ["WIN", "SHIFT"],
+    next: ["CTRL","ENTER"],
+    previous: ["CTRL","TAB"]
   },
 };
 

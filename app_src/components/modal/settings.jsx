@@ -77,7 +77,9 @@ const SettingsModal = React.memo(function SettingsModal() {
     const shortcut = {};
     shortcut.add = document.querySelector("#shortcutAdd").value.split(" + ");
     shortcut.center = document.querySelector("#shortcutCenter").value.split(" + ");
+    shortcut.apply = document.querySelector("#shortcutApply").value.split(" + ");
     shortcut.next = document.querySelector("#shortcutNext").value.split(" + ");
+    shortcut.previous = document.querySelector("#shortcutPrevious").value.split(" + ");
     context.dispatch({
       type: "updateShortcut",
       shortcut: shortcut,
@@ -173,9 +175,17 @@ const SettingsModal = React.memo(function SettingsModal() {
               <div className="field-input">
                 <input id="shortcutCenter" value={context.state.shortcut.center.join(" + ")} onKeyDown={changeShortCut} className="topcoat-textarea" />
               </div>
+              <div className="field-mini-label">Apply Style</div>
+              <div className="field-input">
+                <input id="shortcutApply" value={context.state.shortcut.apply.join(" + ")} onKeyDown={changeShortCut} className="topcoat-textarea" />
+              </div>
               <div className="field-mini-label">Next Line</div>
               <div className="field-input">
                 <input id="shortcutNext" value={context.state.shortcut.next.join(" + ")} onKeyDown={changeShortCut} className="topcoat-textarea" />
+              </div>
+              <div className="field-mini-label">Previous Line</div>
+              <div className="field-input">
+                <input id="shortcutPrevious" value={context.state.shortcut.previous.join(" + ")} onKeyDown={changeShortCut} className="topcoat-textarea" />
               </div>
             </div>
             <div className="field hostBrdTopContrast">
