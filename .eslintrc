@@ -1,7 +1,8 @@
 {
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2018,
+        "requireConfigFile": false
     },
     "env": {
         "es6": true,
@@ -15,5 +16,10 @@
         "react-hooks/rules-of-hooks": "error"
     },
     "extends": ["eslint:recommended", "plugin:react/recommended"],
-    "plugins": ["react", "react-hooks"]
+    "plugins": ["react", "react-hooks"],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    }
 }
